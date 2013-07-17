@@ -71,7 +71,8 @@ public class ActionServlet extends HttpServlet {
 					Cv = C / rho_s;
 				}
 				if (input.equals("Cm") && "rho_sus".equals(selectedGroup)) {
-					rho_sus = rho_s * rho_f / (Cm * (rho_f - rho_s) + rho_s);
+					rho_sus = rho_s * rho_f /
+							(Cm * (rho_f - rho_s) + rho_s);
 					C = Cm * rho_sus;
 					Cv = C / rho_s;
 				}
