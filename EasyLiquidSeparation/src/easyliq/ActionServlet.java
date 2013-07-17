@@ -28,12 +28,12 @@ public class ActionServlet extends HttpServlet {
 
 	private void Calculate(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		Double Cm = Double.parseDouble(request.getParameter("Cm"));
-		Double rho_s = Double.parseDouble(request.getParameter("rho_s"));
-		Double rho_f = Double.parseDouble(request.getParameter("rho_f"));
-		Double rho_sus = Double.parseDouble(request.getParameter("rho_sus"));
-		Double Cv = Double.parseDouble(request.getParameter("Cv"));
-		Double C = Double.parseDouble(request.getParameter("C"));
+		double Cm = Double.parseDouble(request.getParameter("Cm"));
+		double rho_s = Double.parseDouble(request.getParameter("rho_s"));
+		double rho_f = Double.parseDouble(request.getParameter("rho_f"));
+		double rho_sus = Double.parseDouble(request.getParameter("rho_sus"));
+		double Cv = Double.parseDouble(request.getParameter("Cv"));
+		double C = Double.parseDouble(request.getParameter("C"));
 		String selectedGroup = request.getParameter("selectedGroup");
 		String input = request.getParameter("input");
 		Boolean isInList = Boolean.parseBoolean(request
