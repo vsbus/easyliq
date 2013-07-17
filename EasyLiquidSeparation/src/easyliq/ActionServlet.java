@@ -111,7 +111,6 @@ public class ActionServlet extends HttpServlet {
 				+ "\", \"Cv\":\"" + Cv + "\", \"C\":\"" + C + "\"}";
 		response.getWriter().write(json);
 		response.getWriter().flush();
-		//
 	}
 
 	protected void doPost(HttpServletRequest request,
