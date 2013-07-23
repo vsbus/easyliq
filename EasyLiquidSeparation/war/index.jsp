@@ -10,39 +10,55 @@
 
 <script  type="text/javascript">
 
-    function getSelectedGroup()
+    ////////////////////////////////////////////////////////////////////////////
+
+    // Here we define a set of string constants used everywhere as ID for
+    // exact object.
+
+    // Parameters:
+    rho_f = "RHO_F"
+    rho_s = "RHO_S"
+    rho_sus = "RHO_SUS"
+    Cm = "CM"
+    Cv = "CV"
+    C = "C"
+
+    // Calculation Options:
+    calc_rho_f = "CALC_RHO_F"
+    calc_rho_s = "CALC_RHO_S"
+    calc_rho_sus = "CALC_RHO_SUS"
+    calc_CmCvC = "CALC_CMCVC"
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    function getCalculationOptionKey()
     {
-        var el = document.getElementById('calc_param');
-        return el.options[el.selectedIndex].value;
+        var e = document.getElementById('calc_param');
+        return e.options[e.selectedIndex].value;
     }
+    
     function paramChanged()
     {        
-        var sel = getSelectedGroup();
+        var calculationOptionKey = getCalculationOptionKey();
        
-        for (var i in params) 
+        for (var key in params) 
         {
-            params[i].editable = !isInList(groups[sel], params[i].name);
-            if(params[i].editable)
+            var p = params[key];
+            p.editable = calc_options[calculationOptionKey].group.indexOf(key) < 0;
+            var e = params[key].element;
+            if (p.editable)
             {
-                params[i].element.removeAttribute("readOnly");
-                params[i].element.removeAttribute("class");                
+                e.removeAttribute("readOnly");
+                e.removeAttribute("class");                
             }
             else{
-                params[i].element.setAttribute("readOnly", "true");
-                params[i].element.setAttribute("class", "disabled");                
+                e.setAttribute("readOnly", "true");
+                e.setAttribute("class", "disabled");                
             }
-            //params[i].element.setAttribute("contenteditable",  params[i].editable );
-            params[i].element.parentNode.parentNode.setAttribute("class", params[i].editable ? "editable" : "noneditable");
+            e.parentNode.parentNode.setAttribute("class",
+                p.editable ? "editable" : "noneditable");
         }
     }
-    function isInList(list, param)
-    {
-        for(var j = 0 ; j< list.length; j++)
-        {
-            if (list[j] == param) return true;
-        }
-        return false;
-    }   
 
     var input = "";
     var delay = 0;
@@ -50,7 +66,7 @@
     function updateTable(e)
     {
         input = e;
-        params[e].value =params[e].element.value * map[params[e].unit];
+        params[e].value = params[e].element.value * map[params[e].unit];
         now = new Date();
         last_user_action_time = now.getTime();
     }
@@ -59,32 +75,41 @@
     var last_processing_time = (new Date(2013, 0, 1)).getTime();
 
     function Calculate()
-    {                       
-     $.get('ActionServlet',{action:"calculate", selectedGroup:getSelectedGroup(), isInList:isInList(groups["ssmf"], input),input:input, Cm:params["Cm"].value, rho_s:params["rho_s"].value,
-        rho_f:params["rho_f"].value, rho_sus:params["rho_sus"].value,Cv:params["Cv"].value,C:params["C"].value},function(responseText) {
-        		var s = 0;
-				for(var i = 0; i < 100000000; ++i) {
- 					s += i;
-				}
-                params["Cm"].value = responseText.Cm;
-		        params["rho_s"].value = responseText.rho_s;
-		        params["rho_f"].value = responseText.rho_f;
-		        params["rho_sus"].value = responseText.rho_sus;
-		        params["Cv"].value = responseText.Cv;
-		        params["C"].value = responseText.C;	
-		        Render();				        
-	        });
+    {    
+        var request = {
+            action:        "calculate", 
+            selectedGroup: getCalculationOptionKey(), 
+            isInList:      (calc_options[calc_CmCvC].group.indexOf(input) >= 0),
+            input:         input, 
+        }
+        // For parameter fields we can't use initialization list.
+        request[Cm] =      params[Cm].value, 
+        request[rho_s] =   params[rho_s].value,
+        request[rho_f] =   params[rho_f].value, 
+        request[rho_sus] = params[rho_sus].value,
+        request[Cv] =      params[Cv].value,
+        request[C] =       params[C].value
+
+        $.get('ActionServlet', request, function(responseText) {
+            params[Cm].value = responseText.Cm;
+	        params[rho_s].value = responseText.rho_s;
+	        params[rho_f].value = responseText.rho_f;
+	        params[rho_sus].value = responseText.rho_sus;
+	        params[Cv].value = responseText.Cv;
+	        params[C].value = responseText.C;	
+	        Render();				        
+        });
     }
 
     function Render()
     {        
-        for(var key in params)
+        for (var key in params)
         {
-            if(key == input) 
-                {
-                    continue;
-                }
-            params[key].element.value = Number((params[key].value / map[params[key].unit]).toFixed(5));
+            if (key == input) {
+                continue;
+            }
+            params[key].element.value = Number(
+                (params[key].value / map[params[key].unit]).toFixed(5));
         }
     }    
 
@@ -107,7 +132,7 @@
 	window.setInterval(Process, delay)
 
 </script>
-</head>         
+</head>
 
 
 <body  style="background-color:#2F3945">
@@ -119,10 +144,6 @@
         <div class="label">Calculate:</div>
 
         <select id="calc_param" role="listbox" class="ui-pg-selbox" onChange="paramChanged();">
-            <option value="rho_f" role="option" selected="selected" >Filtrate Density (rho_f)</option>
-            <option value="rho_s" role="option">Solids Density (rho_s)</option>
-            <option value="rho_sus" role="option">Suspension Density (rho_sus)</option>
-            <option value="ssmf" role="option">Suspension Solids Mass Fraction (Cm, Cv, C)</option>
         </select>
     </div>
     <div >
@@ -145,46 +166,58 @@
 </form>
  <script  type="text/javascript">
 
-        var map={"kg/m3":1, "g/l":1, "%":0.01}
+        var map = {"kg/m3":1, "g/l":1, "%":0.01}
 
-        var groups={"rho_f":["rho_f"],
-            "rho_s":["rho_s"],
-            "rho_sus":["rho_sus"],
-            "ssmf":["Cm", "Cv","C"]}
+        // We can't use initialization list here because we want to use variables as keys.
+        var params = {}
+        params[rho_f] =   { "name":"Filtrate Density",   "unit":"kg/m3", "value":"1418",  "editable":"true", "element":null }
+        params[rho_s] =   { "name":"Solids Density",     "unit":"kg/m3", "value":"1000",  "editable":"true", "element":null }
+        params[rho_sus] = { "name":"Suspension Density", "unit":"kg/m3", "value":"1350",  "editable":"true", "element":null }
+        params[Cm] =      { "name":"Mass Fraction",      "unit":"%",     "value":"0.12",  "editable":"true", "element":null }
+        params[Cv] =      { "name":"Volume Fraction",    "unit":"%",     "value":"0.162", "editable":"true", "element":null }
+        params[C] =       { "name":"Concentration",      "unit":"g/l",   "value":"162",   "editable":"true", "element":null }
+        
+        // We can't use initialization list here because we want to use variables as keys.
+        var calc_options = {}
+        calc_options[calc_rho_f] =   { "name": "Filtrate Density (rho_f)",         "group": [rho_f] }
+        calc_options[calc_rho_s] =   { "name": "Solids Density (rho_s)",           "group": [rho_s] }
+        calc_options[calc_rho_sus] = { "name": "Suspension Density (rho_sus)",     "group": [rho_sus] }
+        calc_options[calc_CmCvC] =   { "name": "Solids Mass Fraction (Cm, Cv, C)", "group": [Cm, Cv,C] }
+        
+        var table = document.getElementById("pt");
+        var body = document.createElement("tbody");
+        table.appendChild(body);
 
-        var params = {
-            "rho_f":{"name":"rho_f", "unit":"kg/m3","value":"1418","editable":"true", "element":null},
-            "rho_s":{"name":"rho_s", "unit":"kg/m3","value":"1000","editable":"true", "element":null},
-            "rho_sus":{"name":"rho_sus", "unit":"kg/m3","value":"1350","editable":"true", "element":null},
-            "Cm":{"name":"Cm", "unit":"%", "value":"0.12","editable":"true", "element":null},
-            "Cv":{"name":"Cv", "unit":"%", "value":"0.162","editable":"true", "element":null},
-            "C":{"name":"C", "unit":"g/l", "value":"162","editable":"true", "element":null}
-            }
+        var checkBox = document.getElementById("calc_param");
+        for (var key in calc_options) {
+            var e = document.createElement("option");
+            e.setAttribute("value", key);
+            e.setAttribute("role", "option");
+            e.text = calc_options[key].name;
+            checkBox.appendChild(e);
 
-            var table = document.getElementById("pt");
-            var body = document.createElement("tbody");
-            table.appendChild(body);
+        }
 
-            for(var key in groups)
-            {
-                var group = groups[key];
-                for(i = 0 ; i< group.length; i++)
-                {
-                    var p = group[i];
-                    var el = createRow(params[p], body);
-                    params[p].element = el;   
-                }
-                var em_row = document.createElement("tr");
-                em_row.appendChild(document.createElement("td"));
-                em_row.appendChild(document.createElement("td"));
-                em_row.appendChild(document.createElement("td"));                 
-
-                em_row.setAttribute("class","rowseparator");
-                body.appendChild(em_row);
-            }
-           
-        function createRow (param, tbody)
+        for (var key in calc_options)
         {
+            var group = calc_options[key].group;
+            for (var i in group)
+            {
+                var param_key = group[i];
+                params[param_key].element = createRow(param_key, body);
+            }
+            var em_row = document.createElement("tr");
+            em_row.appendChild(document.createElement("td"));
+            em_row.appendChild(document.createElement("td"));
+            em_row.appendChild(document.createElement("td"));                 
+
+            em_row.setAttribute("class","rowseparator");
+            body.appendChild(em_row);
+        }
+           
+        function createRow(param_key, tbody)
+        {
+            var param = params[param_key];
             var result = null;
             var row = document.createElement("tr");
             var el = document.createElement("td");
@@ -199,11 +232,11 @@
             editbox.setAttribute("type",  "text" );
             editbox.setAttribute("value",  param.value / map[param.unit] );
 
-            editbox.setAttribute("onkeyup",  "javascript: updateTable('"+param.name+"');" );
+            editbox.setAttribute("onkeyup",  "javascript: updateTable('"+param_key+"');" );
             if(!param.editable)
             {
-                editbox.setAttribute("readOnly","true");
-                editbox.setAttribute("class","disabled");
+                editbox.setAttribute("readOnly", "true");
+                editbox.setAttribute("class", "disabled");
                // row.setAttribute("class", "noneditable");
             }
  
@@ -211,7 +244,7 @@
             result = editbox;               
             
             row.appendChild(el);
-            row.setAttribute("class", param.editable? "editable":"noneditable");
+            row.setAttribute("class", param.editable ? "editable" : "noneditable");
             tbody.appendChild(row);
             return result;
         }

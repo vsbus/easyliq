@@ -26,89 +26,110 @@ public class ActionServlet extends HttpServlet {
 		}
 	}
 
+	public enum Parameter {
+		RHO_F, RHO_S, RHO_SUS, CM, CV, C;
+	}
+
+	public enum CalculationOption {
+		CALC_RHO_F, CALC_RHO_S, CALC_RHO_SUS, CALC_CMCVC;
+	}
+
+	private double parameterValue(HttpServletRequest r, Parameter p) {
+		return Double.parseDouble(r.getParameter(p.toString()));
+	}
+
 	private void Calculate(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		double Cm = Double.parseDouble(request.getParameter("Cm"));
-		double rho_s = Double.parseDouble(request.getParameter("rho_s"));
-		double rho_f = Double.parseDouble(request.getParameter("rho_f"));
-		double rho_sus = Double.parseDouble(request.getParameter("rho_sus"));
-		double Cv = Double.parseDouble(request.getParameter("Cv"));
-		double C = Double.parseDouble(request.getParameter("C"));
-		String selectedGroup = request.getParameter("selectedGroup");
-		String input = request.getParameter("input");
+		double rho_s = parameterValue(request, Parameter.RHO_S);
+		double rho_f = parameterValue(request, Parameter.RHO_F);
+		double rho_sus = parameterValue(request, Parameter.RHO_SUS);
+		double Cm = parameterValue(request, Parameter.CM);
+		double Cv = parameterValue(request, Parameter.CV);
+		double C = parameterValue(request, Parameter.C);
+
+		CalculationOption option = CalculationOption.valueOf(request
+				.getParameter("selectedGroup"));
+		Parameter input = Parameter.valueOf(request.getParameter("input"));
+
 		Boolean isInList = Boolean.parseBoolean(request
 				.getParameter("isInList"));
-		if ("ssmf".equals(selectedGroup)) {
+
+		if (option == CalculationOption.CALC_CMCVC) {
 			Cm = rho_s * (rho_f - rho_sus) / rho_sus / (rho_f - rho_s);
 			Cv = (rho_f - rho_sus) / (rho_f - rho_s);
 			C = rho_s * (rho_f - rho_sus) / (rho_f - rho_s);
 		} else {
+			boolean calc_rho_f = option == CalculationOption.CALC_RHO_F;
+			boolean calc_rho_s = option == CalculationOption.CALC_RHO_S;
+			boolean calc_rho_sus = option == CalculationOption.CALC_RHO_SUS;
+
 			if (isInList) {
-				if (input.equals("Cv") && "rho_f".equals(selectedGroup)) {
+				if (input == Parameter.CV && calc_rho_f) {
 					rho_f = (Cv * rho_s - rho_sus) / (Cv - 1);
 					Cm = rho_s * Cv / rho_sus;
 					C = Cv * rho_s;
 				}
-				if (input.equals("Cv") && "rho_s".equals(selectedGroup)) {
+				if (input == Parameter.CV && calc_rho_s) {
 					rho_s = (Cv * rho_f + rho_sus - rho_f) / Cv;
 					Cm = rho_s * Cv / rho_sus;
 					C = Cv * rho_s;
 				}
-				if (input.equals("Cv") && "rho_sus".equals(selectedGroup)) {
+				if (input == Parameter.CV && calc_rho_sus) {
 					rho_sus = rho_f - Cv * (rho_f - rho_s);
 					C = Cv * rho_s;
 					Cm = C / rho_sus;
 				}
 				// cm
-				if (input.equals("Cm") && "rho_f".equals(selectedGroup)) {
+				if (input == Parameter.CM && calc_rho_f) {
 					C = Cm * rho_sus;
 					Cv = C / rho_s;
 					rho_f = (Cv * rho_s - rho_sus) / (Cv - 1);
 				}
-				if (input.equals("Cm") && "rho_s".equals(selectedGroup)) {
+				if (input == Parameter.CM && calc_rho_s) {
 					C = Cm * rho_sus;
 					rho_s = C * rho_f / (C + rho_f - rho_sus);
 					Cv = C / rho_s;
 				}
-				if (input.equals("Cm") && "rho_sus".equals(selectedGroup)) {
-					rho_sus = rho_s * rho_f /
-							(Cm * (rho_f - rho_s) + rho_s);
+				if (input == Parameter.CM && calc_rho_sus) {
+					rho_sus = rho_s * rho_f / (Cm * (rho_f - rho_s) + rho_s);
 					C = Cm * rho_sus;
 					Cv = C / rho_s;
 				}
 				// c
-				if (input.equals("C") && "rho_f".equals(selectedGroup)) {
+				if (input == Parameter.C && calc_rho_f) {
 					Cv = C / rho_s;
 					Cm = C / rho_sus;
 					rho_f = (Cv * rho_s - rho_sus) / (Cv - 1);
 				}
-				if (input.equals("C") && "rho_s".equals(selectedGroup)) {
+				if (input == Parameter.C && calc_rho_s) {
 					Cm = C / rho_sus;
 					rho_s = C * rho_f / (C + rho_f - rho_sus);
 					Cv = C / rho_s;
 				}
-				if (input.equals("C") && "rho_sus".equals(selectedGroup)) {
+				if (input == Parameter.C && calc_rho_sus) {
 					Cv = C / rho_s;
 					rho_sus = rho_f - Cv * (rho_f - rho_s);
 					Cm = C / rho_sus;
 				}
 			} else {
-				if ("rho_f".equals(selectedGroup)) {
+				if (calc_rho_f) {
 					rho_f = (Cv * rho_s - rho_sus) / (Cv - 1);
 				}
-				if ("rho_s".equals(selectedGroup)) {
+				if (calc_rho_s) {
 					rho_s = (Cv * rho_f + rho_sus - rho_f) / Cv;
 				}
-				if ("rho_sus".equals(selectedGroup)) {
+				if (calc_rho_sus) {
 					rho_sus = rho_f - Cv * (rho_f - rho_s);
 				}
 			}
 		}
+
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
-		String json = "{\"Cm\":\"" + Cm + "\", \"rho_s\":\"" + rho_s
-				+ "\", \"rho_f\":\"" + rho_f + "\", \"rho_sus\":\"" + rho_sus
-				+ "\", \"Cv\":\"" + Cv + "\", \"C\":\"" + C + "\"}";
+		String json = "{" + "\"rho_s\":\"" + rho_s + "\", " + "\"rho_f\":\""
+				+ rho_f + "\", " + "\"rho_sus\":\"" + rho_sus + "\", "
+				+ "\"Cm\":\"" + Cm + "\", " + "\"Cv\":\"" + Cv + "\", "
+				+ "\"C\":\"" + C + "\"" + "}";
 		response.getWriter().write(json);
 		response.getWriter().flush();
 	}
