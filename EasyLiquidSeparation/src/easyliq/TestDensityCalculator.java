@@ -42,7 +42,7 @@ public class TestDensityCalculator {
 				new Parameter[] { Parameter.RHO_F, Parameter.RHO_SUS,
 						Parameter.C }, };
 
-		CalculationParameters expect = CreateParametersString(parameters);
+		CalculationParameters expect = GetCalcParamsFromMap(parameters);
 
 		String err = "";
 		for (Parameter[] inputs : tests) {
@@ -76,12 +76,7 @@ public class TestDensityCalculator {
 		parameters.put(Parameter.RHO_SUS, 1200.0);
 		parameters.put(Parameter.CM, 0.3);
 
-		CalculationParameters expect = CreateParametersString(parameters);
-
-		String err = GenerateTestResult(parameters, expect, new CmRhoEquation());
-		if (err.length() > 0) {
-			fail(err);
-		}
+		TestEquation(parameters, new CmRhoEquation());
 	}
 	
 	@Test
@@ -90,14 +85,9 @@ public class TestDensityCalculator {
 		parameters.put(Parameter.RHO_F, 1000.0);
 		parameters.put(Parameter.RHO_S, 2250.0);
 		parameters.put(Parameter.RHO_SUS, 1200.0);
-		parameters.put(Parameter.CV, 0.16);
+		parameters.put(Parameter.CV, 0.16);	
 		
-		CalculationParameters expect = CreateParametersString(parameters);
-
-		String err = GenerateTestResult(parameters, expect, new CvRhoEquation());
-		if (err.length() > 0) {
-			fail(err);
-		}
+		TestEquation(parameters, new CvRhoEquation());
 	}
 	
 	@Test
@@ -108,16 +98,13 @@ public class TestDensityCalculator {
 		parameters.put(Parameter.RHO_SUS, 1200.0);
 		parameters.put(Parameter.C, 360.0);
 		
-		CalculationParameters expect = CreateParametersString(parameters);
-
-		String err = GenerateTestResult(parameters, expect, new CRhoEquation());
-		if (err.length() > 0) {
-			fail(err);
-		}
+		TestEquation(parameters, new CRhoEquation());
+		
 	}
 
-	private String GenerateTestResult(HashMap<Parameter, Double> parameters,
-			CalculationParameters expect, Equation equation) throws Exception {
+	private void TestEquation(HashMap<Parameter, Double> parameters,
+			Equation equation) throws Exception {
+		CalculationParameters expect = GetCalcParamsFromMap(parameters);
 		String err = "";
 		for (Parameter result : parameters.keySet()) {
 			CalculationParameters calcParams = new CalculationParameters();
@@ -135,10 +122,12 @@ public class TestDensityCalculator {
 						+ calcParams.toString() + "\n";
 			}
 		}
-		return err;
+		if (err.length() > 0) {
+			fail(err);
+		}
 	}
 
-	private CalculationParameters CreateParametersString(HashMap<Parameter, Double> parameters) throws Exception {
+	private CalculationParameters GetCalcParamsFromMap(HashMap<Parameter, Double> parameters) throws Exception {
 		CalculationParameters expect = new CalculationParameters(); 
 		for (Entry<Parameter, Double> p : parameters.entrySet()) {
 			expect.addKnown(p.getKey(), p.getValue());
