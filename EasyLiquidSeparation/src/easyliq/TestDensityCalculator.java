@@ -42,7 +42,8 @@ public class TestDensityCalculator {
 				new Parameter[] { Parameter.RHO_F, Parameter.RHO_SUS,
 						Parameter.C }, };
 
-		CalculationParameters expect = GetCalcParamsFromMap(parameters);
+		CalculationParameters expect = TestUtils
+				.GetCalcParamsFromMap(parameters);
 
 		String err = "";
 		for (Parameter[] inputs : tests) {
@@ -76,20 +77,20 @@ public class TestDensityCalculator {
 		parameters.put(Parameter.RHO_SUS, 1200.0);
 		parameters.put(Parameter.CM, 0.3);
 
-		TestEquation(parameters, new CmRhoEquation());
+		TestUtils.TestEquation(parameters, new CmRhoEquation());
 	}
-	
+
 	@Test
 	public void testCvRhoEquation() throws Exception {
 		HashMap<Parameter, Double> parameters = new HashMap<Parameter, Double>();
 		parameters.put(Parameter.RHO_F, 1000.0);
 		parameters.put(Parameter.RHO_S, 2250.0);
 		parameters.put(Parameter.RHO_SUS, 1200.0);
-		parameters.put(Parameter.CV, 0.16);	
-		
-		TestEquation(parameters, new CvRhoEquation());
+		parameters.put(Parameter.CV, 0.16);
+
+		TestUtils.TestEquation(parameters, new CvRhoEquation());
 	}
-	
+
 	@Test
 	public void testCRhoEquation() throws Exception {
 		HashMap<Parameter, Double> parameters = new HashMap<Parameter, Double>();
@@ -97,42 +98,7 @@ public class TestDensityCalculator {
 		parameters.put(Parameter.RHO_S, 2250.0);
 		parameters.put(Parameter.RHO_SUS, 1200.0);
 		parameters.put(Parameter.C, 360.0);
-		
-		TestEquation(parameters, new CRhoEquation());
-		
-	}
 
-	private void TestEquation(HashMap<Parameter, Double> parameters,
-			Equation equation) throws Exception {
-		CalculationParameters expect = GetCalcParamsFromMap(parameters);
-		String err = "";
-		for (Parameter result : parameters.keySet()) {
-			CalculationParameters calcParams = new CalculationParameters();
-			for (Entry<Parameter, Double> p : parameters.entrySet()) {
-				Parameter key = p.getKey();
-				if (key == result) {
-					calcParams.addUnknown(key);
-				} else {
-					calcParams.addKnown(key, p.getValue());
-				}
-			}
-			equation.Calculate(calcParams);
-			if (!calcParams.toString().equals(expect.toString())) {
-				err = err + "\nexpect:\n  " + expect.toString() + "\n got:\n  "
-						+ calcParams.toString() + "\n";
-			}
-		}
-		if (err.length() > 0) {
-			fail(err);
-		}
+		TestUtils.TestEquation(parameters, new CRhoEquation());
 	}
-
-	private CalculationParameters GetCalcParamsFromMap(HashMap<Parameter, Double> parameters) throws Exception {
-		CalculationParameters expect = new CalculationParameters(); 
-		for (Entry<Parameter, Double> p : parameters.entrySet()) {
-			expect.addKnown(p.getKey(), p.getValue());
-		}
-		return expect;
-	}
-	
 }
