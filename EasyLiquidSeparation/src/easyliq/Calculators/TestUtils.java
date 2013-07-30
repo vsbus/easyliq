@@ -1,9 +1,13 @@
-package easyliq;
+package easyliq.Calculators;
 
 import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
+
+import easyliq.CalculationParameters;
+import easyliq.Equation;
+import easyliq.Parameter;
 
 public class TestUtils {
 	static public void TestEquation(HashMap<Parameter, Double> parameters,

@@ -1,10 +1,9 @@
-package easyliq;
+package easyliq.Calculators;
 
 import java.util.HashMap;
-
 import org.junit.Test;
-
-import easyliq.RfFromCakeSaturationCalculator.*;
+import easyliq.Parameter;
+import easyliq.Calculators.RfFromCakeSaturationCalculator.*;
 
 public class RfFromCakeSaturationCalculatorTest {
 
@@ -16,7 +15,6 @@ public class RfFromCakeSaturationCalculatorTest {
 		parameters.put(Parameter.EPS, 0.50);
 		parameters.put(Parameter.S, 1.0);
 		parameters.put(Parameter.RF, 0.25);
-
 		TestUtils.TestEquation(parameters, new MoistureContentFromCakeSaturationEquation());
 	}
 }

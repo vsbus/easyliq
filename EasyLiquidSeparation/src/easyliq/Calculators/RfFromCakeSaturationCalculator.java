@@ -1,4 +1,9 @@
-package easyliq;
+package easyliq.Calculators;
+
+import easyliq.CalculationParameters;
+import easyliq.Calculator;
+import easyliq.Equation;
+import easyliq.Parameter;
 
 public class RfFromCakeSaturationCalculator extends Calculator {
 	public RfFromCakeSaturationCalculator() {

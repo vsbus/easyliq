@@ -1,15 +1,15 @@
-package easyliq;
+package easyliq.Calculators;
 
 import static org.junit.Assert.*;
 
 import java.util.*;
 import java.util.Map.Entry;
-
 import org.junit.Test;
+import easyliq.CalculationParameters;
+import easyliq.Parameter;
+import easyliq.Calculators.DensityCalculator.*;
 
-import easyliq.DensityCalculator.*;
-
-public class TestDensityCalculator {
+public class DensityCalculatorTest {
 
 	@Test
 	public void testDensityCalculator() throws Exception {
