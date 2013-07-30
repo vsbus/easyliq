@@ -7,9 +7,8 @@ import java.util.Map.Entry;
 import org.junit.Test;
 import easyliq.CalculationParameters;
 import easyliq.Parameter;
-import easyliq.Calculators.DensityCalculator.*;
 
-public class DensityCalculatorTest {
+public class DensityTest {
 
 	@Test
 	public void testDensityCalculator() throws Exception {
@@ -57,7 +56,7 @@ public class DensityCalculatorTest {
 				}
 			}
 			String before = calcParams.toString();
-			new DensityCalculator().Calculate(calcParams);
+			new Density().Calculate(calcParams);
 			if (!calcParams.toString().equals(expect.toString())) {
 				err = err + "\nbefore:\n    " + before + "\nexpect:\n    "
 						+ expect.toString() + "\ngot:\n    "
@@ -77,7 +76,8 @@ public class DensityCalculatorTest {
 		parameters.put(Parameter.RHO_SUS, 1200.0);
 		parameters.put(Parameter.CM, 0.3);
 
-		TestUtils.TestEquation(parameters, new CmRhoEquation());
+		TestUtils.TestEquation(parameters,
+				new easyliq.Calculators.Density.CmRhoEquation());
 	}
 
 	@Test
@@ -88,7 +88,8 @@ public class DensityCalculatorTest {
 		parameters.put(Parameter.RHO_SUS, 1200.0);
 		parameters.put(Parameter.CV, 0.16);
 
-		TestUtils.TestEquation(parameters, new CvRhoEquation());
+		TestUtils.TestEquation(parameters,
+				new easyliq.Calculators.Density.CvRhoEquation());
 	}
 
 	@Test
@@ -99,6 +100,7 @@ public class DensityCalculatorTest {
 		parameters.put(Parameter.RHO_SUS, 1200.0);
 		parameters.put(Parameter.C, 360.0);
 
-		TestUtils.TestEquation(parameters, new CRhoEquation());
+		TestUtils.TestEquation(parameters,
+				new easyliq.Calculators.Density.CRhoEquation());
 	}
 }

@@ -4,8 +4,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import easyliq.Calculators.DensityCalculator;
-
 /**
  * Servlet implementation class ActionServlet
  */
@@ -55,7 +53,7 @@ public class ActionServlet extends HttpServlet {
 				calcParams.addKnown(p, Double.parseDouble(parStr));
 			}
 		}
-		new DensityCalculator().Calculate(calcParams);
+		new easyliq.Calculators.Density().Calculate(calcParams);
 
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");

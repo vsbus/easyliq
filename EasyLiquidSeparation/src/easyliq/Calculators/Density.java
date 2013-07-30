@@ -5,9 +5,9 @@ import easyliq.Calculator;
 import easyliq.Equation;
 import easyliq.Parameter;
 
-public class DensityCalculator extends Calculator {
+public class Density extends Calculator {
 
-	public DensityCalculator() {
+	public Density() {
 		super(new Equation[] { new CmRhoEquation(), new CvRhoEquation(),
 				new CRhoEquation() });
 	}

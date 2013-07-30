@@ -5,8 +5,8 @@ import easyliq.Calculator;
 import easyliq.Equation;
 import easyliq.Parameter;
 
-public class RfFromCakeSaturationCalculator extends Calculator {
-	public RfFromCakeSaturationCalculator() {
+public class RfFromCakeSaturation extends Calculator {
+	public RfFromCakeSaturation() {
 		super(new Equation[] {});
 	}
 
