@@ -7,73 +7,86 @@
 
 <link href="assets/css/styles.css" type="text/css" rel="stylesheet"/>
 <script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="assets/js/modules.js"></script>
+<script src="assets/js/fsDensityConcentrationCalculator.js"></script>
 
 <script  type="text/javascript">
-
-    ////////////////////////////////////////////////////////////////////////////
-
-    // Here we define a set of string constants used everywhere as ID for
-    // exact object.
-
-    // Parameters:
-    rho_f = "RHO_F"
-    rho_s = "RHO_S"
-    rho_sus = "RHO_SUS"
-    Cm = "CM"
-    Cv = "CV"
-    C = "C"
-
-    // Groups:
-    group_rho_f = "GROUP_RHO_F"
-    group_rho_s = "GROUP_RHO_S"
-    group_rho_sus = "GROUP_RHO_SUS"
-    group_C = "GROUP_C"
-
-
-    // Calculation Options:
-    calc_rho_f = "CALC_RHO_F"
-    calc_rho_s = "CALC_RHO_S"
-    calc_rho_sus = "CALC_RHO_SUS"
-    calc_CmCvC = "CALC_CMCVC"
-
-    ////////////////////////////////////////////////////////////////////////////
-
-    function getCalculationOption() {
-        var e = document.getElementById('calc_param');
-        return e.options[e.selectedIndex].value;
+var currentModule = null;
+    function draw(m)
+ 	{
+ 		currentModule = m; 
+ 		clearCalculationOptions();
+ 		clearParametersTable();
+ 		drawCalculationOptions(m);
+ 		drawParametersTable(m); 				 
+ 	} 
+ 	
+ 	function clearCalculationOptions(){
+ 		var d = document.getElementById("calc_option_div"); 		
+ 		while(d.firstChild != null)
+ 		{
+ 			d.removeChild(d.firstChild); 			
+ 		}
+ 	}
+    
+    function clearParametersTable()
+    {
+    	var table = document.getElementById("pt");
+    	var body = table.getElementsByTagName("tbody")[0];
+    	if(body != null){
+    		table.removeChild(body);
+    	}    	
     }
     
-    function calcOptionChanged() {        
-        var calculationOption = getCalculationOption();
+    function drawCalculationOptions(m){
+    	var d = document.getElementById("calc_option_div");
+ 		var s = document.createElement("span");    		
+    	s.innerHTML = m.combos[0].name;
+    	d.appendChild(s);
+ 		var comboBox = document.createElement("select");
+ 		comboBox.setAttribute("role", "listbox");
+ 		//comboBox.setAttribute("onChange", "("+m.combos[0].onchange+")()");
+ 		//comboBox.setAttribute("onChange", "("+m.onComboChanged+")(this)");
+ 		//comboBox.setAttribute("onChange", "("+m.onComboChanged+")()");
+ 		comboBox.onchange = function(){m.onComboChanged(m);};
+ 		
+ 		m.combos[0].control = comboBox;
+ 		d.appendChild(comboBox);
+ 		for(var i in m.combos[0].options){ 		
+ 			var e = document.createElement("option");
+ 			e.setAttribute("value", i);
+            e.setAttribute("role", "option");
+            e.text = m.combos[0].options[i].name;
+            comboBox.appendChild(e);
+ 		}
+ 		comboBox.selectedIndex = 2;
+    }
+    function drawParametersTable(m){
+    	var table = document.getElementById("pt");
+    	var body = document.createElement("tbody");
+        table.appendChild(body);
 
-        var mp = {};
-        mp[calc_rho_f] = group_rho_f;
-        mp[calc_rho_s] = group_rho_s;
-        mp[calc_rho_sus] = group_rho_sus;
-        mp[calc_CmCvC] = group_C;
-        calculatedGroup = mp[calculationOption];
-       
-        for (var parameter in parameters_meta) {
-            var meta = parameters_meta[parameter];
-            var e = parameters_meta[parameter].element;
-            if (meta.group != calculatedGroup) {
-                e.removeAttribute("readOnly");
-                e.removeAttribute("class");
-                e.parentNode.parentNode.setAttribute("class", "editable");
+        for (var key in m.combos[0].options) {
+            var group_parameters = m.groups_meta[m.combos[0].options[key].group].parameters;
+            for (var i in group_parameters) {
+                var parameter = group_parameters[i];
+                m.parameters_meta[parameter].element = createRow(m, parameter, body);
             }
-            else {
-                e.setAttribute("readOnly", "true");
-                e.setAttribute("class", "disabled");
-                e.parentNode.parentNode.setAttribute("class", "noneditable");
-            }
+            var em_row = document.createElement("tr");
+            em_row.appendChild(document.createElement("td"));
+            em_row.appendChild(document.createElement("td"));
+            em_row.appendChild(document.createElement("td"));                 
+
+            em_row.setAttribute("class","rowseparator");
+            body.appendChild(em_row);
         }
     }
-
+    
     var delay = 0;
 
     function parameterValueChanged(parameter) {
-        var meta = parameters_meta[parameter];
-        groups_meta[meta.group].representator = parameter;
+        var meta = currentModule.parameters_meta[parameter];
+        currentModule.groups_meta[meta.group].representator = parameter;
         meta.value = meta.element.value * map[meta.unit];
         last_user_action_time = (new Date()).getTime();
     }
@@ -83,42 +96,8 @@
 
     function Calculate()
     {    
-        var request = { action: "calculate" }
-        // For parameter fields we can't use initialization list.
-        for (var parameter in parameters_meta) {
-            var known = false;
-            var pmeta = parameters_meta[parameter];
-            if (pmeta.group != calculatedGroup) {
-                var gmeta = groups_meta[pmeta.group];
-                if (parameter == gmeta.representator) {
-                    known = true;
-                }
-            }
-            if (known) {
-                request[parameter] = pmeta.value;
-            }
-        }
-
-        $.get('ActionServlet', request, function(responseText) {
-            parameters_meta[Cm].value = responseText[Cm]
-	        parameters_meta[rho_s].value = responseText[rho_s]
-	        parameters_meta[rho_f].value = responseText[rho_f]
-	        parameters_meta[rho_sus].value = responseText[rho_sus]
-	        parameters_meta[Cv].value = responseText[Cv]
-	        parameters_meta[C].value = responseText[C]
-	        Render()
-        });
+    	currentModule.calculate(currentModule);		   
     }
-
-    function Render() {        
-        for (var parameter in parameters_meta) {
-            var pmeta = parameters_meta[parameter];
-            var gmeta = groups_meta[pmeta.group];
-            if (pmeta.group == calculatedGroup || parameter != gmeta.representator) {
-                pmeta.element.value = Number((pmeta.value / map[pmeta.unit]).toFixed(5));
-            }
-        }
-    }    
 
 	function Process() {
 		if (last_user_action_time <= last_processing_time) {
@@ -129,7 +108,7 @@
 		if (timediff < delay) {
 			return
         }
-		Calculate()
+        Calculate()
 		last_processing_time = now.getTime()
 	}
 
@@ -145,10 +124,8 @@
 <div class = "main_div">
 <div class="inputbar">
     <div >
-        <div class="label">Calculate:</div>
-
-        <select id="calc_param" role="listbox" class="ui-pg-selbox" onChange="calcOptionChanged();">
-        </select>
+    	<input type="button" onclick="javascript: draw(new DensityConcentrationCalculator());" value="fsDensityConcentrationCalculator"/>
+    	<div id="calc_option_div"/>    	
     </div>
     <div >
         <div>
@@ -169,64 +146,13 @@
 
 </form>
  <script  type="text/javascript">
-
+ 	
         var map = {"kg/m3":1, "g/l":1, "%":0.01}
-        
-        // We can't use initialization list here because we want to use variables as keys.
-        var groups_meta = {}
-        groups_meta[group_rho_f] =   { parameters:[rho_f],     representator: rho_f }
-        groups_meta[group_rho_s] =   { parameters:[rho_s],     representator: rho_s }
-        groups_meta[group_rho_sus] = { parameters:[rho_sus],   representator: rho_sus }
-        groups_meta[group_C] =       { parameters:[Cm, Cv, C], representator: Cm }
-        calculatedGroup = group_rho_sus;
-
-        // We can't use initialization list here because we want to use variables as keys.
-        var parameters_meta = {}
-        parameters_meta[rho_f] =   { name:"Filtrate Density",   unit:"kg/m3", value:"1418",  element:null, group:group_rho_f }
-        parameters_meta[rho_s] =   { name:"Solids Density",     unit:"kg/m3", value:"1000",  element:null, group:group_rho_s }
-        parameters_meta[rho_sus] = { name:"Suspension Density", unit:"kg/m3", value:"1350",  element:null, group:group_rho_sus }
-        parameters_meta[Cm] =      { name:"Mass Fraction",      unit:"%",     value:"0.12",  element:null, group:group_C }
-        parameters_meta[Cv] =      { name:"Volume Fraction",    unit:"%",     value:"0.162", element:null, group:group_C }
-        parameters_meta[C] =       { name:"Concentration",      unit:"g/l",   value:"162",   element:null, group:group_C }
-
-        // We can't use initialization list here because we want to use variables as keys.
-        var calc_options = {}
-        calc_options[calc_rho_f] =   { name:"Filtrate Density (rho_f)",         group:group_rho_f }
-        calc_options[calc_rho_s] =   { name:"Solids Density (rho_s)",           group:group_rho_s }
-        calc_options[calc_rho_sus] = { name:"Suspension Density (rho_sus)",     group:group_rho_sus }
-        calc_options[calc_CmCvC] =   { name:"Solids Mass Fraction (Cm, Cv, C)", group:group_C }
-        
-        var table = document.getElementById("pt");
-        var body = document.createElement("tbody");
-        table.appendChild(body);
-
-        var comboBox = document.getElementById("calc_param");
-        for (var key in calc_options) {
-            var e = document.createElement("option");
-            e.setAttribute("value", key);
-            e.setAttribute("role", "option");
-            e.text = calc_options[key].name;
-            comboBox.appendChild(e);
-        }
-        comboBox.selectedIndex = 2
-
-        for (var key in calc_options) {
-            var group_parameters = groups_meta[calc_options[key].group].parameters;
-            for (var i in group_parameters) {
-                var parameter = group_parameters[i];
-                parameters_meta[parameter].element = createRow(parameter, body);
-            }
-            var em_row = document.createElement("tr");
-            em_row.appendChild(document.createElement("td"));
-            em_row.appendChild(document.createElement("td"));
-            em_row.appendChild(document.createElement("td"));                 
-
-            em_row.setAttribute("class","rowseparator");
-            body.appendChild(em_row);
-        }
+                
+       
            
-        function createRow(parameter, tbody) {
-            var pmeta = parameters_meta[parameter];
+        function createRow(m, parameter, tbody) {
+            var pmeta = m.parameters_meta[parameter];
             var result = null;
             var row = document.createElement("tr");
             var el = document.createElement("td");
@@ -242,7 +168,7 @@
             editbox.setAttribute("value",  pmeta.value / map[pmeta.unit] );
 
             editbox.setAttribute("onkeyup",  "javascript: parameterValueChanged('"+parameter+"');" );
-            if (pmeta.group == calculatedGroup) {
+            if (pmeta.group == m.calculatedGroup) {
                 editbox.setAttribute("readOnly", "true");
                 editbox.setAttribute("class", "disabled");
                 row.setAttribute("class", "noneditable");
@@ -257,7 +183,7 @@
             tbody.appendChild(row);
             return result;
         }
-        calcOptionChanged();
+        //calcOptionChanged();
 </script>
 
     
