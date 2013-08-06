@@ -194,7 +194,7 @@ function DensityConcentrationCalculator() {
 			}
 		}
 	};
-	var combo0 = new combo("Calculate", calc_options, null, null);
+	var combo0 = new Combo("Calculate", calc_options, null, null);
 
 	combo0.onchange = combo0_onchange;
 	var DensityConcentrationCalculator_combos = [ combo0 ];
@@ -207,4 +207,4 @@ function DensityConcentrationCalculator() {
 	this.calculate = calculateDensityConcentration;
 	this.onComboChanged = combo0_onchange;
 }
-DensityConcentrationCalculator.prototype = new module;
+DensityConcentrationCalculator.prototype = new Module;

@@ -11,9 +11,10 @@
 <script src="assets/js/fsDensityConcentrationCalculator.js"></script>
 
 <script  type="text/javascript">
-var currentModule = null;
-    function draw(m)
- 	{
+	
+	var currentModule = null;
+    
+    function draw(m) {
  		currentModule = m; 
  		clearCalculationOptions();
  		clearParametersTable();
@@ -21,38 +22,33 @@ var currentModule = null;
  		drawParametersTable(m); 				 
  	} 
  	
- 	function clearCalculationOptions(){
+ 	function clearCalculationOptions() {
  		var d = document.getElementById("calc_option_div"); 		
- 		while(d.firstChild != null)
- 		{
+ 		while (d.firstChild != null) {
  			d.removeChild(d.firstChild); 			
  		}
  	}
     
-    function clearParametersTable()
-    {
+    function clearParametersTable() {
     	var table = document.getElementById("pt");
     	var body = table.getElementsByTagName("tbody")[0];
-    	if(body != null){
+    	if (body != null) {
     		table.removeChild(body);
     	}    	
     }
     
-    function drawCalculationOptions(m){
+    function drawCalculationOptions(m) {
     	var d = document.getElementById("calc_option_div");
  		var s = document.createElement("span");    		
     	s.innerHTML = m.combos[0].name;
     	d.appendChild(s);
  		var comboBox = document.createElement("select");
  		comboBox.setAttribute("role", "listbox");
- 		//comboBox.setAttribute("onChange", "("+m.combos[0].onchange+")()");
- 		//comboBox.setAttribute("onChange", "("+m.onComboChanged+")(this)");
- 		//comboBox.setAttribute("onChange", "("+m.onComboChanged+")()");
  		comboBox.onchange = function(){m.onComboChanged(m);};
  		
  		m.combos[0].control = comboBox;
  		d.appendChild(comboBox);
- 		for(var i in m.combos[0].options){ 		
+ 		for (var i in m.combos[0].options) { 		
  			var e = document.createElement("option");
  			e.setAttribute("value", i);
             e.setAttribute("role", "option");
@@ -61,7 +57,7 @@ var currentModule = null;
  		}
  		comboBox.selectedIndex = 2;
     }
-    function drawParametersTable(m){
+    function drawParametersTable(m) {
     	var table = document.getElementById("pt");
     	var body = document.createElement("tbody");
         table.appendChild(body);
@@ -83,19 +79,17 @@ var currentModule = null;
     }
     
     var delay = 0;
-
-    function parameterValueChanged(parameter) {
-        var meta = currentModule.parameters_meta[parameter];
-        currentModule.groups_meta[meta.group].representator = parameter;
+    var last_user_action_time = (new Date(2013, 0, 1)).getTime();
+    var last_processing_time = (new Date(2013, 0, 1)).getTime();
+    
+    function parameterValueChanged(m, parameter) {    	
+        var meta = m.parameters_meta[parameter];
+        m.groups_meta[meta.group].representator = parameter;
         meta.value = meta.element.value * map[meta.unit];
         last_user_action_time = (new Date()).getTime();
     }
-	
-    var last_user_action_time = (new Date(2013, 0, 1)).getTime();
-    var last_processing_time = (new Date(2013, 0, 1)).getTime();
-
-    function Calculate()
-    {    
+	    
+    function Calculate() {    
     	currentModule.calculate(currentModule);		   
     }
 
@@ -106,10 +100,10 @@ var currentModule = null;
 		now = new Date()
 		timediff = now.getTime() - last_user_action_time
 		if (timediff < delay) {
-			return
+			return;
         }
-        Calculate()
-		last_processing_time = now.getTime()
+        Calculate();
+		last_processing_time = now.getTime();
 	}
 
 	window.setInterval(Process, delay)
@@ -166,8 +160,11 @@ var currentModule = null;
             var editbox = document.createElement("input");
             editbox.setAttribute("type",  "text" );
             editbox.setAttribute("value",  pmeta.value / map[pmeta.unit] );
-
-            editbox.setAttribute("onkeyup",  "javascript: parameterValueChanged('"+parameter+"');" );
+            
+            editbox.onkeyup = function(){
+            	 	parameterValueChanged( m, parameter);
+            	 }
+            
             if (pmeta.group == m.calculatedGroup) {
                 editbox.setAttribute("readOnly", "true");
                 editbox.setAttribute("class", "disabled");
@@ -182,8 +179,7 @@ var currentModule = null;
             row.appendChild(el);
             tbody.appendChild(row);
             return result;
-        }
-        //calcOptionChanged();
+        }      
 </script>
 
     
