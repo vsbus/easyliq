@@ -13,8 +13,8 @@
 <script  type="text/javascript">
 	
 	var currentModule = null;
-    
-    function draw(m) {
+	
+	function draw(m) {
  		currentModule = m; 
  		clearCalculationOptions();
  		clearParametersTable();
