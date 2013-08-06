@@ -199,7 +199,7 @@ function DensityConcentrationCalculator() {
     combo0.onchange = combo0_onchange;
     var DensityConcentrationCalculator_combos = [ combo0 ];
 
-    this.name = "fsDensityConcentrationCalculator";
+    this.name = "DensityConcentrationCalculator";
     this.combos = DensityConcentrationCalculator_combos;
     this.parameters_meta = createParametersMetaForDensityConcentrationCalculator();
     this.groups_meta = createGroupsMetaForDensityConcentrationCalculator();

@@ -8,7 +8,7 @@
 <link href="assets/css/styles.css" type="text/css" rel="stylesheet"/>
 <script src="http://code.jquery.com/jquery-latest.js"></script>
 <script src="assets/js/modules.js"></script>
-<script src="assets/js/fsDensityConcentrationCalculator.js"></script>
+<script src="assets/js/DensityConcentrationCalculator.js"></script>
 
 <script  type="text/javascript">
     
@@ -123,7 +123,7 @@
 <div class = "main_div">
 <div class="inputbar">
     <div >
-        <input type="button" onclick="javascript: draw(new DensityConcentrationCalculator());" value="fsDensityConcentrationCalculator"/>
+        <input type="button" onclick="javascript: draw(new DensityConcentrationCalculator());" value="DensityConcentrationCalculator"/>
         <div id="calc_option_div"/>        
     </div>
     <div >
