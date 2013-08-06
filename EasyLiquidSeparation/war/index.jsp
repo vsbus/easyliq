@@ -82,7 +82,11 @@
     var last_user_action_time = (new Date(2013, 0, 1)).getTime();
     var last_processing_time = (new Date(2013, 0, 1)).getTime();
     
-    function parameterValueChanged(m, parameter) {    	
+    function parameterValueChanged(m, parameter) { 
+     	var pmeta = m.parameters_meta[parameter];
+       	if (pmeta.group == m.calculatedGroup) { 
+       		return;
+       	}
         var meta = m.parameters_meta[parameter];
         m.groups_meta[meta.group].representator = parameter;
         meta.value = meta.element.value * map[meta.unit];
