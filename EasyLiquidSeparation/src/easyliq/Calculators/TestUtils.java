@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import easyliq.CalculationParameters;
-import easyliq.Equation;
 import easyliq.Parameter;
 
 public class TestUtils {

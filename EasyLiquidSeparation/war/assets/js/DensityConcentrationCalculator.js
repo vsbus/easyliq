@@ -56,10 +56,11 @@ function getCalculationOption(combo) {
 
 function calculateDensityConcentration(m) {
     var request = {
-        action : "calculate"
+        action:     "calculate",
+        calculator: "Density"
     }
     // For parameter fields we can't use initialization list.
-    for ( var parameter in this.parameters_meta) {
+    for (var parameter in this.parameters_meta) {
         var known = false;
         var pmeta = this.parameters_meta[parameter];
         if (pmeta.group != this.calculatedGroup) {

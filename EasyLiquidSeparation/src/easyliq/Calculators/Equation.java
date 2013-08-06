@@ -1,10 +1,23 @@
-package easyliq;
+package easyliq.Calculators;
+
+import java.util.HashSet;
+
+import easyliq.CalculationParameters;
+import easyliq.Parameter;
 
 public abstract class Equation {
 	private Parameter[] parameters;
 
 	protected Equation(Parameter[] parameters) {
 		this.parameters = parameters;
+	}
+	
+	public HashSet<Parameter> getParametersSet() {
+		HashSet<Parameter> res = new HashSet<Parameter>();
+		for (Parameter p: parameters) {
+			res.add(p);
+		}
+		return res;
 	}
 
 	public boolean Calculate(CalculationParameters calcParams) {

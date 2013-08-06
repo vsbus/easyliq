@@ -1,8 +1,14 @@
 package easyliq;
 
+import java.util.HashSet;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import easyliq.Calculators.Calculator;
+import easyliq.Calculators.Density;
+import easyliq.Calculators.RfFromCakeSaturation;
 
 /**
  * Servlet implementation class ActionServlet
@@ -28,22 +34,10 @@ public class ActionServlet extends HttpServlet {
 		}
 	}
 
-	public enum CalculationOption {
-		CALC_RHO_F, CALC_RHO_S, CALC_RHO_SUS, CALC_CMCVC;
-	}
-
 	private void Calculate(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-
-		Parameter []parameters = new Parameter[] {
-				Parameter.RHO_S,
-				Parameter.RHO_F,
-				Parameter.RHO_SUS,
-				Parameter.CM,
-				Parameter.CV,
-				Parameter.C				
-		};
-		
+		Calculator calculator = CreateCalculator(request.getParameter("calculator"));
+		HashSet<Parameter> parameters = calculator.getParametersSet();
 		CalculationParameters calcParams = new CalculationParameters();
 		for (Parameter p: parameters) {
 			String parStr = request.getParameter(p.toString());
@@ -53,7 +47,7 @@ public class ActionServlet extends HttpServlet {
 				calcParams.addKnown(p, Double.parseDouble(parStr));
 			}
 		}
-		new easyliq.Calculators.Density().Calculate(calcParams);
+		calculator.Calculate(calcParams);
 
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
@@ -70,5 +64,15 @@ public class ActionServlet extends HttpServlet {
 		json = json + "}";
 		response.getWriter().write(json);
 		response.getWriter().flush();
+	}
+
+	private Calculator CreateCalculator(String calculator) {
+		switch (calculator) {
+		case "Density":
+			return new Density();
+		case "RfFromCakeSaturation":
+			return new RfFromCakeSaturation();
+		}
+		return null;
 	}
 }
