@@ -11,55 +11,56 @@
 <script src="assets/js/fsDensityConcentrationCalculator.js"></script>
 
 <script  type="text/javascript">
-	
-	var currentModule = null;
-	
-	function draw(m) {
- 		currentModule = m; 
- 		clearCalculationOptions();
- 		clearParametersTable();
- 		drawCalculationOptions(m);
- 		drawParametersTable(m); 				 
- 	} 
- 	
- 	function clearCalculationOptions() {
- 		var d = document.getElementById("calc_option_div"); 		
- 		while (d.firstChild != null) {
- 			d.removeChild(d.firstChild); 			
- 		}
- 	}
+    
+    var currentModule = null;
+    
+    function draw(m) {
+        currentModule = m; 
+        clearCalculationOptions();
+        clearParametersTable();
+        drawCalculationOptions(m);
+        drawParametersTable(m);      
+    } 
+     
+    function clearCalculationOptions() {
+        var d = document.getElementById("calc_option_div");     
+        while (d.firstChild != null) {
+            d.removeChild(d.firstChild);     
+        }
+    }
     
     function clearParametersTable() {
-    	var table = document.getElementById("pt");
-    	var body = table.getElementsByTagName("tbody")[0];
-    	if (body != null) {
-    		table.removeChild(body);
-    	}    	
+        var table = document.getElementById("pt");
+        var body = table.getElementsByTagName("tbody")[0];
+        if (body != null) {
+            table.removeChild(body);
+        }
     }
     
     function drawCalculationOptions(m) {
-    	var d = document.getElementById("calc_option_div");
- 		var s = document.createElement("span");    		
-    	s.innerHTML = m.combos[0].name;
-    	d.appendChild(s);
- 		var comboBox = document.createElement("select");
- 		comboBox.setAttribute("role", "listbox");
- 		comboBox.onchange = function(){m.onComboChanged(m);};
- 		
- 		m.combos[0].control = comboBox;
- 		d.appendChild(comboBox);
- 		for (var i in m.combos[0].options) { 		
- 			var e = document.createElement("option");
- 			e.setAttribute("value", i);
+        var d = document.getElementById("calc_option_div");
+        var s = document.createElement("span");        
+        s.innerHTML = m.combos[0].name;
+        d.appendChild(s);
+        var comboBox = document.createElement("select");
+        comboBox.setAttribute("role", "listbox");
+        comboBox.onchange = function(){m.onComboChanged(m);};
+    
+        m.combos[0].control = comboBox;
+        d.appendChild(comboBox);
+        for (var i in m.combos[0].options) {     
+            var e = document.createElement("option");
+            e.setAttribute("value", i);
             e.setAttribute("role", "option");
             e.text = m.combos[0].options[i].name;
             comboBox.appendChild(e);
- 		}
- 		comboBox.selectedIndex = 2;
+        }
+        comboBox.selectedIndex = 2;
     }
+    
     function drawParametersTable(m) {
-    	var table = document.getElementById("pt");
-    	var body = document.createElement("tbody");
+        var table = document.getElementById("pt");
+        var body = document.createElement("tbody");
         table.appendChild(body);
 
         for (var key in m.combos[0].options) {
@@ -83,34 +84,34 @@
     var last_processing_time = (new Date(2013, 0, 1)).getTime();
     
     function parameterValueChanged(m, parameter) { 
-     	var pmeta = m.parameters_meta[parameter];
-       	if (pmeta.group == m.calculatedGroup) { 
-       		return;
-       	}
+        var pmeta = m.parameters_meta[parameter];
+        if (pmeta.group == m.calculatedGroup) { 
+            return;
+        }
         var meta = m.parameters_meta[parameter];
         m.groups_meta[meta.group].representator = parameter;
         meta.value = meta.element.value * map[meta.unit];
         last_user_action_time = (new Date()).getTime();
     }
-	    
+        
     function Calculate() {    
-    	currentModule.calculate(currentModule);		   
+        currentModule.calculate(currentModule);       
     }
 
-	function Process() {
-		if (last_user_action_time <= last_processing_time) {
-			return
+    function Process() {
+        if (last_user_action_time <= last_processing_time) {
+            return
         }
-		now = new Date()
-		timediff = now.getTime() - last_user_action_time
-		if (timediff < delay) {
-			return;
+        now = new Date()
+        timediff = now.getTime() - last_user_action_time
+        if (timediff < delay) {
+            return;
         }
         Calculate();
-		last_processing_time = now.getTime();
-	}
+        last_processing_time = now.getTime();
+    }
 
-	window.setInterval(Process, delay)
+    window.setInterval(Process, delay)
 
 </script>
 </head>
@@ -122,8 +123,8 @@
 <div class = "main_div">
 <div class="inputbar">
     <div >
-    	<input type="button" onclick="javascript: draw(new DensityConcentrationCalculator());" value="fsDensityConcentrationCalculator"/>
-    	<div id="calc_option_div"/>    	
+        <input type="button" onclick="javascript: draw(new DensityConcentrationCalculator());" value="fsDensityConcentrationCalculator"/>
+        <div id="calc_option_div"/>        
     </div>
     <div >
         <div>
@@ -144,46 +145,44 @@
 
 </form>
  <script  type="text/javascript">
- 	
-        var map = {"kg/m3":1, "g/l":1, "%":0.01}
-                
-       
-           
-        function createRow(m, parameter, tbody) {
-            var pmeta = m.parameters_meta[parameter];
-            var result = null;
-            var row = document.createElement("tr");
-            var el = document.createElement("td");
-            el.appendChild(document.createTextNode(pmeta.name));
-            row.appendChild(el);
-            var el = document.createElement("td");
-            el.appendChild(document.createTextNode(pmeta.unit));
-            row.appendChild(el);
-            var el = document.createElement("td");
-           
-            var editbox = document.createElement("input");
-            editbox.setAttribute("type",  "text" );
-            editbox.setAttribute("value",  pmeta.value / map[pmeta.unit] );
+     
+    var map = {"kg/m3":1, "g/l":1, "%":0.01}
+    
+    function createRow(m, parameter, tbody) {
+        var pmeta = m.parameters_meta[parameter];
+        var result = null;
+        var row = document.createElement("tr");
+        var el = document.createElement("td");
+        el.appendChild(document.createTextNode(pmeta.name));
+        row.appendChild(el);
+        var el = document.createElement("td");
+        el.appendChild(document.createTextNode(pmeta.unit));
+        row.appendChild(el);
+        var el = document.createElement("td");
+   
+        var editbox = document.createElement("input");
+        editbox.setAttribute("type",  "text");
+        editbox.setAttribute("value",  pmeta.value / map[pmeta.unit]);
+    
+        editbox.onkeyup = function() {
+            parameterValueChanged(m, parameter);
+        }
             
-            editbox.onkeyup = function(){
-            	 	parameterValueChanged( m, parameter);
-            	 }
-            
-            if (pmeta.group == m.calculatedGroup) {
-                editbox.setAttribute("readOnly", "true");
-                editbox.setAttribute("class", "disabled");
-                row.setAttribute("class", "noneditable");
-            } else {
-                row.setAttribute("class", "editable");
-            }
+        if (pmeta.group == m.calculatedGroup) {
+            editbox.setAttribute("readOnly", "true");
+            editbox.setAttribute("class", "disabled");
+            row.setAttribute("class", "noneditable");
+        } else {
+            row.setAttribute("class", "editable");
+        }
  
-            el.appendChild(editbox);
-            result = editbox;               
-            
-            row.appendChild(el);
-            tbody.appendChild(row);
-            return result;
-        }      
+        el.appendChild(editbox);
+        result = editbox;               
+    
+        row.appendChild(el);
+        tbody.appendChild(row);
+        return result;
+    }      
 </script>
 
     
