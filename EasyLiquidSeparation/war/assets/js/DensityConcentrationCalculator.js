@@ -23,77 +23,9 @@ calc_rho_s = "CALC_RHO_S"
 calc_rho_sus = "CALC_RHO_SUS"
 calc_CmCvC = "CALC_CMCVC"
 
-function combo0_onchange(m) {
-
-    var calculationOption = getCalculationOption(m.combos[0]);
-
-    var mp = {};
-    mp[calc_rho_f] = group_rho_f;
-    mp[calc_rho_s] = group_rho_s;
-    mp[calc_rho_sus] = group_rho_sus;
-    mp[calc_CmCvC] = group_C;
-    m.calculatedGroup = mp[calculationOption];
-
-    for ( var parameter in m.parameters_meta) {
-        var meta = m.parameters_meta[parameter];
-        var e = m.parameters_meta[parameter].element;
-        if (meta.group != m.calculatedGroup) {
-            e.removeAttribute("readOnly");
-            e.removeAttribute("class");
-            e.parentNode.parentNode.setAttribute("class", "editable");
-        } else {
-            e.setAttribute("readOnly", "true");
-            e.setAttribute("class", "disabled");
-            e.parentNode.parentNode.setAttribute("class", "noneditable");
-        }
-    }
-}
-
-function getCalculationOption(combo) {
-    var e = combo.control;
-    return e.options[e.selectedIndex].value;
-}
-
-function calculateDensityConcentration(m) {
-    var request = {
-        action:     "calculate",
-        calculator: "Density"
-    }
-    // For parameter fields we can't use initialization list.
-    for (var parameter in this.parameters_meta) {
-        var known = false;
-        var pmeta = this.parameters_meta[parameter];
-        if (pmeta.group != this.calculatedGroup) {
-            var gmeta = this.groups_meta[pmeta.group];
-            if (parameter == gmeta.representator) {
-                known = true;
-            }
-        }
-        if (known) {
-            request[parameter] = pmeta.value;
-        }
-    }
-    var parm = this;
-    $.get('ActionServlet', request, function(responseText) {
-
-        m.parameters_meta[Cm].value = responseText[Cm];
-        m.parameters_meta[rho_s].value = responseText[rho_s];
-        m.parameters_meta[rho_f].value = responseText[rho_f];
-        m.parameters_meta[rho_sus].value = responseText[rho_sus];
-        m.parameters_meta[Cv].value = responseText[Cv];
-        m.parameters_meta[C].value = responseText[C];
-
-        m.Render(m);
-    });
-}
-
-DensityConcentrationCalculator.prototype.constructor = DensityConcentrationCalculator;
-// DensityConcentrationCalculator();
-
-function createParametersMetaForDensityConcentrationCalculator() {
+    function createParametersMetaForDensityConcentrationCalculator() {
     // We can't use initialization list here because we want to use variables as
     // keys.
-
     var parameters_meta = {}
     parameters_meta[rho_f] = {
         name : "Filtrate Density",
@@ -162,11 +94,10 @@ function createGroupsMetaForDensityConcentrationCalculator() {
     }
     return groups_meta;
 }
-
-function DensityConcentrationCalculator() {
-
+function createCalcOptionsForDensityConcentrationCalculator() {
     // We can't use initialization list here because we want to use variables as
     // keys.
+
     var calc_options = {}
     calc_options[calc_rho_f] = {
         name : "Filtrate Density (rho_f)",
@@ -184,20 +115,69 @@ function DensityConcentrationCalculator() {
         name : "Solids Mass Fraction (Cm, Cv, C)",
         group : group_C
     }
-    this.Render = function(m) {
-        for ( var parameter in m.parameters_meta) {
-            var pmeta = m.parameters_meta[parameter];
-            var gmeta = m.groups_meta[pmeta.group];
-            if (pmeta.group == m.calculatedGroup
-                    || parameter != gmeta.representator) {
-                pmeta.element.value = Number((pmeta.value / map[pmeta.unit])
-                        .toFixed(5));
+    return calc_options;
+}
+
+function combo0_onchange(m) {
+    var calculationOption = getCalculationOption(m.combos[0]);
+
+    var mp = {};
+    mp[calc_rho_f] = group_rho_f;
+    mp[calc_rho_s] = group_rho_s;
+    mp[calc_rho_sus] = group_rho_sus;
+    mp[calc_CmCvC] = group_C;
+    m.calculatedGroup = mp[calculationOption];
+
+    for ( var parameter in m.parameters_meta) {
+        var meta = m.parameters_meta[parameter];
+        var e = m.parameters_meta[parameter].element;
+        if (meta.group != m.calculatedGroup) {
+            e.removeAttribute("readOnly");
+            e.removeAttribute("class");
+            e.parentNode.parentNode.setAttribute("class", "editable");
+        } else {
+            e.setAttribute("readOnly", "true");
+            e.setAttribute("class", "disabled");
+            e.parentNode.parentNode.setAttribute("class", "noneditable");
+        }
+    }
+}
+function calculateDensityConcentration(m) {
+    var request = {
+        action : "calculate",
+        calculator : "Density"
+    }
+    // For parameter fields we can't use initialization list.
+    for ( var parameter in this.parameters_meta) {
+        var known = false;
+        var pmeta = this.parameters_meta[parameter];
+        if (pmeta.group != this.calculatedGroup) {
+            var gmeta = this.groups_meta[pmeta.group];
+            if (parameter == gmeta.representator) {
+                known = true;
             }
         }
-    };
-    var combo0 = new Combo("Calculate", calc_options, null, null);
+        if (known) {
+            request[parameter] = pmeta.value;
+        }
+    }
+    var parm = this;
+    $.get('ActionServlet', request, function(responseText) {
+        m.parameters_meta[Cm].value = responseText[Cm];
+        m.parameters_meta[rho_s].value = responseText[rho_s];
+        m.parameters_meta[rho_f].value = responseText[rho_f];
+        m.parameters_meta[rho_sus].value = responseText[rho_sus];
+        m.parameters_meta[Cv].value = responseText[Cv];
+        m.parameters_meta[C].value = responseText[C];
 
-    combo0.onchange = combo0_onchange;
+        m.Render(m);
+    });
+}
+
+function DensityConcentrationCalculator() {
+    var combo0 = new Combo("Calculate",
+            createCalcOptionsForDensityConcentrationCalculator(), null, null);
+    //combo0.onchange = combo0_onchange;
     var DensityConcentrationCalculator_combos = [ combo0 ];
 
     this.name = "DensityConcentrationCalculator";
@@ -206,6 +186,7 @@ function DensityConcentrationCalculator() {
     this.groups_meta = createGroupsMetaForDensityConcentrationCalculator();
     this.calculatedGroup = group_rho_sus;
     this.calculate = calculateDensityConcentration;
-    this.onComboChanged = combo0_onchange;
+    this.onComboChanged = combo0_onchange;    
 }
 DensityConcentrationCalculator.prototype = new Module;
+DensityConcentrationCalculator.prototype.constructor = DensityConcentrationCalculator;

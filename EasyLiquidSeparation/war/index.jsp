@@ -9,6 +9,7 @@
 <script src="http://code.jquery.com/jquery-latest.js"></script>
 <script src="assets/js/modules.js"></script>
 <script src="assets/js/DensityConcentrationCalculator.js"></script>
+<script src="assets/js/RfFromCakeSaturation.js"></script>
 
 <script  type="text/javascript">
     
@@ -48,14 +49,18 @@
     
         m.combos[0].control = comboBox;
         d.appendChild(comboBox);
+        var selected_index = null;
         for (var i in m.combos[0].options) {     
             var e = document.createElement("option");
             e.setAttribute("value", i);
             e.setAttribute("role", "option");
             e.text = m.combos[0].options[i].name;
             comboBox.appendChild(e);
+            if (m.combos[0].options[i].group == m.calculatedGroup) {
+                selected_index = comboBox.options.length - 1;
+            }
         }
-        comboBox.selectedIndex = 2;
+        comboBox.selectedIndex = selected_index;
     }
     
     function drawParametersTable(m) {
@@ -63,16 +68,17 @@
         var body = document.createElement("tbody");
         table.appendChild(body);
 
-        for (var key in m.combos[0].options) {
-            var group_parameters = m.groups_meta[m.combos[0].options[key].group].parameters;
+        for (var key in m.groups_meta) {
+            var group_parameters = m.groups_meta[key].parameters;
             for (var i in group_parameters) {
                 var parameter = group_parameters[i];
                 m.parameters_meta[parameter].element = createRow(m, parameter, body);
             }
-            var em_row = document.createElement("tr");
+        
+            em_row = document.createElement("tr");
             em_row.appendChild(document.createElement("td"));
             em_row.appendChild(document.createElement("td"));
-            em_row.appendChild(document.createElement("td"));                 
+            em_row.appendChild(document.createElement("td"));
 
             em_row.setAttribute("class","rowseparator");
             body.appendChild(em_row);
@@ -111,7 +117,7 @@
         last_processing_time = now.getTime();
     }
 
-    window.setInterval(Process, delay)
+    setInterval(Process, delay)
 
 </script>
 </head>
@@ -124,6 +130,7 @@
 <div class="inputbar">
     <div >
         <input type="button" onclick="javascript: draw(new DensityConcentrationCalculator());" value="DensityConcentrationCalculator"/>
+        <input type="button" onclick="javascript: draw(new RfFromCakeSaturation());" value="RfFromCakeSaturation"/>
         <div id="calc_option_div"/>        
     </div>
     <div >
