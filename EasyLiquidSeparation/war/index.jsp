@@ -13,10 +13,11 @@
 
 <script  type="text/javascript">
     
-    var currentModule = null;
+    var currentModules = [];
     
     function draw(m) {
-        currentModule = m; 
+        var o = {module: m, editTime:(new Date()).getTime()};
+        currentModules.push(o) 
         clearCalculationOptions();
         clearParametersTable();
         drawCalculationOptions(m);
@@ -98,23 +99,31 @@
         m.groups_meta[meta.group].representator = parameter;
         meta.value = meta.element.value * map[meta.unit];
         last_user_action_time = (new Date()).getTime();
+        
+        for (var i in currentModules) {
+            if (currentModules[i].module == m) {
+                currentModules[i].editTime = (new Date()).getTime();
+            }
+        }
     }
         
-    function Calculate() {    
-        currentModule.calculate(currentModule);       
+    function Calculate(m) {    
+        m.calculate(m);       
     }
 
     function Process() {
-        if (last_user_action_time <= last_processing_time) {
-            return
+        for (var i in currentModules) {
+            if (currentModules[i].editTime <= last_processing_time) {
+                continue;
+            }
+            now = new Date()
+            timediff = now.getTime() - currentModules[i].editTime;
+            if (timediff < delay) {
+                continue;
+            }
+            Calculate(currentModules[i].module);
+            last_processing_time = now.getTime();
         }
-        now = new Date()
-        timediff = now.getTime() - last_user_action_time
-        if (timediff < delay) {
-            return;
-        }
-        Calculate();
-        last_processing_time = now.getTime();
     }
 
     setInterval(Process, delay)
