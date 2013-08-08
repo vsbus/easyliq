@@ -15,13 +15,16 @@
     
     var currentModules = [];
     
-    function draw(m) {
+    function ceateModule(m) {
         var o = {module: m, editTime:(new Date()).getTime()};
-        currentModules.push(o) 
-        clearCalculationOptions();
-        clearParametersTable();
-        drawCalculationOptions(m);
-        drawParametersTable(m);      
+        currentModules.push(o)
+        var mainDiv = document.getElementsByClassName("content")[0];
+        var moduleDiv = document.createElement("div");
+        moduleDiv.setAttribute("class", "main_div inputbar");
+        mainDiv.appendChild(moduleDiv);
+        
+        drawCalculationOptions(moduleDiv, m);
+        drawParametersTable(moduleDiv, m);
     } 
      
     function clearCalculationOptions() {
@@ -39,17 +42,21 @@
         }
     }
     
-    function drawCalculationOptions(m) {
-        var d = document.getElementById("calc_option_div");
-        var s = document.createElement("span");        
+    function drawCalculationOptions(div, m) {
+        var comboDiv = document.createElement("div");
+        comboDiv.setAttribute("class", "calc_option_div");
+        div.appendChild(comboDiv);
+        
+        var s = document.createElement("span");
+        s.setAttribute("class", "label");
         s.innerHTML = m.combos[0].name;
-        d.appendChild(s);
+        comboDiv.appendChild(s);
         var comboBox = document.createElement("select");
         comboBox.setAttribute("role", "listbox");
         comboBox.onchange = function(){m.onComboChanged(m);};
     
         m.combos[0].control = comboBox;
-        d.appendChild(comboBox);
+        comboDiv.appendChild(comboBox);
         var selected_index = null;
         for (var i in m.combos[0].options) {     
             var e = document.createElement("option");
@@ -64,8 +71,9 @@
         comboBox.selectedIndex = selected_index;
     }
     
-    function drawParametersTable(m) {
-        var table = document.getElementById("pt");
+    function drawParametersTable(div, m) {
+        var table = createTableWithHeaders(div);
+        //var table = document.getElementById("pt");
         var body = document.createElement("tbody");
         table.appendChild(body);
 
@@ -134,35 +142,38 @@
 
 <body  style="background-color:#2F3945">
     <form>
-       
-<div class = "main_div">
-<div class="inputbar">
-    <div >
-        <input type="button" onclick="javascript: draw(new DensityConcentrationCalculator());" value="DensityConcentrationCalculator"/>
-        <input type="button" onclick="javascript: draw(new RfFromCakeSaturation());" value="RfFromCakeSaturation"/>
-        <div id="calc_option_div"/>        
-    </div>
-    <div >
-        <div>
-    <table id="pt">        
-        <thead>
-            <tr>
-              <th class = "info">Parameter</th>
-              <th class = "info">Units</th>
-              <th class = "info">Value</th>
-            </tr>
-        </thead>  
-    </table>
-    </div>
+<div class = "content">       
+    <div class = "main_div inputbar">
+        <input type="button" onclick="javascript: ceateModule(new DensityConcentrationCalculator());" value="DensityConcentrationCalculator"/>
+        <input type="button" onclick="javascript: ceateModule(new RfFromCakeSaturation());" value="RfFromCakeSaturation"/>       
     </div>
 </div>
-
-</div>
-
 </form>
  <script  type="text/javascript">
-     
     var map = {"kg/m3":1, "g/l":1, "%":0.01}
+    
+    function createTableWithHeaders(div) {
+        var table = document.createElement("table");
+        table.setAttribute("class", "pt");
+        var thead = document.createElement("thead");
+        table.appendChild(thead);
+        var tr = document.createElement("tr");
+        thead.appendChild(tr);
+
+        createHeader(tr, "Parameters");
+        createHeader(tr, "Units");
+        createHeader(tr, "Value");
+
+        div.appendChild(table);
+
+        return table;
+    }
+    function createHeader(row, value) {
+        var th = document.createElement("th");
+        th.setAttribute("class", "info");
+        th.innerHTML = value;
+        row.appendChild(th);
+    }
     
     function createRow(m, parameter, tbody) {
         var pmeta = m.parameters_meta[parameter];

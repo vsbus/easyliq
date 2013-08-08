@@ -128,6 +128,7 @@ function combo0_onchange(m) {
     mp[calc_CmCvC] = group_C;
     m.calculatedGroup = mp[calculationOption];
 
+   // calculatedGroup = m.combos[0].options[calculationOption].group;
     for ( var parameter in m.parameters_meta) {
         var meta = m.parameters_meta[parameter];
         var e = m.parameters_meta[parameter].element;
@@ -177,7 +178,6 @@ function calculateDensityConcentration(m) {
 function DensityConcentrationCalculator() {
     var combo0 = new Combo("Calculate",
             createCalcOptionsForDensityConcentrationCalculator(), null, null);
-    //combo0.onchange = combo0_onchange;
     var DensityConcentrationCalculator_combos = [ combo0 ];
 
     this.name = "DensityConcentrationCalculator";
