@@ -143,10 +143,10 @@ function combo0_onchange(m) {
         }
     }
 }
-function calculateDensityConcentration(m) {
+function calculateDensityConcentration() {
     var request = {
         action : "calculate",
-        calculator : "Density"
+        calculator : "DensityConcentrationCalculator"
     }
     // For parameter fields we can't use initialization list.
     for ( var parameter in this.parameters_meta) {
@@ -162,17 +162,20 @@ function calculateDensityConcentration(m) {
             request[parameter] = pmeta.value;
         }
     }
-    var parm = this;
+    var m = this;
     $.get('ActionServlet', request, function(responseText) {
-        m.parameters_meta[Cm].value = responseText[Cm];
-        m.parameters_meta[rho_s].value = responseText[rho_s];
-        m.parameters_meta[rho_f].value = responseText[rho_f];
-        m.parameters_meta[rho_sus].value = responseText[rho_sus];
-        m.parameters_meta[Cv].value = responseText[Cv];
-        m.parameters_meta[C].value = responseText[C];
-
+        m.updateParameters(responseText);
         m.Render(m);
     });
+}
+
+function UpdateDensityConcentrationParameters(text) {
+    this.parameters_meta[Cm].value = text[Cm];
+    this.parameters_meta[rho_s].value = text[rho_s];
+    this.parameters_meta[rho_f].value = text[rho_f];
+    this.parameters_meta[rho_sus].value = text[rho_sus];
+    this.parameters_meta[Cv].value = text[Cv];
+    this.parameters_meta[C].value = text[C];
 }
 
 function DensityConcentrationCalculator() {
@@ -186,7 +189,9 @@ function DensityConcentrationCalculator() {
     this.groups_meta = createGroupsMetaForDensityConcentrationCalculator();
     this.calculatedGroup = group_rho_sus;
     this.calculate = calculateDensityConcentration;
-    this.onComboChanged = combo0_onchange;    
+    this.onComboChanged = combo0_onchange;
+    this.updateParameters = UpdateDensityConcentrationParameters;
 }
+
 DensityConcentrationCalculator.prototype = new Module;
 DensityConcentrationCalculator.prototype.constructor = DensityConcentrationCalculator;

@@ -22,7 +22,7 @@ input.disabled
 {
 	background-color:#dfdfdf;
 }
-.label
+.cbname
 {
     font-family: sans-serif,verdana,arial;
     font-size: 10pt;
@@ -31,8 +31,11 @@ input.disabled
     font-weight: bold;
     color: #414F5B;
  padding-right: 8px;
+}
 
-
+.module_title
+{
+	 font-weight: bold;
 }
 select
 {
@@ -82,7 +85,7 @@ div .inputbar
 table.pt 
 {
     border-radius: 5px 5px 5px 5px;
-    width: 82%;
+    //width: 82%;
     font-family: Verdana;
     font-size: 12px;
     table-layout: fixed;
@@ -144,7 +147,7 @@ text-aligh:left;
 
 .info
 {
-	width: 70px;
+	//width: 70px;
 	text-align: left;
 }
 th.info

@@ -106,7 +106,7 @@ function createCalcOptionsForRfFromCakeSaturation() {
     }
     return calc_options;
 }
-function calculateRfFromCakeSaturation(m) {
+function calculateRfFromCakeSaturation() {
     var request = {
         action : "calculate",
         calculator : "RfFromCakeSaturation"
@@ -125,14 +125,9 @@ function calculateRfFromCakeSaturation(m) {
             request[parameter] = pmeta.value;
         }
     }
-    var parm = this;
+    var m = this;
     $.get('ActionServlet', request, function(responseText) {
-        m.parameters_meta[s].value = responseText[s];
-        m.parameters_meta[rho_l].value = responseText[rho_l];
-        m.parameters_meta[rho_s].value = responseText[rho_s];
-        m.parameters_meta[eps].value = responseText[eps];
-        m.parameters_meta[rf].value = responseText[rf];
-
+        m.updateParameters(responseText);
         m.Render(m);
     });
 }
@@ -160,6 +155,14 @@ function combo0_RfFromCakeSaturation_onchange(m) {
     }
 }
 
+function UpdateRfFromCakeSaturationParameters(text) {
+    this.parameters_meta[s].value = text[s];
+    this.parameters_meta[rho_l].value = text[rho_l];
+    this.parameters_meta[rho_s].value = text[rho_s];
+    this.parameters_meta[eps].value = text[eps];
+    this.parameters_meta[rf].value = text[rf];
+}
+
 function RfFromCakeSaturation() {
     var combo0 = new Combo("Calculate",
             createCalcOptionsForRfFromCakeSaturation(), null, null);
@@ -171,6 +174,8 @@ function RfFromCakeSaturation() {
     this.calculatedGroup = group_eps;
     this.calculate = calculateRfFromCakeSaturation;
     this.onComboChanged = combo0_RfFromCakeSaturation_onchange;
+    this.updateParameters = UpdateRfFromCakeSaturationParameters;
 };
+
 RfFromCakeSaturation.prototype = new Module;
 RfFromCakeSaturation.prototype.constructor = RfFromCakeSaturation;
