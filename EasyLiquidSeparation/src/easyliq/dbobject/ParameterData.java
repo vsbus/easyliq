@@ -1,8 +1,8 @@
-package easyliq;
+package easyliq.dbobject;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
-/*
+
 @PersistenceCapable
 public class ParameterData {
     @Persistent
@@ -27,4 +27,3 @@ public class ParameterData {
         return value;
     }    
 }
-*/

@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import easyliq.Calculators.Calculator;
 import easyliq.Calculators.Density;
 import easyliq.Calculators.RfFromCakeSaturation;
-import easyliq.PMF;
+import easyliq.dbobject.*;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
@@ -132,7 +132,7 @@ public class ActionServlet extends HttpServlet {
         User user = userService.getCurrentUser();
 
         PersistenceManager pm = PMF.get().getPersistenceManager();
-        String query = "select from " + UserDocument.class.getName();
+        String query = "select from " + UserDocument.class.getName();// where author.getUserId()=="+user.getUserId();
         List<UserDocument> userdoc = (List<UserDocument>) pm.newQuery(query).execute();
 
         response.setContentType("application/json");

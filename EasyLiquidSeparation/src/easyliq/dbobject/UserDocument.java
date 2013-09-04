@@ -1,4 +1,4 @@
-package easyliq;
+package easyliq.dbobject;
 
 import java.util.Date;
 
@@ -9,9 +9,13 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.users.User;
-/*
+
 @PersistenceCapable
 public class UserDocument {
+    
+    /* if it sais that class "UserDocument" is not persistable. blah blah blah", it is an issue of DataNucleus Enhancer.
+     * To solve this problem open an entity classes and change something (add a space or something) and save.
+     */
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     private Key key;
@@ -59,4 +63,4 @@ public class UserDocument {
         this.date = date;
     }
     
-}*/
+}

@@ -99,6 +99,7 @@ if (user != null) {
         <input type="button" onclick="javascript: ceateModule(new DensityConcentrationCalculator());" value="DensityConcentrationCalculator"/>
         <input type="button" onclick="javascript: ceateModule(new RfFromCakeSaturation());" value="RfFromCakeSaturation"/>
         <input type="button" onclick="javascript: Get();" value="Get"/>
+        <input type="button" onclick="javascript: SaveAll();" value="Save all"/>
     </div>
     </div>
 </div>
@@ -136,6 +137,10 @@ if (user != null) {
                 alert(1);
             }
         });
+    }
+    
+    function SaveAll() {
+        alert("not implemented");
     }
 </script>
 

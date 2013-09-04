@@ -1,10 +1,10 @@
-package easyliq;
+package easyliq.dbobject;
 
 import java.util.List;
 
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
-/*
+
 @PersistenceCapable
 public class Module {
     @Persistent
@@ -28,4 +28,4 @@ public class Module {
     {
         return data;
     }
-}*/
+}
