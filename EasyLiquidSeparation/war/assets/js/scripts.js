@@ -33,8 +33,10 @@ function createCopyButton(moduleData, moduleDiv) {
     btn.setAttribute("value", "Duplicate");
     btn.onclick = function() {
         var idx = currentModules.indexOf(moduleData);
-        currentModules.splice(idx, 0, moduleData);
-        var newModuleBlock = generateModuleBlock(generateModuleData(moduleData.module));
+        var newModuleData = generateModuleData(moduleData.module.Copy(moduleData.module));
+        newModuleData.module.id = null;
+        currentModules.splice(idx+1, 0, newModuleData);
+        var newModuleBlock = generateModuleBlock(newModuleData);
         moduleDiv.parentNode
                 .insertBefore(newModuleBlock, moduleDiv.nextSibling);
     }
@@ -102,6 +104,7 @@ function generateModuleBlock(moduleData) {
     var m = moduleData.module;
     var moduleDiv = document.createElement("div");
     moduleDiv.setAttribute("class", "main_div inputbar span3 ");
+    m.control = moduleDiv;
     var nameSpan = document.createElement("span");
     nameSpan.innerHTML = m.name;
     moduleDiv.appendChild(nameSpan);

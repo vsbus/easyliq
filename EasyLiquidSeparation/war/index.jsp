@@ -29,8 +29,8 @@
         var mainDiv = document.getElementsByClassName("row")[0];
         var o = generateModuleBlock(moduleData);
         mainDiv.appendChild(o);
-        m.control = o;
     }
+    
     var delay = 0;
     var last_user_action_time = (new Date(2013, 0, 1)).getTime();
     var last_processing_time = (new Date(2013, 0, 1)).getTime();

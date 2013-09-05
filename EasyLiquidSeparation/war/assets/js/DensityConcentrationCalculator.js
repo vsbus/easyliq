@@ -174,6 +174,23 @@ function DensityConcentrationCalculator() {
     this.calculate = calculateDensityConcentration;
     this.onComboChanged = combo0_onchange;
     this.updateParameters = UpdateDensityConcentrationParameters;
+    this.Copy = function(m) {
+        var obj = new DensityConcentrationCalculator();
+        obj.id = null;
+        obj.position = 0;
+        obj.name = m.name;
+        obj.combos = m.combos;
+        obj.parameters = m.parameters;
+        obj.groups = m.groups;
+        obj.parameters_meta = m.parameters_meta;
+        obj.groups_meta = m.groups_meta;
+        obj.calculatedGroup = m.calculatedGroup;
+        obj.control = null;
+        obj.calculate = m.calculate;
+        obj.onComboChanged = m.onComboChanged;
+        obj.updateParameters = m.updateParameters;
+        return obj;
+    }
 }
 
 DensityConcentrationCalculator.prototype = new Module;
