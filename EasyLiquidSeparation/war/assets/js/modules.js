@@ -60,6 +60,7 @@ function Module(name, combos, parameters, groups, parameters_meta, groups_meta,
     this.parameters_meta = parameters_meta;
     this.groups_meta = groups_meta;
     this.calculatedGroup = calculatedGroup;
+    this.control = null;
     this.calculate = calculate;
     this.onComboChanged = onComboChanged;
     this.updateParameters = null;

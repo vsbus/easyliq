@@ -4,9 +4,15 @@ function createDeleteButton(moduleData, moduleDiv) {
     btn.setAttribute("value", "delete from DB");
     btn.onclick = function() {
         var idx = currentModules.indexOf(moduleData);
+        var id = moduleData.module.id;
         moduleData.module.Delete(moduleData.module);
-        currentModules.splice(idx, 1);
-        btn.parentNode.parentNode.removeChild(btn.parentNode);
+        for (var i = currentModules.length - 1; i >= 0 ; i--) {
+            var m = currentModules[i].module;
+            if (m.id == id) {
+                m.control.parentNode.removeChild(m.control);
+                currentModules.splice(i, 1);
+            }
+        }
     }
     moduleDiv.appendChild(btn);
 }

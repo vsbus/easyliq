@@ -142,7 +142,7 @@ public class ActionServlet extends HttpServlet {
                 List<ParameterData> pd = m.getData();
                 for (ParameterData p : pd) {
                     json = json + ",";
-                    json = json + JsonPair(p.getName(), String.valueOf(p.getValue()));
+                    json = json + JsonPair(String.valueOf(p.getName()), String.valueOf(p.getValue()));
                 }
                 json = json + "}";
                 isFirst = false;
@@ -170,7 +170,7 @@ public class ActionServlet extends HttpServlet {
         HashSet<Parameter> parameters = calculator.getParametersSet();
         for (Parameter p : parameters) {
             String parStr = request.getParameter(p.toString());
-            data.add(new ParameterData(p.toString(), Double.parseDouble(parStr)));
+            data.add(new ParameterData(p, Double.parseDouble(parStr)));
         }
         int position = Integer.parseInt(request.getParameter("position"));
         UserDocument userDoc = new UserDocument(user, new Module(
@@ -191,7 +191,7 @@ public class ActionServlet extends HttpServlet {
         HashSet<Parameter> parameters = calculator.getParametersSet();
         for (Parameter p : parameters) {
             String parStr = request.getParameter(p.toString());
-            data.add(new ParameterData(p.toString(), Double.parseDouble(parStr)));
+            data.add(new ParameterData(p, Double.parseDouble(parStr)));
         }
         
         PersistenceManager pm = PMF.get().getPersistenceManager();
