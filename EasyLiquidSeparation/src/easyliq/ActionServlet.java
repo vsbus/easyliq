@@ -36,50 +36,31 @@ public class ActionServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) {
-        if (request.getParameter("action") != null
-                && request.getParameter("action").equals("calculate")) {
-            try {
-                Calculate(request, response);
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+        String action = request.getParameter("action");
+        if (action == null) {
+            return;
         }
-        if (request.getParameter("action") != null
-                && request.getParameter("action").equals("save")) {
-            try {
-                Save(request, response);
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+        try {
+            switch (action) {
+                case "calculate":
+                    Calculate(request, response);
+                    break;
+                case "save":
+                    Save(request, response);
+                    break;
+                case "update":
+                    Update(request, response);
+                    break;
+                case "delete":
+                    Delete(request, response);
+                    break;
+                case "get":
+                    DownloadUserDocument(request, response);
+                    break;
             }
-        }
-        if (request.getParameter("action") != null
-                && request.getParameter("action").equals("update")) {
-            try {
-                Update(request, response);
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-        if (request.getParameter("action") != null
-                && request.getParameter("action").equals("delete")) {
-            try {
-                Delete(request, response);
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-        if (request.getParameter("action") != null
-                && request.getParameter("action").equals("get")) {
-            try {
-                DownloadUserDocument(request, response);
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 
