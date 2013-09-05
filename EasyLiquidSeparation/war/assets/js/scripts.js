@@ -20,7 +20,8 @@ function createSaveButton(m, moduleDiv) {
     };
     moduleDiv.appendChild(btn);
 }
-function createCopyButton(moduleData, moduleDiv) {    
+
+function createCopyButton(moduleData, moduleDiv) {
     var btn = document.createElement("input");
     btn.setAttribute("type", "button");
     btn.setAttribute("value", "Duplicate");
@@ -33,6 +34,7 @@ function createCopyButton(moduleData, moduleDiv) {
     }
     moduleDiv.appendChild(btn);
 }
+
 function createRemoveFromScreenButton(moduleData, moduleDiv) {
     var btn = document.createElement("input");
     btn.setAttribute("type", "button");
@@ -45,12 +47,14 @@ function createRemoveFromScreenButton(moduleData, moduleDiv) {
     }
     moduleDiv.appendChild(btn);
 }
+
 function clearCalculationOptions() {
     var d = document.getElementById("calc_option_div");
     while (d.firstChild != null) {
         d.removeChild(d.firstChild);
     }
 }
+
 function clearParametersTable() {
     var table = document.getElementById("pt");
     var body = table.getElementsByTagName("tbody")[0];
@@ -58,6 +62,7 @@ function clearParametersTable() {
         table.removeChild(body);
     }
 }
+
 function drawParametersTable(div, m) {
     var table = createTableWithHeaders(div);
     var body = document.createElement("tbody");
@@ -79,12 +84,14 @@ function drawParametersTable(div, m) {
         body.appendChild(em_row);
     }
 }
+
 function generateModuleData(m) {
     return {
         module : m,
         editTime : (new Date()).getTime()
     };
 }
+
 function generateModuleBlock(moduleData) {
     var m = moduleData.module;
     var moduleDiv = document.createElement("div");
@@ -134,6 +141,7 @@ function drawCalculationOptions(div, m) {
     }
     comboBox.selectedIndex = selected_index;
 }
+
 function createTableWithHeaders(div) {
     var table = document.createElement("table");
     table.setAttribute("class", "pt");
@@ -150,6 +158,7 @@ function createTableWithHeaders(div) {
 
     return table;
 }
+
 function createHeader(row, value) {
     var th = document.createElement("th");
     th.setAttribute("class", "col-lg-4 info");

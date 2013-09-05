@@ -41,22 +41,20 @@ public class ActionServlet extends HttpServlet {
             return;
         }
         try {
-            switch (action) {
-                case "calculate":
+            if (action.equals("calculate")) {
                     Calculate(request, response);
-                    break;
-                case "save":
+                    }
+            if (action.equals("save")) {
                     Save(request, response);
-                    break;
-                case "update":
+                    }
+            if (action.equals("update")) {
                     Update(request, response);
-                    break;
-                case "delete":
+                    }
+            if (action.equals("delete")) {
                     Delete(request, response);
-                    break;
-                case "get":
+                }
+            if (action.equals("get")) {
                     DownloadUserDocument(request, response);
-                    break;
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -98,10 +96,10 @@ public class ActionServlet extends HttpServlet {
     }
 
     private Calculator CreateCalculator(String calculator) {
-        switch (calculator) {
-        case "DensityConcentrationCalculator":
+        if (calculator.equals("DensityConcentrationCalculator")) {
             return new Density();
-        case "RfFromCakeSaturation":
+        }
+        if (calculator.equals("RfFromCakeSaturation")) {
             return new RfFromCakeSaturation();
         }
         return null;
@@ -113,7 +111,7 @@ public class ActionServlet extends HttpServlet {
         User user = userService.getCurrentUser();
 
         PersistenceManager pm = PMF.get().getPersistenceManager();
-        String query = "select from " + UserDocument.class.getName()+" order by position";// where author.getUserId()=="+user.getUserId();
+        String query = "select from " + UserDocument.class.getName()+" order by position";
         List<UserDocument> userdoc = (List<UserDocument>) pm.newQuery(query).execute();
 
         response.setContentType("application/json");
@@ -159,6 +157,7 @@ public class ActionServlet extends HttpServlet {
     private String JsonPair(String name, String value) {
         return "\"" + name + "\":\"" + value+"\"";
     }
+    
     private void Save(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         Date date = new Date();

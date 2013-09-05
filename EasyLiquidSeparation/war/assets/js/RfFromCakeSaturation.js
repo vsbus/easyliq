@@ -1,25 +1,4 @@
-////////////////////////////////////////////////////////////////////////////
 
-// Here we define a set of string constants used everywhere as ID for
-// exact object.
-
-// Parameters:
-rho_l = "RHO_L"
-rho_s = "RHO_S"
-eps = "EPS"
-rf = "RF"
-s = "S"
-
-// Groups:
-group_rho_l = "GROUP_RHO_L"
-group_s = "GROUP_S"
-group_eps = "GROUP_EPS"
-group_rf = "GROUP_RF"
-
-// Calculation Options:
-calc_rf = "CALC_RF"
-calc_s = "CALC_S"
-calc_eps = "CALC_EPS"
 
 function createParametersMetaForRfFromCakeSaturation() {
     // We can't use initialization list here because we want to use variables as

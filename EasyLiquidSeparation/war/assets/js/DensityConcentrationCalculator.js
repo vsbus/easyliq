@@ -4,24 +4,7 @@
 // exact object.
 
 // Parameters:
-rho_f = "RHO_F"
-rho_s = "RHO_S"
-rho_sus = "RHO_SUS"
-Cm = "CM"
-Cv = "CV"
-C = "C"
 
-// Groups:
-group_rho_f = "GROUP_RHO_F"
-group_rho_s = "GROUP_RHO_S"
-group_rho_sus = "GROUP_RHO_SUS"
-group_C = "GROUP_C"
-
-// Calculation Options:
-calc_rho_f = "CALC_RHO_F"
-calc_rho_s = "CALC_RHO_S"
-calc_rho_sus = "CALC_RHO_SUS"
-calc_CmCvC = "CALC_CMCVC"
 
     function createParametersMetaForDensityConcentrationCalculator() {
     // We can't use initialization list here because we want to use variables as
