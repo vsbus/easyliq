@@ -132,7 +132,7 @@ public class ActionServlet extends HttpServlet {
         User user = userService.getCurrentUser();
 
         PersistenceManager pm = PMF.get().getPersistenceManager();
-        String query = "select from " + UserDocument.class.getName();// where author.getUserId()=="+user.getUserId();
+        String query = "select from " + UserDocument.class.getName()+" order by position";// where author.getUserId()=="+user.getUserId();
         List<UserDocument> userdoc = (List<UserDocument>) pm.newQuery(query).execute();
 
         response.setContentType("application/json");
@@ -157,9 +157,8 @@ public class ActionServlet extends HttpServlet {
                 } else {
                     json = json + JsonPair("author", g.getAuthor().getNickname());
                 }
-
+                json = json + "," + JsonPair("position", String.valueOf(g.getPosition()));
                 Module m = g.getContent();
-
                 json = json + "," + JsonPair("module_name", m.getName());
                 List<ParameterData> pd = m.getData();
                 for (ParameterData p : pd) {
@@ -193,8 +192,9 @@ public class ActionServlet extends HttpServlet {
             String parStr = request.getParameter(p.toString());
             data.add(new ParameterData(p.toString(), Double.parseDouble(parStr)));
         }
+        int position = Integer.parseInt(request.getParameter("position"));
         UserDocument userDoc = new UserDocument(user, new Module(
-                request.getParameter("name"), data), date);
+                request.getParameter("name"), data), date, position);
         PersistenceManager pm = PMF.get().getPersistenceManager();
         try {
             pm.makePersistent(userDoc);
@@ -213,11 +213,13 @@ public class ActionServlet extends HttpServlet {
             String parStr = request.getParameter(p.toString());
             data.add(new ParameterData(p.toString(), Double.parseDouble(parStr)));
         }
+        
         PersistenceManager pm = PMF.get().getPersistenceManager();
         try {
             UserDocument ud = pm.getObjectById(UserDocument.class,
                     Long.parseLong(request.getParameter("id")));
             ud.setContent(new Module(request.getParameter("name"), data));
+            ud.setPosition(Integer.parseInt(request.getParameter("position")));
         } finally {
             pm.close();
         }

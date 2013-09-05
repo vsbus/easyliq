@@ -29,10 +29,14 @@ public class UserDocument {
     @Persistent
     private Module content;
     
-    public UserDocument(User author, Module content, Date date) {
+    @Persistent
+    private int position;
+    
+    public UserDocument(User author, Module content, Date date, int position) {
         this.author = author;
         this.content = content;
         this.date = date;
+        this.position = position;
     }
     
     public long getKey() {
@@ -47,12 +51,20 @@ public class UserDocument {
         return content;
     }
 
+    public int getPosition() {
+        return position;
+    }
+    
     public Date getDate() {
         return date;
     }
 
     public void setAuthor(User author) {
         this.author = author;
+    }
+    
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     public void setContent(Module content) {

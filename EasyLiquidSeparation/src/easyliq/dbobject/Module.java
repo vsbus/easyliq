@@ -8,9 +8,9 @@ import javax.jdo.annotations.Persistent;
 @PersistenceCapable
 public class Module {
     @Persistent
-    private String name;
+    private String name;    
     
-  //  @Persistent
+    @Persistent
     private List<ParameterData> data;
     
     public Module(String name, List<ParameterData> data)

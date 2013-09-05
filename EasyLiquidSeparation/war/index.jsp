@@ -113,7 +113,6 @@ if (user != null) {
             action : "get"
         }        
         $.get('ActionServlet', request, function(responseText) {
-            alert("ok " + responseText);
             if (responseText["error"]!= null) {
                 alert(responseText["error"]);
                 return;
@@ -125,22 +124,26 @@ if (user != null) {
                         m = new RfFromCakeSaturation();
                         m.updateParameters(responseText["documents"][i]);
                         m.id = responseText["documents"][i]["id"];
+                        m.position = responseText["documents"][i]["position"];
                         ceateModule(m);
                         break;
                     case "DensityConcentrationCalculator":
                         m = new DensityConcentrationCalculator();
                         m.updateParameters(responseText["documents"][i]);
                         m.id = responseText["documents"][i]["id"];
+                        m.position = responseText["documents"][i]["position"];
                         ceateModule(m);
                         break;
                 }
-                alert(1);
             }
         });
     }
     
     function SaveAll() {
-        alert("not implemented");
+        for(var i = 0; i < currentModules.length; i++) {
+            currentModules[i].module.position = i;
+            currentModules[i].module.Save(currentModules[i].module);
+        } 
     }
 </script>
 

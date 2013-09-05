@@ -15,6 +15,7 @@ function Module() {
 function Module(name, combos, parameters, groups, parameters_meta, groups_meta,
         calculatedGroup, calculate, onComboChanged) {
     this.id = null;
+    this.position = 0;
     this.name = name;
     this.combos = combos;
     this.parameters = parameters;
@@ -39,12 +40,12 @@ function Module(name, combos, parameters, groups, parameters_meta, groups_meta,
     this.Save = function(m) {
         var request = {
             action : "save",
-            name : m.constructor.name
+            name : m.constructor.name,
+            position : m.position
         }
         if (m.id != null) {
             request["id"] = m.id;
-            request["action"] = "update"; 
-            
+            request["action"] = "update";
         }
             
         // For parameter fields we can't use initialization list.
@@ -54,7 +55,6 @@ function Module(name, combos, parameters, groups, parameters_meta, groups_meta,
         }
         
         $.get('ActionServlet', request, function(responseText) {
-            alert("ok "+ responseText);
             if (request["action"] == "save") {
                 m.id = responseText;
             }
@@ -67,7 +67,6 @@ function Module(name, combos, parameters, groups, parameters_meta, groups_meta,
             id : m.id
         };
         $.get('ActionServlet', request, function(responseText) {
-            alert("ok "+ responseText);          
         });
     };
 }
