@@ -21,7 +21,7 @@ public class UserDocument {
     private Key key;
     
     @Persistent
-    private User author;
+    private String authorEmail;
     
     @Persistent
     private Date date;
@@ -32,8 +32,8 @@ public class UserDocument {
     @Persistent
     private int position;
     
-    public UserDocument(User author, Module content, Date date, int position) {
-        this.author = author;
+    public UserDocument(String authorEmail, Module content, Date date, int position) {
+        this.authorEmail = authorEmail;
         this.content = content;
         this.date = date;
         this.position = position;
@@ -43,8 +43,8 @@ public class UserDocument {
         return key.getId();
     }
 
-    public User getAuthor() {
-        return author;
+    public String getAuthorEmail() {
+        return authorEmail;
     }
 
     public Module getContent() {
@@ -59,8 +59,8 @@ public class UserDocument {
         return date;
     }
 
-    public void setAuthor(User author) {
-        this.author = author;
+    public void setAuthorEmail(String email) {
+        this.authorEmail = email;
     }
     
     public void setPosition(int position) {

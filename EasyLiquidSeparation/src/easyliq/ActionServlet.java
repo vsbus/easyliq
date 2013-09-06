@@ -111,7 +111,7 @@ public class ActionServlet extends HttpServlet {
         User user = userService.getCurrentUser();
 
         PersistenceManager pm = PMF.get().getPersistenceManager();
-        String query = "select from " + UserDocument.class.getName()+" order by position";
+        String query = "select from " + UserDocument.class.getName()+" where authorEmail=='"+user.getEmail()+"' order by position";
         List<UserDocument> userdoc = (List<UserDocument>) pm.newQuery(query).execute();
 
         response.setContentType("application/json");
@@ -123,19 +123,13 @@ public class ActionServlet extends HttpServlet {
             json = json + "\"documents\":[";
             boolean isFirst = true;
             for (UserDocument g : userdoc) {
-                if (!g.getAuthor().getEmail().equals(user.getEmail())) {
-                    continue;
-                }
                 if (!isFirst) {
                     json = json + ",";
                 }
                 json = json + "{";
                 json = json + JsonPair("id", String.valueOf(g.getKey())) + ",";
-                if (g.getAuthor() == null) {
-                    json = json + JsonPair("author", "anonymous");
-                } else {
-                    json = json + JsonPair("author", g.getAuthor().getNickname());
-                }
+                json = json + JsonPair("author", g.getAuthorEmail());
+
                 json = json + "," + JsonPair("position", String.valueOf(g.getPosition()));
                 Module m = g.getContent();
                 json = json + "," + JsonPair("module_name", m.getName());
@@ -173,7 +167,7 @@ public class ActionServlet extends HttpServlet {
             data.add(new ParameterData(p, Double.parseDouble(parStr)));
         }
         int position = Integer.parseInt(request.getParameter("position"));
-        UserDocument userDoc = new UserDocument(user, new Module(
+        UserDocument userDoc = new UserDocument(user.getEmail(), new Module(
                 request.getParameter("name"), data), date, position);
         PersistenceManager pm = PMF.get().getPersistenceManager();
         try {

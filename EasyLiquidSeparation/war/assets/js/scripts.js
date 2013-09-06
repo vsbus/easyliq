@@ -1,7 +1,7 @@
 function createDeleteButton(moduleData, moduleDiv) {
     var btn = document.createElement("input");
     btn.setAttribute("type", "button");
-    btn.setAttribute("value", "delete from DB");
+    btn.setAttribute("value", "delete");
     btn.onclick = function() {
         var idx = currentModules.indexOf(moduleData);
         var id = moduleData.module.id;
@@ -111,7 +111,7 @@ function generateModuleBlock(moduleData) {
     nameSpan.setAttribute("class", "module_title");
 
     createSaveButton(m, moduleDiv);
-    createRemoveFromScreenButton(moduleData, moduleDiv);
+    //createRemoveFromScreenButton(moduleData, moduleDiv);
     createDeleteButton(moduleData, moduleDiv);
     createCopyButton(moduleData, moduleDiv);
 
