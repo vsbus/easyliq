@@ -12,7 +12,7 @@ public class ParameterData {
     
     @Persistent
     private double value;
-   
+
     public ParameterData(Parameter name, double value)
     {
         this.name = name;
