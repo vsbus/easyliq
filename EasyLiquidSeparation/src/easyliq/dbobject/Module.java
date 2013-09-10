@@ -10,6 +10,7 @@ public class Module {
     @Persistent
     private String name;
     
+    @Persistent
     private List<ParameterData> data;
     
     public Module(String name, List<ParameterData> data)

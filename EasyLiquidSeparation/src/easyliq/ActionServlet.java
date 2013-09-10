@@ -112,7 +112,9 @@ public class ActionServlet extends HttpServlet {
 
         PersistenceManager pm = PMF.get().getPersistenceManager();
         String query = "select from " + UserDocument.class.getName()+" where authorEmail=='"+user.getEmail()+"' order by position";
-        List<UserDocument> userdoc = (List<UserDocument>) pm.newQuery(query).execute();
+        
+        @SuppressWarnings("unchecked")
+        List<UserDocument> userdoc = (List<UserDocument>)pm.newQuery(query).execute();
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
