@@ -157,18 +157,13 @@ function RfFromCakeSaturation() {
     this.Copy = function(m) {
         var obj = new RfFromCakeSaturation();
         obj.id = null;
-        obj.position = 0;
-        obj.name = m.name;
-        obj.combos = m.combos;
-        obj.parameters = m.parameters;
-        obj.groups = m.groups;
-        obj.parameters_meta = m.parameters_meta;
-        obj.groups_meta = m.groups_meta;
         obj.calculatedGroup = m.calculatedGroup;
         obj.control = null;
-        obj.calculate = m.calculate;
-        obj.onComboChanged = m.onComboChanged;
-        obj.updateParameters = m.updateParameters;
+        
+        for ( var parameter in obj.parameters_meta) {
+            obj.parameters_meta[parameter].value = m.parameters_meta[parameter].value
+        }
+        
         return obj;
     }
 };
