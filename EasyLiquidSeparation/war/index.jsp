@@ -29,6 +29,7 @@
         var mainDiv = document.getElementsByClassName("row")[0];
         var o = generateModuleBlock(moduleData);
         mainDiv.appendChild(o);
+        m.Save(m);
     }
     
     var delay = 0;
@@ -99,8 +100,7 @@ if (user != null) {
 <div class="row">       
     <div class = "main_div inputbar">
         <input type="button" onclick="javascript: ceateModule(new DensityConcentrationCalculator());" value="DensityConcentrationCalculator"/>
-        <input type="button" onclick="javascript: ceateModule(new RfFromCakeSaturation());" value="RfFromCakeSaturation"/>
-        <input type="button" onclick="javascript: Get();" value="Get"/>
+        <input type="button" onclick="javascript: ceateModule(new RfFromCakeSaturation());" value="RfFromCakeSaturation"/>        
         <input type="button" onclick="javascript: SaveAll();" value="Save all"/>
     </div>
     </div>
@@ -147,6 +147,7 @@ if (user != null) {
             currentModules[i].module.Save(currentModules[i].module);
         } 
     }
+    Get();
 </script>
 
     
