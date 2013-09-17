@@ -65,7 +65,7 @@ function Module(name, combos, parameters, groups, parameters_meta, groups_meta,
     this.onComboChanged = onComboChanged;
     this.updateParameters = null;
     this.Render = function(m) {
-        for ( var parameter in m.parameters_meta) {
+        for (var parameter in m.parameters_meta) {
             var pmeta = m.parameters_meta[parameter];
             var gmeta = m.groups_meta[pmeta.group];
             if ((pmeta.group == m.calculatedGroup)
@@ -96,15 +96,6 @@ function Module(name, combos, parameters, groups, parameters_meta, groups_meta,
             if (request["action"] == "save") {
                 m.id = responseText;
             }
-        });
-    };
-
-    this.Delete = function(m) {
-        var request = {
-            action : "delete",
-            id : m.id
-        };
-        $.get('ActionServlet', request, function(responseText) {
         });
     };
 }

@@ -23,13 +23,12 @@
     
     var currentModules = [];
     
-    function ceateModule(m) {
+    function createModule(m) {
         var moduleData = generateModuleData(m);
         currentModules.push(moduleData)
         var mainDiv = document.getElementsByClassName("row")[0];
         var o = generateModuleBlock(moduleData);
         mainDiv.appendChild(o);
-        m.Save(m);
     }
     
     var delay = 0;
@@ -99,55 +98,84 @@ if (user != null) {
  </div>
 <div class="row">       
     <div class = "main_div inputbar">
-        <input type="button" onclick="javascript: ceateModule(new DensityConcentrationCalculator());" value="DensityConcentrationCalculator"/>
-        <input type="button" onclick="javascript: ceateModule(new RfFromCakeSaturation());" value="RfFromCakeSaturation"/>        
+        <input type="button" onclick="javascript: createModule(new DensityConcentrationCalculator());" value="DensityConcentrationCalculator"/>
+        <input type="button" onclick="javascript: createModule(new RfFromCakeSaturation());" value="RfFromCakeSaturation"/>        
         <input type="button" onclick="javascript: SaveAll();" value="Save all"/>
+        <input type="button" onclick="javascript: LoadAll();" value="Load all"/>
     </div>
     </div>
 </div>
 </form>
  <script  type="text/javascript">
     var map = {"kg/m3":1, "g/l":1, "%":0.01}
+
+
+    function Serialize(module) {
+        var values = {}
+        for (p in module.parameters_meta) {
+            values[p] = module.parameters_meta[p].value
+        }
+        var map = {
+            name : module.constructor.name,
+            position : module.position,
+            parameters : values
+        }
+        return JSON.stringify(map)
+    }
     
-         
-    function Get() {
+    function Deserialize(m) {
+        var module;
+        switch (m.name) {
+            case "RfFromCakeSaturation":
+                module = new RfFromCakeSaturation();
+                break;
+            case "DensityConcentrationCalculator":
+                module = new DensityConcentrationCalculator();
+                break;
+        }
+        module.updateParameters(m.parameters);
+        module.id = m.id;
+        module.position = m.position;
+        return module
+    }
+
+    userdocId = ""
+    
+    function SaveAll() {
+        var modules = []
+        for(var i in currentModules) {
+            modules[i] = Serialize(currentModules[i].module)
+        } 
         var request = {
-            action : "get"
-        }        
+            id : userdocId,
+            action : "save",
+            modules : modules,
+        }
         $.get('ActionServlet', request, function(responseText) {
-            if (responseText["error"]!= null) {
-                alert(responseText["error"]);
-                return;
-            }
-            for (var i in responseText["documents"]) {
-                var m = new Module();
-                switch (responseText["documents"][i]["module_name"]) {
-                    case "RfFromCakeSaturation":
-                        m = new RfFromCakeSaturation();
-                        m.updateParameters(responseText["documents"][i]);
-                        m.id = responseText["documents"][i]["id"];
-                        m.position = responseText["documents"][i]["position"];
-                        ceateModule(m);
-                        break;
-                    case "DensityConcentrationCalculator":
-                        m = new DensityConcentrationCalculator();
-                        m.updateParameters(responseText["documents"][i]);
-                        m.id = responseText["documents"][i]["id"];
-                        m.position = responseText["documents"][i]["position"];
-                        ceateModule(m);
-                        break;
-                }
+            if (request["action"] == "save") {
+                userdocId = responseText;
             }
         });
     }
-    
-    function SaveAll() {
-        for(var i = 0; i < currentModules.length; i++) {
-            currentModules[i].module.position = i;
-            currentModules[i].module.Save(currentModules[i].module);
-        } 
+
+    function LoadAll() {
+        $.get('ActionServlet', {"action" : "load"}, function(response) {
+            // Remove controls from UI.
+            for (var i in currentModules) {
+                var m = currentModules[i].module;  
+                m.control.parentNode.removeChild(m.control);
+            }
+            // Clear modules array.
+            currentModules = []
+            // Create new modules that downloaded from DB.
+            for (var i in response) {
+                var m = Deserialize(response[i])
+                createModule(m)
+            }
+        });
     }
-    Get();
+
+    
 </script>
 
     

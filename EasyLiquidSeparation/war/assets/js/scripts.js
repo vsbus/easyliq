@@ -17,16 +17,6 @@ function createDeleteButton(moduleData, moduleDiv) {
     moduleDiv.appendChild(btn);
 }
 
-function createSaveButton(m, moduleDiv) {
-    var btn = document.createElement("input");
-    btn.setAttribute("type", "button");
-    btn.setAttribute("value", "save");
-    btn.onclick = function() {
-        m.Save(m);
-    };
-    moduleDiv.appendChild(btn);
-}
-
 function createCopyButton(moduleData, moduleDiv) {
     var btn = document.createElement("input");
     btn.setAttribute("type", "button");
@@ -110,7 +100,6 @@ function generateModuleBlock(moduleData) {
     moduleDiv.appendChild(nameSpan);
     nameSpan.setAttribute("class", "module_title");
 
-    createSaveButton(m, moduleDiv);
     //createRemoveFromScreenButton(moduleData, moduleDiv);
     createDeleteButton(moduleData, moduleDiv);
     createCopyButton(moduleData, moduleDiv);
