@@ -91,7 +91,7 @@ public class ActionServlet extends HttpServlet {
 	}
 
 	private Calculator CreateCalculator(String calculator) {
-		if (calculator.equals("DensityConcentrationCalculator")) {
+		if (calculator.equals("DensityConcentration")) {
 			return new Density();
 		}
 		if (calculator.equals("RfFromCakeSaturation")) {

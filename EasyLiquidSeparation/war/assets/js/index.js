@@ -1,3 +1,10 @@
+function createModule(m) {
+    currentModules.push(m)
+    var mainDiv = document.getElementsByClassName("row")[0];
+    var o = drawModuleBlock(m);
+    mainDiv.appendChild(o);
+}
+
 function createCopyButton(module, moduleDiv) {
     var btn = document.createElement("input");
     btn.setAttribute("type", "button");
@@ -7,7 +14,7 @@ function createCopyButton(module, moduleDiv) {
         var newModule = module.Copy();
         newModule.id = null;
         currentModules.splice(idx + 1, 0, newModule);
-        var newModuleBlock = createModuleBlock(newModule);
+        var newModuleBlock = drawModuleBlock(newModule);
         moduleDiv.parentNode
                 .insertBefore(newModuleBlock, moduleDiv.nextSibling);
     }
@@ -29,7 +36,7 @@ function createRemoveButton(module, moduleDiv) {
 }
 
 function drawParametersTable(div, m) {
-    var table = createTableWithHeaders(div);
+    var table = prepareTableForParameters(div);
     var body = document.createElement("tbody");
     table.appendChild(body);
 
@@ -50,7 +57,7 @@ function drawParametersTable(div, m) {
     }
 }
 
-function createModuleBlock(m) {
+function drawModuleBlock(m) {
     var moduleDiv = document.createElement("div");
     moduleDiv.setAttribute("class", "main_div inputbar span3 ");
     m.control = moduleDiv;
@@ -98,7 +105,7 @@ function drawCalculationOptions(div, m) {
     comboBox.selectedIndex = selected_index;
 }
 
-function createTableWithHeaders(div) {
+function prepareTableForParameters(div) {
     var table = document.createElement("table");
     table.setAttribute("class", "pt");
     var thead = document.createElement("thead");

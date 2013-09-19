@@ -6,7 +6,7 @@
 // Parameters:
 
 
-    function createParametersMetaForDensityConcentrationCalculator() {
+    function createParametersMetaForDensityConcentration() {
     // We can't use initialization list here because we want to use variables as
     // keys.
     var parameters_meta = {}
@@ -55,7 +55,7 @@
     return parameters_meta;
 }
 
-function createGroupsMetaForDensityConcentrationCalculator() {
+function createGroupsMetaForDensityConcentration() {
     // We can't use initialization list here because we want to use variables as
     // keys.
     var groups_meta = {}
@@ -77,7 +77,7 @@ function createGroupsMetaForDensityConcentrationCalculator() {
     }
     return groups_meta;
 }
-function createCalcOptionsForDensityConcentrationCalculator() {
+function createCalcOptionsForDensityConcentration() {
     // We can't use initialization list here because we want to use variables as
     // keys.
 
@@ -129,7 +129,7 @@ function combo0_onchange(m) {
 function calculateDensityConcentration() {
     var request = {
         action : "calculate",
-        calculator : "DensityConcentrationCalculator"
+        calculator : "DensityConcentration"
     }
     // For parameter fields we can't use initialization list.
     for ( var parameter in this.parameters_meta) {
@@ -161,20 +161,20 @@ function UpdateDensityConcentrationParameters(text) {
     this.parameters_meta[C].value = text[C];
 }
 
-function DensityConcentrationCalculator() {
+function DensityConcentration() {
     var combo0 = new Combo("Calculate",
-            createCalcOptionsForDensityConcentrationCalculator(), null, null);
-    var DensityConcentrationCalculator_combos = [ combo0 ];
+            createCalcOptionsForDensityConcentration(), null, null);
+    var DensityConcentration_combos = [ combo0 ];
 
-    this.name = "DensityConcentrationCalculator";
-    this.combos = DensityConcentrationCalculator_combos;
-    this.parameters_meta = createParametersMetaForDensityConcentrationCalculator();
-    this.groups_meta = createGroupsMetaForDensityConcentrationCalculator();
+    this.name = "Density Concentration";
+    this.combos = DensityConcentration_combos;
+    this.parameters_meta = createParametersMetaForDensityConcentration();
+    this.groups_meta = createGroupsMetaForDensityConcentration();
     this.calculatedGroup = group_rho_sus;
     this.calculate = calculateDensityConcentration;
     this.onComboChanged = combo0_onchange;
     this.updateParameters = UpdateDensityConcentrationParameters;    
 }
 
-DensityConcentrationCalculator.prototype = new Module;
-DensityConcentrationCalculator.prototype.constructor = DensityConcentrationCalculator;
+DensityConcentration.prototype = new Module;
+DensityConcentration.prototype.constructor = DensityConcentration;
