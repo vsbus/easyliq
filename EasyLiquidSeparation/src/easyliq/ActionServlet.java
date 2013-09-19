@@ -1,6 +1,7 @@
 package easyliq;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -141,7 +142,10 @@ public class ActionServlet extends HttpServlet {
 
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		String[] s = request.getParameterValues("modules[]");
-		List<String> m = Arrays.asList(s);
+		List<String> m = new ArrayList<String>();
+		if (s != null) {
+		    m = Arrays.asList(s);
+		}
 		String id = request.getParameter("id");
 		try {
 			String query = "select from " + UserDocument.class.getName()

@@ -107,7 +107,7 @@ function calculateRfFromCakeSaturation() {
     var m = this;
     $.get('ActionServlet', request, function(responseText) {
         m.updateParameters(responseText);
-        m.Render(m);
+        m.Render();
     });
 }
 function combo0_RfFromCakeSaturation_onchange(m) {
@@ -153,19 +153,7 @@ function RfFromCakeSaturation() {
     this.calculatedGroup = group_eps;
     this.calculate = calculateRfFromCakeSaturation;
     this.onComboChanged = combo0_RfFromCakeSaturation_onchange;
-    this.updateParameters = UpdateRfFromCakeSaturationParameters;
-    this.Copy = function(m) {
-        var obj = new RfFromCakeSaturation();
-        obj.id = null;
-        obj.calculatedGroup = m.calculatedGroup;
-        obj.control = null;
-        
-        for ( var parameter in obj.parameters_meta) {
-            obj.parameters_meta[parameter].value = m.parameters_meta[parameter].value
-        }
-        
-        return obj;
-    }
+    this.updateParameters = UpdateRfFromCakeSaturationParameters;    
 };
 
 RfFromCakeSaturation.prototype = new Module;

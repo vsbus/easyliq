@@ -1,64 +1,31 @@
-function createDeleteButton(moduleData, moduleDiv) {
+function createCopyButton(module, moduleDiv) {
     var btn = document.createElement("input");
     btn.setAttribute("type", "button");
-    btn.setAttribute("value", "delete");
+    btn.setAttribute("value", "Copy");
     btn.onclick = function() {
-        var idx = currentModules.indexOf(moduleData);
-        var id = moduleData.module.id;
-        moduleData.module.Delete(moduleData.module);
-        for (var i = currentModules.length - 1; i >= 0 ; i--) {
-            var m = currentModules[i].module;
-            if (m.id == id) {
-                m.control.parentNode.removeChild(m.control);
-                currentModules.splice(i, 1);
-            }
-        }
-    }
-    moduleDiv.appendChild(btn);
-}
-
-function createCopyButton(moduleData, moduleDiv) {
-    var btn = document.createElement("input");
-    btn.setAttribute("type", "button");
-    btn.setAttribute("value", "Duplicate");
-    btn.onclick = function() {
-        var idx = currentModules.indexOf(moduleData);
-        var newModuleData = generateModuleData(moduleData.module.Copy(moduleData.module));
-        newModuleData.module.id = null;
-        currentModules.splice(idx+1, 0, newModuleData);
-        var newModuleBlock = generateModuleBlock(newModuleData);
+        var idx = currentModules.indexOf(module);
+        var newModule = module.Copy();
+        newModule.id = null;
+        currentModules.splice(idx + 1, 0, newModule);
+        var newModuleBlock = createModuleBlock(newModule);
         moduleDiv.parentNode
                 .insertBefore(newModuleBlock, moduleDiv.nextSibling);
     }
     moduleDiv.appendChild(btn);
 }
 
-function createRemoveFromScreenButton(moduleData, moduleDiv) {
+function createRemoveButton(module, moduleDiv) {
     var btn = document.createElement("input");
     btn.setAttribute("type", "button");
     btn.setAttribute("value", "remove");
 
     btn.onclick = function() {
-        var idx = currentModules.indexOf(moduleData);
+        var idx = currentModules.indexOf(module);
         currentModules.splice(idx, 1);
         btn.parentNode.parentNode.removeChild(btn.parentNode);
+        SaveAll();
     }
     moduleDiv.appendChild(btn);
-}
-
-function clearCalculationOptions() {
-    var d = document.getElementById("calc_option_div");
-    while (d.firstChild != null) {
-        d.removeChild(d.firstChild);
-    }
-}
-
-function clearParametersTable() {
-    var table = document.getElementById("pt");
-    var body = table.getElementsByTagName("tbody")[0];
-    if (body != null) {
-        table.removeChild(body);
-    }
 }
 
 function drawParametersTable(div, m) {
@@ -83,15 +50,7 @@ function drawParametersTable(div, m) {
     }
 }
 
-function generateModuleData(m) {
-    return {
-        module : m,
-        editTime : (new Date()).getTime()
-    };
-}
-
-function generateModuleBlock(moduleData) {
-    var m = moduleData.module;
+function createModuleBlock(m) {
     var moduleDiv = document.createElement("div");
     moduleDiv.setAttribute("class", "main_div inputbar span3 ");
     m.control = moduleDiv;
@@ -100,9 +59,8 @@ function generateModuleBlock(moduleData) {
     moduleDiv.appendChild(nameSpan);
     nameSpan.setAttribute("class", "module_title");
 
-    //createRemoveFromScreenButton(moduleData, moduleDiv);
-    createDeleteButton(moduleData, moduleDiv);
-    createCopyButton(moduleData, moduleDiv);
+    createRemoveButton(m, moduleDiv);
+    createCopyButton(m, moduleDiv);
 
     drawCalculationOptions(moduleDiv, m);
     drawParametersTable(moduleDiv, m);

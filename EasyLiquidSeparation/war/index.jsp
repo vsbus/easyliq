@@ -24,12 +24,11 @@
     var currentModules = [];
     
     function createModule(m) {
-        var moduleData = generateModuleData(m);
-        currentModules.push(moduleData)
+        currentModules.push(m)
         var mainDiv = document.getElementsByClassName("row")[0];
-        var o = generateModuleBlock(moduleData);
+        var o = createModuleBlock(m);
         mainDiv.appendChild(o);
-    }
+    }    
     
     var delay = 0;
     var last_user_action_time = (new Date(2013, 0, 1)).getTime();
@@ -46,7 +45,7 @@
         last_user_action_time = (new Date()).getTime();
         
         for (var i in currentModules) {
-            if (currentModules[i].module == m) {
+            if (currentModules[i] == m) {
                 currentModules[i].editTime = (new Date()).getTime();
             }
         }
@@ -66,7 +65,7 @@
             if (timediff < delay) {
                 continue;
             }
-            Calculate(currentModules[i].module);
+            Calculate(currentModules[i]);
             last_processing_time = now.getTime();
         }
     }
@@ -144,7 +143,7 @@ if (user != null) {
     function SaveAll() {
         var modules = []
         for(var i in currentModules) {
-            modules[i] = Serialize(currentModules[i].module)
+            modules[i] = Serialize(currentModules[i])
         } 
         var request = {
             id : userdocId,
@@ -162,7 +161,7 @@ if (user != null) {
         $.get('ActionServlet', {"action" : "load"}, function(response) {
             // Remove controls from UI.
             for (var i in currentModules) {
-                var m = currentModules[i].module;  
+                var m = currentModules[i];  
                 m.control.parentNode.removeChild(m.control);
             }
             // Clear modules array.

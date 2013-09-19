@@ -52,6 +52,8 @@ function Module() {
 function Module(name, combos, parameters, groups, parameters_meta, groups_meta,
         calculatedGroup, calculate, onComboChanged) {
     this.id = null;
+    this.editTime = (new Date()).getTime();
+    this.control = null;
     this.position = 0;
     this.name = name;
     this.combos = combos;
@@ -64,38 +66,27 @@ function Module(name, combos, parameters, groups, parameters_meta, groups_meta,
     this.calculate = calculate;
     this.onComboChanged = onComboChanged;
     this.updateParameters = null;
-    this.Render = function(m) {
-        for (var parameter in m.parameters_meta) {
-            var pmeta = m.parameters_meta[parameter];
-            var gmeta = m.groups_meta[pmeta.group];
-            if ((pmeta.group == m.calculatedGroup)
+    this.Render = function() {
+        for ( var parameter in this.parameters_meta) {
+            var pmeta = this.parameters_meta[parameter];
+            var gmeta = this.groups_meta[pmeta.group];
+            if ((pmeta.group == this.calculatedGroup)
                     || (parameter != gmeta.representator)) {
                 pmeta.element.value = Number((pmeta.value / map[pmeta.unit])
                         .toFixed(5));
             }
         }
     };
-    this.Save = function(m) {
-        var request = {
-            action : "save",
-            name : m.constructor.name,
-            position : m.position
-        }
-        if (m.id != null) {
-            request["id"] = m.id;
-            request["action"] = "update";
+    this.Copy = function() {
+        var obj = new this.constructor();//new RfFromCakeSaturation();
+        obj.id = null;
+        obj.calculatedGroup = this.calculatedGroup;
+        obj.control = null;
+
+        for ( var parameter in obj.parameters_meta) {
+            obj.parameters_meta[parameter].value = this.parameters_meta[parameter].value
         }
 
-        // For parameter fields we can't use initialization list.
-        for ( var parameter in m.parameters_meta) {
-            var pmeta = m.parameters_meta[parameter];
-            request[parameter] = pmeta.value;
-        }
-
-        $.get('ActionServlet', request, function(responseText) {
-            if (request["action"] == "save") {
-                m.id = responseText;
-            }
-        });
-    };
+        return obj;
+    }
 }

@@ -148,7 +148,7 @@ function calculateDensityConcentration() {
     var m = this;
     $.get('ActionServlet', request, function(responseText) {
         m.updateParameters(responseText);
-        m.Render(m);
+        m.Render();
     });
 }
 
@@ -173,19 +173,7 @@ function DensityConcentrationCalculator() {
     this.calculatedGroup = group_rho_sus;
     this.calculate = calculateDensityConcentration;
     this.onComboChanged = combo0_onchange;
-    this.updateParameters = UpdateDensityConcentrationParameters;
-    this.Copy = function(m) {
-        var obj = new DensityConcentrationCalculator();
-        obj.id = null;
-        obj.calculatedGroup = m.calculatedGroup;
-        obj.control = null;
-        
-        for ( var parameter in obj.parameters_meta) {
-            obj.parameters_meta[parameter].value = m.parameters_meta[parameter].value
-        }
-        
-        return obj;        
-    }
+    this.updateParameters = UpdateDensityConcentrationParameters;    
 }
 
 DensityConcentrationCalculator.prototype = new Module;
