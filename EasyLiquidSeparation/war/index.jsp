@@ -12,9 +12,9 @@
 <link href="assets/css/styles.css" type="text/css" rel="stylesheet"/>
 <script src="assets/js/scripts.js"></script>
 <script src="http://code.jquery.com/jquery-latest.js"></script>
-<script src="assets/js/modules.js"></script>
-<script src="assets/js/DensityConcentrationCalculator.js"></script>
-<script src="assets/js/RfFromCakeSaturation.js"></script>
+<script src="assets/js/modules/module.js"></script>
+<script src="assets/js/modules/DensityConcentrationCalculator.js"></script>
+<script src="assets/js/modules/RfFromCakeSaturation.js"></script>
 <link href="assets/css/bootstrap.css" type="text/css" rel="stylesheet" media="screen"/>
 <script src="assets/js/bootstrap.js"></script>
 
