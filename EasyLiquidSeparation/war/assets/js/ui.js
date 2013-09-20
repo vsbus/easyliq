@@ -1,8 +1,6 @@
-function createModule(m) {
-    currentModules.push(m)
+function drawModule(m) {
     var mainDiv = document.getElementsByClassName("row")[0];
-    var o = drawModuleBlock(m);
-    mainDiv.appendChild(o);
+    mainDiv.appendChild(createModuleDiv(m));
 }
 
 function createCopyButton(module, moduleDiv) {
@@ -14,7 +12,7 @@ function createCopyButton(module, moduleDiv) {
         var newModule = module.Copy();
         newModule.id = null;
         currentModules.splice(idx + 1, 0, newModule);
-        var newModuleBlock = drawModuleBlock(newModule);
+        var newModuleBlock = createModuleDiv(newModule);
         moduleDiv.parentNode
                 .insertBefore(newModuleBlock, moduleDiv.nextSibling);
     }
@@ -57,7 +55,7 @@ function drawParametersTable(div, m) {
     }
 }
 
-function drawModuleBlock(m) {
+function createModuleDiv(m) {
     var moduleDiv = document.createElement("div");
     moduleDiv.setAttribute("class", "main_div inputbar span3 ");
     m.control = moduleDiv;
