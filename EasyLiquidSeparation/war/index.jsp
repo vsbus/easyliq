@@ -31,7 +31,7 @@
 </head>
 
 
-<body  style="background-color:#2F3945">
+<body  style= "background:url('assets/images/bg.png') repeat scroll left top transparent">
     <form>
     <div class = "content ">
     <div class = "inputbar">
@@ -48,17 +48,19 @@ if (user != null) {
     }
 %>
 <input type="button" onclick="alert('<%= session.getId() %>');" value="session ID" />
-
- </div>
-<div class="row">       
-    <div class = "main_div inputbar">
-        <input type="button" onclick="javascript: addModule(new DensityConcentration());" value="DensityConcentration"/>
-        <input type="button" onclick="javascript: addModule(new RfFromCakeSaturation());" value="RfFromCakeSaturation"/>        
-        <input type="button" onclick="javascript: SaveAll();" value="Save all"/>
-        <input type="button" onclick="javascript: LoadAll();" value="Load all"/>
-    </div>
-    </div>
 </div>
+
+    
+        <div class = "inputbar" style="margin-top:20px">
+            <input type="button" onclick="javascript: addModule(new DensityConcentration());" value="DensityConcentration"/>
+            <input type="button" onclick="javascript: addModule(new RfFromCakeSaturation());" value="RfFromCakeSaturation"/>        
+            <input type="button" onclick="javascript: SaveAll();" value="Save all"/>
+            <input type="button" onclick="javascript: LoadAll();" value="Load all"/>
+        </div>
+        <div class="row" style="margin-left: 0px;"> 
+            
+            </div>
+    </div>
 </form>
  <script  type="text/javascript">
 </script>

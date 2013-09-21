@@ -3,34 +3,35 @@ function drawModule(m) {
     mainDiv.appendChild(createModuleDiv(m));
 }
 
-function createCopyButton(module, moduleDiv) {
+function createCopyButton(module, buttonsDiv) {
     var btn = document.createElement("input");
     btn.setAttribute("type", "button");
-    btn.setAttribute("value", "Copy");
+    btn.setAttribute("value", "C");
     btn.onclick = function() {
         var idx = currentModules.indexOf(module);
         var newModule = module.Copy();
         newModule.id = null;
         currentModules.splice(idx + 1, 0, newModule);
         var newModuleBlock = createModuleDiv(newModule);
-        moduleDiv.parentNode
-                .insertBefore(newModuleBlock, moduleDiv.nextSibling);
+        var moduleDiv = module.control; 
+        moduleDiv.parentNode.insertBefore(newModuleBlock, moduleDiv.nextSibling);
     }
-    moduleDiv.appendChild(btn);
+    buttonsDiv.appendChild(btn);
 }
 
-function createRemoveButton(module, moduleDiv) {
+function createRemoveButton(module, buttonsDiv) {
     var btn = document.createElement("input");
     btn.setAttribute("type", "button");
-    btn.setAttribute("value", "remove");
+    btn.setAttribute("value", "X");
 
     btn.onclick = function() {
         var idx = currentModules.indexOf(module);
         currentModules.splice(idx, 1);
-        btn.parentNode.parentNode.removeChild(btn.parentNode);
+        var moduleDiv = module.control; 
+        moduleDiv.parentNode.removeChild(moduleDiv);
         SaveAll();
     }
-    moduleDiv.appendChild(btn);
+    buttonsDiv.appendChild(btn);
 }
 
 function drawParametersTable(div, m) {
@@ -63,10 +64,14 @@ function createModuleDiv(m) {
     nameSpan.innerHTML = m.name;
     moduleDiv.appendChild(nameSpan);
     nameSpan.setAttribute("class", "module_title");
-
-    createRemoveButton(m, moduleDiv);
-    createCopyButton(m, moduleDiv);
-
+    
+    var buttonsDiv = document.createElement("div");
+    buttonsDiv.setAttribute("style", "float: right;");
+    moduleDiv.appendChild(buttonsDiv);
+    
+    createCopyButton(m, buttonsDiv);
+    createRemoveButton(m, buttonsDiv);
+    
     drawCalculationOptions(moduleDiv, m);
     drawParametersTable(moduleDiv, m);
     return moduleDiv;
