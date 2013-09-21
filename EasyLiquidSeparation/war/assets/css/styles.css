@@ -56,8 +56,7 @@ div {
 }
 
 .main_div {
-	margin-top: 60px;
-	box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+	margin-top: 60px;	
 }
 
 div .inputbar {
@@ -76,7 +75,6 @@ div .inputbar {
 
 table.pt {
 	border-radius: 5px 5px 5px 5px;
-	width: 82%;
 	font-family: Verdana;
 	font-size: 11px;
 	table-layout: fixed;
@@ -90,16 +88,10 @@ tr {
 	-moz-border-left-colors: none;
 	-moz-border-right-colors: none;
 	-moz-border-top-colors: none;
-	background: linear-gradient(to bottom, #FFFFFF 0%, #E6E6E6 100%) repeat
-		scroll 0 0 transparent;
-	border-color: silver #7491A5 #7491A5 silver;
 	border-image: none;
 	border-radius: 4px 4px 4px 4px;
-	border-style: solid;
 	border-width: 1px;
-	box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.05);
 	color: #414F5B;
-	cursor: pointer;
 	font-family: arial, verdana;
 	font-style: normal;
 	resize: none;
@@ -108,19 +100,15 @@ tr {
 	white-space: nowrap;
 }
 
-tr.editable {
-	background-color: #abcdef;
+tr.editable {	
 }
 
 tr.noneditable {
-	background: linear-gradient(to bottom, #FFFFFF 0%, #696969 100%) repeat
-		scroll 0 0 transparent;
 	background: #dfdfdf;
 }
 
 td {
 	border-width: 1px;
-	width: 33%;
 }
 
 td div {
@@ -128,13 +116,10 @@ td div {
 }
 
 th {
-	border-style: none;
-	width: 33%;
 	text-aligh: left;
 }
 
 .info {
-	width: 70px;
 	text-align: left;
 }
 
