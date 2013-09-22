@@ -103,29 +103,14 @@ function createCalcOptionsForDensityConcentration() {
 
 function combo0_onchange(m) {
     var calculationOption = getCalculationOption(m.combos[0]);
-
     var mp = {};
     mp[calc_rho_f] = group_rho_f;
     mp[calc_rho_s] = group_rho_s;
     mp[calc_rho_sus] = group_rho_sus;
     mp[calc_CmCvC] = group_C;
     m.calculatedGroup = mp[calculationOption];
-
-   // calculatedGroup = m.combos[0].options[calculationOption].group;
-    for ( var parameter in m.parameters_meta) {
-        var meta = m.parameters_meta[parameter];
-        var e = m.parameters_meta[parameter].element;
-        if (meta.group != m.calculatedGroup) {
-            e.removeAttribute("readOnly");
-            e.removeAttribute("class");
-            e.parentNode.parentNode.setAttribute("class", "editable");
-        } else {
-            e.setAttribute("readOnly", "true");
-            e.setAttribute("class", "disabled");
-            e.parentNode.parentNode.setAttribute("class", "noneditable");
-        }
-    }
 }
+
 function calculateDensityConcentration() {
     var request = {
         action : "calculate",

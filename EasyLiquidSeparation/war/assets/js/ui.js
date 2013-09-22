@@ -34,26 +34,72 @@ function createRemoveButton(module, buttonsDiv) {
     buttonsDiv.appendChild(btn);
 }
 
+function createTextDiv(text, span) {
+	var div = document.createElement("div");
+	div.setAttribute("class", span);
+	div.setAttribute("style", "padding-top: 6px;");
+	div.innerHTML = text;
+	return div
+}
+
+function createHeaderRow() {
+	var parameterHeader = createTextDiv("Parameter", "span6");
+	var unitsHeader = createTextDiv("Units", "span2");
+	var valueHeader = createTextDiv("Value", "span4");
+	var headerRow = document.createElement("div");
+	headerRow.setAttribute("class", "row-fluid");
+	headerRow.setAttribute("style", "font-weight: bold; font-size: 12px;");
+	headerRow.appendChild(parameterHeader);
+	headerRow.appendChild(unitsHeader);
+	headerRow.appendChild(valueHeader);
+    return headerRow;
+}
+
+function addTableRow(module, parameter, tableDiv) {
+	var pmeta = module.parameters_meta[parameter];
+
+	var pvalue = document.createElement("input");
+    pvalue.setAttribute("type", "text");
+    pvalue.setAttribute("value", pmeta.value / map[pmeta.unit]);
+    pvalue.setAttribute("style", "font-size: 12px;");
+	pvalue.onkeyup = function() {
+	  parameterValueChanged(module, parameter);
+	}
+	if (pmeta.group == module.calculatedGroup) {
+	  pvalue.setAttribute("readOnly", "true");
+	  pvalue.setAttribute("class", "disabled span4");
+	} else {
+		pvalue.setAttribute("class", "span4");
+	}
+	
+	var row = document.createElement("div");
+	if (pmeta.group == module.calculatedGroup) {
+	  row.setAttribute("class", "noneditable row-fluid");
+	} else {
+	  row.setAttribute("class", "editable row-fluid");
+	}
+	row.setAttribute("style", "font-size: 12px; height: 32px;");
+	row.appendChild(createTextDiv(pmeta.name, "span6"));
+	row.appendChild(createTextDiv(pmeta.unit, "span2"));
+	row.appendChild(pvalue);
+	tableDiv.appendChild(row);
+
+	pmeta.element = pvalue;
+}
+
 function drawParametersTable(div, m) {
-    var table = prepareTableForParameters(div);
-    var body = document.createElement("tbody");
-    table.appendChild(body);
-
-    for ( var key in m.groups_meta) {
-        var group_parameters = m.groups_meta[key].parameters;
-        for ( var i in group_parameters) {
-            var parameter = group_parameters[i];
-            m.parameters_meta[parameter].element = createRow(m, parameter, body);
-        }
-
-        em_row = document.createElement("tr");
-        em_row.appendChild(document.createElement("td"));
-        em_row.appendChild(document.createElement("td"));
-        em_row.appendChild(document.createElement("td"));
-
-        em_row.setAttribute("class", "rowseparator");
-        body.appendChild(em_row);
+  var tableDiv = document.createElement("div");	
+  tableDiv.appendChild(createHeaderRow());
+  for (var key in m.groups_meta) {
+    var group_parameters = m.groups_meta[key].parameters;
+    for (var i in group_parameters) {
+      addTableRow(m, group_parameters[i], tableDiv);
     }
+    var separator = document.createElement("div");
+    separator.setAttribute("style", "height: 12px;");
+    tableDiv.appendChild(separator);
+  }
+  div.appendChild(tableDiv);
 }
 
 function createModuleDiv(m) {
@@ -100,6 +146,11 @@ function drawCalculationOptions(div, m) {
     comboBox.setAttribute("class", "span9");
     comboBox.onchange = function() {
         m.onComboChanged(m);
+        var moduleDiv = m.control;
+        var moduleContainer = moduleDiv.children[0];
+        var t = moduleContainer.children[moduleContainer.children.length - 1];
+        moduleContainer.removeChild(t);
+        drawParametersTable(moduleContainer, m);
     };
 
     m.combos[0].control = comboBox;
@@ -140,40 +191,4 @@ function createHeader(row, value) {
     th.setAttribute("class", "col-lg-4 info");
     th.innerHTML = value;
     row.appendChild(th);
-}
-
-function createRow(m, parameter, tbody) {
-    var pmeta = m.parameters_meta[parameter];
-    var result = null;
-    var row = document.createElement("tr");
-    var el = document.createElement("td");
-    el.appendChild(document.createTextNode(pmeta.name));
-    row.appendChild(el);
-    var el = document.createElement("td");
-    el.appendChild(document.createTextNode(pmeta.unit));
-    row.appendChild(el);
-    var el = document.createElement("td");
-
-    var editbox = document.createElement("input");
-    editbox.setAttribute("type", "text");
-    editbox.setAttribute("value", pmeta.value / map[pmeta.unit]);
-
-    editbox.onkeyup = function() {
-        parameterValueChanged(m, parameter);
-    }
-
-    if (pmeta.group == m.calculatedGroup) {
-        editbox.setAttribute("readOnly", "true");
-        editbox.setAttribute("class", "disabled");
-        row.setAttribute("class", "noneditable");
-    } else {
-        row.setAttribute("class", "editable");
-    }
-
-    el.appendChild(editbox);
-    result = editbox;
-
-    row.appendChild(el);
-    tbody.appendChild(row);
-    return result;
 }

@@ -110,28 +110,14 @@ function calculateRfFromCakeSaturation() {
         m.Render();
     });
 }
+
 function combo0_RfFromCakeSaturation_onchange(m) {
     var calculationOption = getCalculationOption(m.combos[0]);
-
     var mp = {};
     mp[calc_rf] = group_rf;
     mp[calc_s] = group_s;
     mp[calc_eps] = group_eps;
     m.calculatedGroup = mp[calculationOption];
-
-    for ( var parameter in m.parameters_meta) {
-        var meta = m.parameters_meta[parameter];
-        var e = m.parameters_meta[parameter].element;
-        if (meta.group != m.calculatedGroup) {
-            e.removeAttribute("readOnly");
-            e.removeAttribute("class");
-            e.parentNode.parentNode.setAttribute("class", "editable");
-        } else {
-            e.setAttribute("readOnly", "true");
-            e.setAttribute("class", "disabled");
-            e.parentNode.parentNode.setAttribute("class", "noneditable");
-        }
-    }
 }
 
 function UpdateRfFromCakeSaturationParameters(text) {
