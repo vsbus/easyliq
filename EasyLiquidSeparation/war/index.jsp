@@ -30,10 +30,10 @@
 </script>
 </head>
 
-
 <body  style= "background:url('assets/images/bg.png') repeat scroll left top transparent">
+ 
     <form>
-    <div class = "content ">
+    <div class = "container">
     <div class = "inputbar">
 <%
 UserService userService = UserServiceFactory.getUserService();
@@ -57,7 +57,7 @@ if (user != null) {
             <input type="button" onclick="javascript: SaveAll();" value="Save all"/>
             <input type="button" onclick="javascript: LoadAll();" value="Load all"/>
         </div>
-        <div class="row" style="margin-left: 0px;"> 
+        <div class="row"> 
             
             </div>
     </div>

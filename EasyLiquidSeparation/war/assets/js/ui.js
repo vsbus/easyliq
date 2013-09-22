@@ -57,37 +57,47 @@ function drawParametersTable(div, m) {
 }
 
 function createModuleDiv(m) {
-    var moduleDiv = document.createElement("div");
-    moduleDiv.setAttribute("class", "main_div inputbar span3 ");
-    m.control = moduleDiv;
     var nameSpan = document.createElement("span");
     nameSpan.innerHTML = m.name;
-    moduleDiv.appendChild(nameSpan);
-    nameSpan.setAttribute("class", "module_title");
+    nameSpan.setAttribute("class", "module_title span10");
     
     var buttonsDiv = document.createElement("div");
     buttonsDiv.setAttribute("style", "float: right;");
-    moduleDiv.appendChild(buttonsDiv);
-    
+    buttonsDiv.setAttribute("class", "module_title span2");
     createCopyButton(m, buttonsDiv);
     createRemoveButton(m, buttonsDiv);
     
-    drawCalculationOptions(moduleDiv, m);
-    drawParametersTable(moduleDiv, m);
+    var headerDiv = document.createElement("div");
+    headerDiv.setAttribute("class", "row-fluid");
+    headerDiv.appendChild(nameSpan);
+    headerDiv.appendChild(buttonsDiv);
+
+    var moduleContainer = document.createElement("div");
+    moduleContainer.setAttribute("class", "main_div inputbar");
+    moduleContainer.appendChild(headerDiv);
+    drawCalculationOptions(moduleContainer, m);
+    drawParametersTable(moduleContainer, m);
+
+    var moduleDiv = document.createElement("div");
+    moduleDiv.setAttribute("class", "span4");
+    moduleDiv.appendChild(moduleContainer);
+    m.control = moduleDiv;
+
     return moduleDiv;
 }
 
 function drawCalculationOptions(div, m) {
     var comboDiv = document.createElement("div");
-    comboDiv.setAttribute("class", "calc_option_div");
+    comboDiv.setAttribute("class", "calc_option_div row-fluid");
     div.appendChild(comboDiv);
 
     var s = document.createElement("span");
-    s.setAttribute("class", "cbname");
+    s.setAttribute("class", "cbname span3");
     s.innerHTML = m.combos[0].name;
     comboDiv.appendChild(s);
     var comboBox = document.createElement("select");
     comboBox.setAttribute("role", "listbox");
+    comboBox.setAttribute("class", "span9");
     comboBox.onchange = function() {
         m.onComboChanged(m);
     };
