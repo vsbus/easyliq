@@ -47,22 +47,16 @@ if (user != null) {
     response.sendRedirect(userService.createLoginURL(request.getRequestURI()));
     }
 %>
-<input type="button" onclick="alert('<%= session.getId() %>');" value="session ID" />
-</div>
-
-    
-        <div class = "inputbar" style="margin-top:20px">
             <input type="button" onclick="javascript: addModule(new DensityConcentration());" value="DensityConcentration"/>
             <input type="button" onclick="javascript: addModule(new RfFromCakeSaturation());" value="RfFromCakeSaturation"/>        
-            <input type="button" onclick="javascript: SaveAll();" value="Save all"/>
-            <input type="button" onclick="javascript: LoadAll();" value="Load all"/>
         </div>
         <div class="row"> 
             
             </div>
     </div>
 </form>
- <script  type="text/javascript">
+<script  type="text/javascript">
+  LoadAll();
 </script>
 </body>
 </html>

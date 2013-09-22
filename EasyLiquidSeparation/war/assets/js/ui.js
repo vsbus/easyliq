@@ -15,6 +15,7 @@ function createCopyButton(module, buttonsDiv) {
         var newModuleBlock = createModuleDiv(newModule);
         var moduleDiv = module.control; 
         moduleDiv.parentNode.insertBefore(newModuleBlock, moduleDiv.nextSibling);
+        SaveAll();
     }
     buttonsDiv.appendChild(btn);
 }
@@ -23,7 +24,6 @@ function createRemoveButton(module, buttonsDiv) {
     var btn = document.createElement("input");
     btn.setAttribute("type", "button");
     btn.setAttribute("value", "X");
-
     btn.onclick = function() {
         var idx = currentModules.indexOf(module);
         currentModules.splice(idx, 1);

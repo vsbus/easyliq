@@ -22,6 +22,7 @@ function Process() {
 function addModule(m) {
     currentModules.push(m)
     drawModule(m);
+    SaveAll();
 }
 
 setInterval(Process, delay)
