@@ -3,8 +3,8 @@ function parameterValueChanged(m, parameter) {
     if (pmeta.group == m.calculatedGroup) {
         return;
     }
+    setGroupRepresentator(m, parameter);
     var meta = m.parameters_meta[parameter];
-    m.groups_meta[meta.group].representator = parameter;
     meta.value = meta.element.value * map[meta.unit];
     action_time = (new Date()).getTime();
     for (var i in currentModules) {
