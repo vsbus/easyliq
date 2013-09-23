@@ -6,11 +6,16 @@ function parameterValueChanged(m, parameter) {
     var meta = m.parameters_meta[parameter];
     m.groups_meta[meta.group].representator = parameter;
     meta.value = meta.element.value * map[meta.unit];
-    last_user_action_time = (new Date()).getTime();
-
-    for ( var i in currentModules) {
+    action_time = (new Date()).getTime();
+    for (var i in currentModules) {
         if (currentModules[i] == m) {
-            currentModules[i].editTime = (new Date()).getTime();
+            currentModules[i].editTime = action_time;
+            last_parameter_change_time = action_time;
         }
     }
+}
+
+function addModuleButtonClick(module) {
+	addModule(module);
+	SaveAll();
 }

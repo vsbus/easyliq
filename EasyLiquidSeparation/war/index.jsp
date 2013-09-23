@@ -47,8 +47,8 @@ if (user != null) {
     response.sendRedirect(userService.createLoginURL(request.getRequestURI()));
     }
 %>
-            <input type="button" onclick="javascript: addModule(new DensityConcentration());" value="DensityConcentration"/>
-            <input type="button" onclick="javascript: addModule(new RfFromCakeSaturation());" value="RfFromCakeSaturation"/>        
+            <input type="button" onclick="javascript: addModuleButtonClick(new DensityConcentration());" value="DensityConcentration"/>
+            <input type="button" onclick="javascript: addModuleButtonClick(new RfFromCakeSaturation());" value="RfFromCakeSaturation"/>        
         </div>
         <div class="row"> 
             
