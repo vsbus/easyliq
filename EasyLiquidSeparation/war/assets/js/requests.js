@@ -19,6 +19,8 @@ function LoadAll() {
     }
     main_menu = document.getElementById("main_menu");
     main_menu.style.visibility = "hidden";
+    status_msg = document.getElementById("status_message");
+    status_msg.textContent = "Loading...";
     $.get('ActionServlet', request, function(response) {
         // Remove controls from UI.
         for (var i in currentModules) {
@@ -33,6 +35,7 @@ function LoadAll() {
             addModule(module)
         }
         main_menu.style.visibility = "visible";
+        status_msg.textContent = "";
     });
 }
 

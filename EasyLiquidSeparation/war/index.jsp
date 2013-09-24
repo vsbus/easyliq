@@ -34,7 +34,7 @@
  
     <form>
     <div class = "container">
-    <div class = "inputbar" id = "main_menu">
+    <div class = "inputbar">
 <%
 UserService userService = UserServiceFactory.getUserService();
 User user = userService.getCurrentUser();
@@ -47,8 +47,12 @@ if (user != null) {
     response.sendRedirect(userService.createLoginURL(request.getRequestURI()));
     }
 %>
-            <input type="button" onclick="javascript: addModuleButtonClick(new DensityConcentration());" value="DensityConcentration"/>
-            <input type="button" onclick="javascript: addModuleButtonClick(new RfFromCakeSaturation());" value="RfFromCakeSaturation"/>        
+            <div id = "status_message">
+            </div>
+            <div id = "main_menu">
+              <input type="button" onclick="javascript: addModuleButtonClick(new DensityConcentration());" value="DensityConcentration"/>
+              <input type="button" onclick="javascript: addModuleButtonClick(new RfFromCakeSaturation());" value="RfFromCakeSaturation"/>        
+            </div>
         </div>
         <div class="row"> 
             
