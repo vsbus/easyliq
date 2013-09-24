@@ -17,6 +17,8 @@ function LoadAll() {
     var request = {
         action : "load"
     }
+    main_menu = document.getElementById("main_menu");
+    main_menu.style.visibility = "hidden";
     $.get('ActionServlet', request, function(response) {
         // Remove controls from UI.
         for (var i in currentModules) {
@@ -30,6 +32,7 @@ function LoadAll() {
             var module = Deserialize(response[i])
             addModule(module)
         }
+        main_menu.style.visibility = "visible";
     });
 }
 

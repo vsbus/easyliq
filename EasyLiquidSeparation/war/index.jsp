@@ -34,7 +34,7 @@
  
     <form>
     <div class = "container">
-    <div class = "inputbar">
+    <div class = "inputbar" id = "main_menu">
 <%
 UserService userService = UserServiceFactory.getUserService();
 User user = userService.getCurrentUser();
@@ -56,7 +56,7 @@ if (user != null) {
     </div>
 </form>
 <script  type="text/javascript">
-  LoadAll();
+ LoadAll();
 </script>
 </body>
 </html>
