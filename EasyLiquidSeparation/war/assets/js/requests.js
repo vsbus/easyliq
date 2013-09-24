@@ -44,10 +44,15 @@ function Serialize(module) {
     for (p in module.parameters_meta) {
         values[p] = module.parameters_meta[p].value
     }
+    var co = [];
+    for (var i in module.combos) {
+        co[i] = module.combos[i].currentValue;
+    }
     var map = {
         name: module.constructor.name,
         position: module.position,
-        parameters: values
+        parameters: values,
+        calc_options: co
     }
     return JSON.stringify(map)
 }
@@ -65,5 +70,10 @@ function Deserialize(response_map) {
     module.updateParameters(response_map.parameters);
     module.id = response_map.id;
     module.position = response_map.position;
+
+    for(var i in response_map.calc_options) {
+        module.combos[i].currentValue = response_map.calc_options[i];
+    }        
+
     return module
 }

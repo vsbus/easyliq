@@ -40,11 +40,12 @@ function getCalculationOption(combo) {
     return e.options[e.selectedIndex].value;
 }
 
-function Combo(name, options, control, onchange) {
+function Combo(name, options, control, onchange, currentValue) {
     this.name = name;
     this.options = options;
     this.control = control;
     this.onchange = onchange;
+    this.currentValue = currentValue;
 }
 
 function Module() {
@@ -53,7 +54,7 @@ function Module() {
 function Module(name, combos, parameters, groups, parameters_meta, groups_meta,
         calculatedGroup, calculate, onComboChanged) {
     this.id = null;
-    this.editTime = (new Date()).getTime();
+    this.changeByUserTime = (new Date()).getTime();
     this.control = null;
     this.position = 0;
     this.name = name;
@@ -74,7 +75,7 @@ function Module(name, combos, parameters, groups, parameters_meta, groups_meta,
             if ((pmeta.group == this.calculatedGroup)
                     || (parameter != gmeta.representator)) {
                 pmeta.element.value = Number((pmeta.value / map[pmeta.unit])
-                        .toFixed(5));
+                        .toFixed(digits_after_point));
             }
         }
     };

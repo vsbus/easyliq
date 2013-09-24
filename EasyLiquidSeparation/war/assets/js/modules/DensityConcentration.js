@@ -103,6 +103,8 @@ function createCalcOptionsForDensityConcentration() {
 
 function combo0_onchange(m) {
     var calculationOption = getCalculationOption(m.combos[0]);
+    m.combos[0].currentValue = calculationOption;
+
     var mp = {};
     mp[calc_rho_f] = group_rho_f;
     mp[calc_rho_s] = group_rho_s;
@@ -148,7 +150,7 @@ function UpdateDensityConcentrationParameters(text) {
 
 function DensityConcentration() {
     var combo0 = new Combo("Calculate",
-            createCalcOptionsForDensityConcentration(), null, null);
+            createCalcOptionsForDensityConcentration(), null, null, calc_rho_sus);
     var DensityConcentration_combos = [ combo0 ];
 
     this.name = "Density Concentration";

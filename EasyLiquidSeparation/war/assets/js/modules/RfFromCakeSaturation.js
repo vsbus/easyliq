@@ -113,6 +113,8 @@ function calculateRfFromCakeSaturation() {
 
 function combo0_RfFromCakeSaturation_onchange(m) {
     var calculationOption = getCalculationOption(m.combos[0]);
+    m.combos[0].currentValue = calculationOption;
+
     var mp = {};
     mp[calc_rf] = group_rf;
     mp[calc_s] = group_s;
@@ -130,7 +132,7 @@ function UpdateRfFromCakeSaturationParameters(text) {
 
 function RfFromCakeSaturation() {
     var combo0 = new Combo("Calculate",
-            createCalcOptionsForRfFromCakeSaturation(), null, null);
+            createCalcOptionsForRfFromCakeSaturation(), null, null, calc_eps);
 
     this.name = "Cake Moisture Content from Cake Saturation";
     this.combos = [ combo0 ];

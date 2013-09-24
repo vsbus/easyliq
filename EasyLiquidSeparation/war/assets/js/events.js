@@ -9,8 +9,7 @@ function parameterValueChanged(m, parameter) {
     action_time = (new Date()).getTime();
     for (var i in currentModules) {
         if (currentModules[i] == m) {
-            currentModules[i].editTime = action_time;
-            last_parameter_change_time = action_time;
+            UpdateChangeByUserTime(currentModules[i], action_time);
         }
     }
 }
