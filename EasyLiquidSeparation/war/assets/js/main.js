@@ -18,9 +18,11 @@ function Process() {
         }
         if (processing_time - currentModules[i].changeByUserTime >= delay) {
             currentModules[i].calculate();
+            // last processing time update MUST be only when something was
+            // recalculated.
+            last_processing_time = processing_time;
         }
     }
-    last_processing_time = processing_time;
 
     // Send save request when data was changed after the last saving
     // and last saving was done at least save_all_delay milliseconds ago.
