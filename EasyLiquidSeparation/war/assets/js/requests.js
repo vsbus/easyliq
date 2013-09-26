@@ -48,11 +48,17 @@ function Serialize(module) {
     for (var i in module.combos) {
         co[i] = module.combos[i].currentValue;
     }
+    var representators = {};
+    for ( var group in module.groups_meta) {
+        representators[group] = module.groups_meta[group].representator;//.push(module.groups_meta[group].representator);
+    }
+    
     var map = {
         name: module.constructor.name,
         position: module.position,
         parameters: values,
-        calc_options: co
+        calc_options: co,
+        inputs: representators
     }
     return JSON.stringify(map)
 }
@@ -75,5 +81,9 @@ function Deserialize(response_map) {
         module.combos[i].currentValue = response_map.calc_options[i];
     }        
 
+    for(var i in response_map.inputs) {
+        module.groups_meta[i].representator = response_map.inputs[i];
+    }
+    
     return module
 }
