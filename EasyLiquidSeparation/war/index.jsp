@@ -50,8 +50,18 @@ if (user != null) {
             <div id = "status_message">
             </div>
             <div id = "main_menu">
+            <div>
+              Document:
+              <input type="button" onclick="javascript: addDocument();" value="Add"/>
+              <input type="button" onclick="javascript: removeDocumentClick();" value="Remove"/>
+              <div id="documents_list">
+              </div>
+            </div>
+            <div>
+              Add Module: 
               <input type="button" onclick="javascript: addModuleButtonClick(new DensityConcentration());" value="DensityConcentration"/>
               <input type="button" onclick="javascript: addModuleButtonClick(new RfFromCakeSaturation());" value="RfFromCakeSaturation"/>        
+            </div>
             </div>
         </div>
         <div class="row"> 
@@ -60,7 +70,7 @@ if (user != null) {
     </div>
 </form>
 <script  type="text/javascript">
- LoadAll();
+initWorkspace();
 </script>
 </body>
 </html>

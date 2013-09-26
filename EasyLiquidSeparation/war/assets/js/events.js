@@ -14,3 +14,19 @@ function addModuleButtonClick(module) {
 	addModule(module);
 	SaveAll();
 }
+
+function removeDocumentClick() {
+	if (currentDoc != null) {
+		document.getElementById("documents_list").removeChild(currentDoc.element);
+		var idx = documents.indexOf(currentDoc);
+        documents.splice(idx, 1);
+        if (idx == documents.length) {
+        	idx = idx - 1;
+        }
+        if (idx < 0) {
+        	addDocument();
+        	idx = 0;
+        }
+        setCurrentDocument(documents[idx]);
+	}
+}

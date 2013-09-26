@@ -8,6 +8,9 @@ var digits_after_point = 3;
 
 var currentModules = [];
 
+var documents = [];
+var currentDoc = null;
+
 function Process() {
     now = new Date();
     processing_time = now.getTime();
@@ -36,6 +39,41 @@ function Process() {
 function UpdateChangeByUserTime(module, action_time) {
     module.changeByUserTime = action_time; 
     last_change_by_user_time = action_time;
+}
+
+function addDocument() {
+	var name = "Untitled";
+	if (documents.length > 0) {
+		name = documents[documents.length - 1].name + "0";
+	}
+	var ndoc = {
+		name: name,
+		element: document.createElement("input")
+	}
+	ndoc.element.style.background = "white";
+	ndoc.element.setAttribute("type", "button");
+	ndoc.element.value = name;
+	ndoc.element.onclick = function () {
+		setCurrentDocument(ndoc);
+	};
+	document.getElementById("documents_list").appendChild(ndoc.element);
+	documents[documents.length] = ndoc;
+}
+
+function setCurrentDocument(doc) {
+	if (currentDoc != null) {
+		currentDoc.element.style.background = "white";
+	}
+	currentDoc = doc;
+	currentDoc.element.style.background = "pink";
+}
+
+function initWorkspace() {
+	LoadAll();
+	if (documents.length == 0) {
+		addDocument();
+		setCurrentDocument(documents[0]);
+	}
 }
 
 function addModule(m) {
