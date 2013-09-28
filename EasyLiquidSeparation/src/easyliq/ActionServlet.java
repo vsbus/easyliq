@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
-import javax.jdo.Query;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,7 +17,6 @@ import easyliq.Calculators.Density;
 import easyliq.Calculators.RfFromCakeSaturation;
 import easyliq.dbobject.*;
 
-import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -165,7 +163,6 @@ public class ActionServlet extends HttpServlet {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         String query = "select from " + Document.class.getName()
                 + " where authorEmail=='" + user.getEmail() + "'";
-
         @SuppressWarnings("unchecked")
         List<Document> r = (List<Document>) pm.newQuery(query)
                 .execute();
@@ -181,7 +178,7 @@ public class ActionServlet extends HttpServlet {
                 }
                 isFirst = false;
                 json = json + "{"+ JsonPair("docName", doc.getName());                
-                json = json + "," + JsonPair("id", KeyFactory.keyToString(doc.getKey()));
+                json = json + "," + JsonPair("id", doc.getKey());
                 json = json + "}";
             }
             json = json + "]";
@@ -206,19 +203,15 @@ public class ActionServlet extends HttpServlet {
 		}
 		String id = request.getParameter("id");
 		try {
-			String query = "select from " + UserDocument.class.getName()
-					+ " where authorEmail=='" + user.getEmail() + "'";
-			@SuppressWarnings("unchecked")
-			List<UserDocument> r = (List<UserDocument>) pm.newQuery(query)
-					.execute();
-			if (r.isEmpty()) {
+			if (id.isEmpty()) {
 				UserDocument userDoc = new UserDocument(user.getEmail(), m);
 				pm.makePersistent(userDoc);
-				id = String.valueOf(userDoc.getKey());
+				id = userDoc.getKey();
+				response.getWriter().write(id);
 			} else {
-				UserDocument userDoc = pm.getObjectById(UserDocument.class, r
-						.get(0).getKey());
+				UserDocument userDoc = pm.getObjectById(UserDocument.class, id);
 				userDoc.setModules(m);
+				response.getWriter().write(id);
 			}
 		} finally {
 			pm.close();
@@ -237,7 +230,7 @@ public class ActionServlet extends HttpServlet {
             if (id.isEmpty()) {
                 Document doc = new Document(name, user.getEmail());
                 pm.makePersistent(doc);
-                String key = KeyFactory.keyToString(doc.getKey());
+                String key = doc.getKey();
                 response.getWriter().write(key);
             } else {
                 Document doc = pm.getObjectById(Document.class, id);

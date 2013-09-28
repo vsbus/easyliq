@@ -9,6 +9,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 
 @PersistenceCapable
 public class UserDocument {
@@ -31,8 +32,8 @@ public class UserDocument {
         this.modules = modules;
     }
     
-    public long getKey() {
-        return key.getId();
+    public String getKey() {
+        return KeyFactory.keyToString(key);
     }
 
     public String getAuthorEmail() {
