@@ -14,26 +14,27 @@ function SaveAll() {
 }
 
 function SaveDoc(doc) {
-    var request = {
-        id : doc.id,
-        action : "savedoc",
-        docName : doc.name
-    }
-    $.get('ActionServlet', request, function(responseText) {
-        userdocId = responseText;
-        doc.id = responseText;
-        alert(doc.id);
-    });
+    $.ajax({
+        url: "/ActionServlet",
+       // beforeSend: function(){$("#overlay").show(); alert("show");},
+        //complete: function(){$("#overlay").hide(); alert("hide");},
+        data: {action : "savedoc", id : doc.id, docName : doc.name},
+        success: function(responseText) {
+            userdocId = responseText;
+            doc.id = responseText;
+            },
+        async:   false
+   });
 }
 
 function LoadAll() {
     var request = {
         action : "load"
     }
-//    main_menu = document.getElementById("main_menu");
-//    main_menu.style.visibility = "hidden";
-//    status_msg = document.getElementById("status_message");
-//    status_msg.textContent = "Loading...";
+    main_menu = document.getElementById("main_menu");
+    main_menu.style.visibility = "hidden";
+    status_msg = document.getElementById("status_message");
+    status_msg.textContent = "Loading...";
     $.get('ActionServlet', request, function(response) {
         // Remove controls from UI.
         for (var i in currentModules) {
@@ -47,28 +48,30 @@ function LoadAll() {
             var module = Deserialize(response[i])
             addModule(module)
         }
-      //  main_menu.style.visibility = "visible";
-      //  status_msg.textContent = "";
+        main_menu.style.visibility = "visible";
+        status_msg.textContent = "";
     });
 }
 
 function LoadDocs() {
-    var request = {
-            action : "loaddoc"
-        }    
-    $.get('ActionServlet', request, function(response) {
-        // Remove controls from UI.
-        for (var i in currentModules) {
-            var c = currentModules[i].control;
-            c.parentNode.removeChild(c);
-        }
-        // Clear modules array.
-        documents = []
-        // Create new modules that download from DB.
-        for (var i in response) {
-            addDocument_(response[i].name, response[i].id);
-        }
-    });
+    $.ajax({
+        url: "/ActionServlet",
+        data: {action : "loaddoc"},
+        success: function(response) {
+                // Remove controls from UI.
+                for (var i in currentModules) {
+                    var c = currentModules[i].control;
+                    c.parentNode.removeChild(c);
+                }
+                // Clear modules array.
+                documents = []
+                // Create new modules that download from DB.
+                for (var i in response) {
+                    addDocument(response[i].docName, response[i].id);
+                }
+            },
+        async:   false
+   });
 }
 
 function removeDoc(){
@@ -78,7 +81,6 @@ function removeDoc(){
             id: currentDoc.id
         } 
     $.get('ActionServlet', request, function(response) {
-       alert(2);
     });    
 }
 

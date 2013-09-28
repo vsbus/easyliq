@@ -41,31 +41,18 @@ function UpdateChangeByUserTime(module, action_time) {
     last_change_by_user_time = action_time;
 }
 
-function addDocument() {
+function addDefaultDocument() {
 	var name = "Untitled";
+	var id = null;
 	if (documents.length > 0) {
 		name = documents[documents.length - 1].name + "0";
+		
 	}
-	var ndoc = {
-	    id: null,
-		name: name,
-		element: document.createElement("input")
-	}
-	ndoc.element.style.background = "white";
-	ndoc.element.setAttribute("type", "button");
-	ndoc.element.value = name;
-	ndoc.element.onclick = function () {
-		setCurrentDocument(ndoc);
-	};
-	document.getElementById("documents_list").appendChild(ndoc.element);
-	documents[documents.length] = ndoc;
+	var ndoc = addDocument(name, id);
 	SaveDoc(ndoc);
 }
 
-function addDocument_(name, id) {
-    if (documents.length > 0) {
-        name = documents[documents.length - 1].name + "0";
-    }
+function addDocument(name, id) {
     var ndoc = {
         id: id,
         name: name,
@@ -79,6 +66,7 @@ function addDocument_(name, id) {
     };
     document.getElementById("documents_list").appendChild(ndoc.element);
     documents[documents.length] = ndoc;
+    return ndoc;
 }
 
 function setCurrentDocument(doc) {
@@ -93,9 +81,10 @@ function initWorkspace() {
     LoadDocs();
 	LoadAll();
 	if (documents.length == 0) {
-		addDocument();
-		setCurrentDocument(documents[0]);
+		addDefaultDocument();
+		//setCurrentDocument(documents[0]);
 	}
+	setCurrentDocument(documents[0]);
 }
 
 function addModule(m) {

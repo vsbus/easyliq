@@ -66,7 +66,7 @@ public class ActionServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
-
+	
 	private void Calculate(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		Calculator calculator = CreateCalculator(request
@@ -225,7 +225,6 @@ public class ActionServlet extends HttpServlet {
 		}
 	}
 	
-	
 	private void SaveDoc(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         UserService userService = UserServiceFactory.getUserService();
@@ -235,23 +234,14 @@ public class ActionServlet extends HttpServlet {
         String name = request.getParameter("docName");
         String id = request.getParameter("id");
         try {
-            String query = "select from " + Document.class.getName()
-                    + " where authorEmail=='" + user.getEmail() +"'";
-            if(!id.isEmpty()) {
-                query = query + " and id == '" + id + "'"; //
-            }
-            @SuppressWarnings("unchecked")
-            List<Document> r = (List<Document>) pm.newQuery(query)
-                    .execute();
             if (id.isEmpty()) {
                 Document doc = new Document(name, user.getEmail());
                 pm.makePersistent(doc);
                 String key = KeyFactory.keyToString(doc.getKey());
                 response.getWriter().write(key);
             } else {
-                Document userDoc = pm.getObjectById(Document.class, id);
-                userDoc.setName(name);
-                id = String.valueOf(userDoc.getId());
+                Document doc = pm.getObjectById(Document.class, id);
+                doc.setName(name);
                 response.getWriter().write(id);
             }
         } finally {

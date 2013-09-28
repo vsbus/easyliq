@@ -33,6 +33,7 @@
 <body  style= "background:url('assets/images/bg.png') repeat scroll left top transparent">
  
     <form>
+    <div id = "modal-overlay" > </div> 
     <div class = "container">
     <div class = "inputbar">
 <%
@@ -47,13 +48,15 @@ if (user != null) {
     response.sendRedirect(userService.createLoginURL(request.getRequestURI()));
     }
 %>
+            
             <div id = "status_message">
             </div>
             <div id = "main_menu">
             <div>
               Document:
-              <input type="button" onclick="javascript: addDocument();" value="Add"/>
+              <input type="button" onclick="javascript: addDefaultDocument();" value="Add"/>
               <input type="button" onclick="javascript: removeDocumentClick();" value="Remove"/>
+              <input type="button" onclick="javascript: renameDocumentClick();" value="Rename"/>
               <div id="documents_list">
               </div>
             </div>
@@ -68,9 +71,11 @@ if (user != null) {
             
             </div>
     </div>
+    
 </form>
 <script  type="text/javascript">
 initWorkspace();
+//$("#overlay").fadeOut();
 </script>
 </body>
 </html>

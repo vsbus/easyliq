@@ -25,9 +25,18 @@ function removeDocumentClick() {
         	idx = idx - 1;
         }
         if (idx < 0) {
-        	addDocument();
+        	addDefaultDocument();
         	idx = 0;
         }
         setCurrentDocument(documents[idx]);
 	}
+}
+
+function renameDocumentClick() {
+    if (currentDoc != null) {
+        currentDoc.name = currentDoc.name + "1";
+        currentDoc.element.value = currentDoc.name
+        SaveDoc(currentDoc);
+        
+    }
 }
