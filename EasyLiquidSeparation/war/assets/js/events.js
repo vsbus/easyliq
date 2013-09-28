@@ -17,6 +17,7 @@ function addModuleButtonClick(module) {
 
 function removeDocumentClick() {
 	if (currentDoc != null) {
+	    removeDoc();
 		document.getElementById("documents_list").removeChild(currentDoc.element);
 		var idx = documents.indexOf(currentDoc);
         documents.splice(idx, 1);

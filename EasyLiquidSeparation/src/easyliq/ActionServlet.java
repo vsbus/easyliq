@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +18,7 @@ import easyliq.Calculators.Density;
 import easyliq.Calculators.RfFromCakeSaturation;
 import easyliq.dbobject.*;
 
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -47,9 +49,18 @@ public class ActionServlet extends HttpServlet {
 			if (action.equals("save")) {
 				Save(request, response);
 			}
+			if (action.equals("savedoc")) {
+                SaveDoc(request, response);
+            }
+			if (action.equals("removedoc")) {
+                RemoveDoc(request, response);
+            }
 			if (action.equals("load")) {
 				Load(request, response);
 			}
+			if (action.equals("loaddoc")) {
+                LoadDoc(request, response);
+            }
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -130,7 +141,54 @@ public class ActionServlet extends HttpServlet {
 			response.getWriter().write(json);
 		}
 	}
+	
 
+    private void RemoveDoc(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        UserService userService = UserServiceFactory.getUserService();
+        User user = userService.getCurrentUser();
+
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        String id = request.getParameter("id");
+        try {
+                pm.deletePersistent(pm.getObjectById(Document.class, id));
+        } finally {
+            pm.close();
+        }
+    }
+
+	private void LoadDoc(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        UserService userService = UserServiceFactory.getUserService();
+        User user = userService.getCurrentUser();
+
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        String query = "select from " + Document.class.getName()
+                + " where authorEmail=='" + user.getEmail() + "'";
+
+        @SuppressWarnings("unchecked")
+        List<Document> r = (List<Document>) pm.newQuery(query)
+                .execute();
+        if (!r.isEmpty()) {
+            Document userdoc = r.get(0);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            String json = "[";
+            boolean isFirst = true;
+            for (Document doc : r) {
+                if (!isFirst) {
+                    json = json + ",";
+                }
+                isFirst = false;
+                json = json + "{"+ JsonPair("docName", doc.getName());                
+                json = json + "," + JsonPair("id", KeyFactory.keyToString(doc.getKey()));
+                json = json + "}";
+            }
+            json = json + "]";
+            pm.close();
+            response.getWriter().write(json);
+        }
+    }
 	private String JsonPair(String name, String value) {
 		return "\"" + name + "\":\"" + value + "\"";
 	}
@@ -166,4 +224,38 @@ public class ActionServlet extends HttpServlet {
 			pm.close();
 		}
 	}
+	
+	
+	private void SaveDoc(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        UserService userService = UserServiceFactory.getUserService();
+        User user = userService.getCurrentUser();
+
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        String name = request.getParameter("docName");
+        String id = request.getParameter("id");
+        try {
+            String query = "select from " + Document.class.getName()
+                    + " where authorEmail=='" + user.getEmail() +"'";
+            if(!id.isEmpty()) {
+                query = query + " and id == '" + id + "'"; //
+            }
+            @SuppressWarnings("unchecked")
+            List<Document> r = (List<Document>) pm.newQuery(query)
+                    .execute();
+            if (id.isEmpty()) {
+                Document doc = new Document(name, user.getEmail());
+                pm.makePersistent(doc);
+                String key = KeyFactory.keyToString(doc.getKey());
+                response.getWriter().write(key);
+            } else {
+                Document userDoc = pm.getObjectById(Document.class, id);
+                userDoc.setName(name);
+                id = String.valueOf(userDoc.getId());
+                response.getWriter().write(id);
+            }
+        } finally {
+            pm.close();
+        }
+    }
 }

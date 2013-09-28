@@ -47,6 +47,7 @@ function addDocument() {
 		name = documents[documents.length - 1].name + "0";
 	}
 	var ndoc = {
+	    id: null,
 		name: name,
 		element: document.createElement("input")
 	}
@@ -58,6 +59,26 @@ function addDocument() {
 	};
 	document.getElementById("documents_list").appendChild(ndoc.element);
 	documents[documents.length] = ndoc;
+	SaveDoc(ndoc);
+}
+
+function addDocument_(name, id) {
+    if (documents.length > 0) {
+        name = documents[documents.length - 1].name + "0";
+    }
+    var ndoc = {
+        id: id,
+        name: name,
+        element: document.createElement("input")
+    }
+    ndoc.element.style.background = "white";
+    ndoc.element.setAttribute("type", "button");
+    ndoc.element.value = name;
+    ndoc.element.onclick = function () {
+        setCurrentDocument(ndoc);
+    };
+    document.getElementById("documents_list").appendChild(ndoc.element);
+    documents[documents.length] = ndoc;
 }
 
 function setCurrentDocument(doc) {
@@ -69,6 +90,7 @@ function setCurrentDocument(doc) {
 }
 
 function initWorkspace() {
+    LoadDocs();
 	LoadAll();
 	if (documents.length == 0) {
 		addDocument();
