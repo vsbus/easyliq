@@ -125,7 +125,7 @@ public class ActionServlet extends HttpServlet {
 			UserDocument userdoc = r.get(0);
 			response.setContentType("application/json");
 			response.setCharacterEncoding("UTF-8");
-			String json = "[";
+			String json = "{\"id\":\""+ userdoc.getKey()+"\",\"modules\": [";
 			boolean isFirst = true;
 			for (String m : userdoc.getModules()) {
 				if (!isFirst) {
@@ -134,7 +134,7 @@ public class ActionServlet extends HttpServlet {
 				isFirst = false;
 				json = json + m;
 			}
-			json = json + "]";
+			json = json + "]}";
 			pm.close();
 			response.getWriter().write(json);
 		}

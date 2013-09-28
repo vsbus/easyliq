@@ -16,15 +16,16 @@ function SaveAll() {
 function SaveDoc(doc) {
     $.ajax({
         url: "/ActionServlet",
-       // beforeSend: function(){$("#overlay").show(); alert("show");},
-        //complete: function(){$("#overlay").hide(); alert("hide");},
+        //beforeSend: function(){$("#overlay").show(); console.log("show");},
+        //complete: function(){$("#overlay").hide(); console.log("hide");},
         data: {action : "savedoc", id : doc.id, docName : doc.name},
         success: function(responseText) {
             userdocId = responseText;
             doc.id = responseText;
             },
-        async:   false
+        async: false
    });
+    //$("#overlay").hide(); console.log("hide");
 }
 
 function LoadAll() {
@@ -36,6 +37,7 @@ function LoadAll() {
     status_msg = document.getElementById("status_message");
     status_msg.textContent = "Loading...";
     $.get('ActionServlet', request, function(response) {
+        userdocId = response.id;
         // Remove controls from UI.
         for (var i in currentModules) {
             var c = currentModules[i].control;
@@ -44,8 +46,8 @@ function LoadAll() {
         // Clear modules array.
         currentModules = []
         // Create new modules that download from DB.
-        for (var i in response) {
-            var module = Deserialize(response[i])
+        for (var i in response.modules) {
+            var module = Deserialize(response.modules[i])
             addModule(module)
         }
         main_menu.style.visibility = "visible";
@@ -67,7 +69,8 @@ function LoadDocs() {
                 documents = []
                 // Create new modules that download from DB.
                 for (var i in response) {
-                    addDocument(response[i].docName, response[i].id);
+                    var doc = addDocument(response[i].docName, response[i].id);
+                    DisplayDocument(doc);
                 }
             },
         async:   false
