@@ -9,15 +9,15 @@ function createCopyButton(module, buttonsDiv) {
     btn.setAttribute("type", "button");
     btn.setAttribute("value", "C");
     btn.onclick = function() {
-        var idx = currentModules.indexOf(module);
+        var idx = currentDoc.modules.indexOf(module);
         var newModule = module.Copy();
         newModule.id = null;
-        currentModules.splice(idx + 1, 0, newModule);
+        currentDoc.modules.splice(idx + 1, 0, newModule);
         var newModuleBlock = createModuleDiv(newModule);
         var moduleDiv = module.control;
         moduleDiv.parentNode
                 .insertBefore(newModuleBlock, moduleDiv.nextSibling);
-        SaveAll();
+        SaveDoc(currentDoc);
     }
     buttonsDiv.appendChild(btn);
 }
@@ -27,11 +27,11 @@ function createRemoveButton(module, buttonsDiv) {
     btn.setAttribute("type", "button");
     btn.setAttribute("value", "X");
     btn.onclick = function() {
-        var idx = currentModules.indexOf(module);
-        currentModules.splice(idx, 1);
+        var idx = currentDoc.modules.indexOf(module);
+        currentDoc.modules.splice(idx, 1);
         var moduleDiv = module.control;
         moduleDiv.parentNode.removeChild(moduleDiv);
-        SaveAll();
+        SaveDoc(currentDoc);
     }
     buttonsDiv.appendChild(btn);
 }

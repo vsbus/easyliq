@@ -1,5 +1,4 @@
-/*
-#modal-overlay {
+#overlay {
     position: fixed;
     z-index: 10;
     background: black;
@@ -9,7 +8,7 @@
     width: 100%;
     height: 100%;
 }
-*/
+
 input {
 	-moz-box-sizing: border-box;
 	font-family: arial, verdana;

@@ -33,7 +33,7 @@
 <body  style= "background:url('assets/images/bg.png') repeat scroll left top transparent">
  
     <form>
-    <div id = "modal-overlay" > </div> 
+    <div id = "overlay" > </div> 
     <div class = "container">
     <div class = "inputbar">
 <%
@@ -75,7 +75,7 @@ if (user != null) {
 </form>
 <script  type="text/javascript">
 initWorkspace();
-//$("#overlay").fadeOut();
+$("#overlay").hide();
 </script>
 </body>
 </html>

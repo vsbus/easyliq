@@ -12,7 +12,7 @@ function parameterValueChanged(m, parameter) {
 
 function addModuleButtonClick(module) {
 	addModule(module);
-	SaveAll();
+	SaveDoc(currentDoc);
 }
 
 function removeDocumentClick() {
@@ -36,7 +36,6 @@ function renameDocumentClick() {
     if (currentDoc != null) {
         currentDoc.name = currentDoc.name + "1";
         currentDoc.element.value = currentDoc.name
-        SaveDoc(currentDoc);
-        
+        SaveDoc(currentDoc);        
     }
 }

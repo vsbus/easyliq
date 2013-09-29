@@ -14,7 +14,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 @PersistenceCapable
 public class UserDocument {
     
-    /* if it says that class "UserDocument" is not persistable. blah blah blah", it is an issue of DataNucleus Enhancer.
+    /* if it says that class "DocumentTest" is not persistable. blah blah blah", it is an issue of DataNucleus Enhancer.
      * To solve this problem open an entity classes and change something (add a space or something) and save.
      */
     @PrimaryKey
@@ -26,9 +26,13 @@ public class UserDocument {
     
     @Persistent
     private List<String> modules;
+    
+    @Persistent
+    private String name;
         
-    public UserDocument(String authorEmail, List<String> modules) {
+    public UserDocument(String name, String authorEmail, List<String> modules) {
         this.authorEmail = authorEmail;
+        this.name = name;
         this.modules = modules;
     }
     
@@ -40,15 +44,24 @@ public class UserDocument {
         return authorEmail;
     }
 
-    public List<String> getModules() {
-        return modules;
+    public String getName() {
+        return name;
     }
 
     public void setAuthorEmail(String email) {
         this.authorEmail = email;
     }
     
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public List<String> getModules() {
+        return modules;
+    }
+    
     public void setModules(List<String> modules) {
         this.modules = new ArrayList<String>(modules);
     }    
+
 }
