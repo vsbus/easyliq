@@ -112,6 +112,11 @@ public class ActionServlet extends HttpServlet {
         String id = request.getParameter("id");
         try {
             pm.deletePersistent(pm.getObjectById(UserDocument.class, id));
+			// Hack to force data store to apply deletion: As pm.getObjectById
+			// throws exceptions for not existing objects we are using
+			// pm.flush() here that works fine with deleting but not with
+			// changing elements.
+            pm.flush();
         } finally {
             pm.close();
         }
@@ -167,6 +172,7 @@ public class ActionServlet extends HttpServlet {
         User user = userService.getCurrentUser();
 
         PersistenceManager pm = PMF.get().getPersistenceManager();
+        pm.setIgnoreCache(true);
         String name = request.getParameter("docName");
         String id = request.getParameter("id");
         String[] s = request.getParameterValues("modules[]");
@@ -179,13 +185,17 @@ public class ActionServlet extends HttpServlet {
                 UserDocument doc = new UserDocument(name, user.getEmail(),
                         modules);
                 pm.makePersistent(doc);
-                String key = doc.getKey();
+                String key = doc.getKey();                
                 response.getWriter().write(key);
+                // Hack to force data store to apply changes: Query to the added element.
+                pm.getObjectById(UserDocument.class, key);
             } else {
                 UserDocument doc = pm.getObjectById(UserDocument.class, id);
                 doc.setName(name);
                 doc.setModules(modules);
                 response.getWriter().write(id);
+                // Hack to force data store to apply changes: Query to the added element.
+                pm.getObjectById(UserDocument.class, id);
             }
         } finally {
             pm.close();
