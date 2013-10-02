@@ -34,12 +34,19 @@ function removeDocumentClick() {
 
 function renameDocumentClick() {
     if (currentDoc != null) {
-        currentDoc.name = currentDoc.name + "1";
-        var a = currentDoc.element.getElementsByTagName("a")[0];
-        var i = document.createElement("i");
-        i.setAttribute("class", "icon-chevron-right");
-        a.innerHTML = currentDoc.name;
-        a.appendChild(i);
-        SaveDoc(currentDoc);        
+        $("#overlay").show();
+        var e = document.getElementById("doc_name");
+        e.value = currentDoc.name;
+        e.focus();
+        document.getElementById("save_doc").onclick = function(){
+            currentDoc.name = e.value;
+            var a = currentDoc.element.getElementsByTagName("a")[0];
+            var i = document.createElement("i");
+            i.setAttribute("class", "icon-chevron-right");
+            a.innerHTML = currentDoc.name;
+            a.appendChild(i);
+            SaveDoc(currentDoc);
+            $("#overlay").hide();
+        }
     }
 }

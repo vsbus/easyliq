@@ -45,13 +45,20 @@ function UpdateChangeByUserTime(module, action_time) {
 function addDefaultDocument() {
     var name = "Untitled";
     var id = null;
-    if (documents.length > 0) {
+    /*if (documents.length > 0) {
         name = documents[documents.length - 1].name + "0";
-
+    } */   
+    $("#overlay").show();
+    var e = document.getElementById("doc_name");
+    e.value = name;
+    e.focus();
+    document.getElementById("save_doc").onclick = function(){
+        name = e.value;
+        var ndoc = addDocument(name, id, []);
+        SaveDoc(ndoc);
+        DisplayDocument(ndoc);
+        $("#overlay").hide();
     }
-    var ndoc = addDocument(name, id, []);
-    SaveDoc(ndoc);
-    DisplayDocument(ndoc);
 }
 function DisplayDocument(doc) {
     document.getElementById("documents_list").appendChild(doc.element);

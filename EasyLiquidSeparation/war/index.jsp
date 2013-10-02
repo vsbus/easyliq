@@ -35,7 +35,11 @@
  
     <form>
     <div id = "overlay" > 
-            
+        <div style="display: block; height: 100px; left: 35%;position: absolute; top: 45%; width: 30%; z-index: 100;" class="inputbar">
+            document name:
+            <input type="text" id="doc_name"></input>
+            <input type = "button" id="save_doc" value="Save"></input>
+        </div>    
     </div>
     <div class="bs-docs-sidebar">
         <ul id="documents_list" class="nav nav-list bs-docs-sidenav affix">
