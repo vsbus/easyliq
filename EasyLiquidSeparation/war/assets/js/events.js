@@ -35,7 +35,11 @@ function removeDocumentClick() {
 function renameDocumentClick() {
     if (currentDoc != null) {
         currentDoc.name = currentDoc.name + "1";
-        currentDoc.element.value = currentDoc.name
+        var a = currentDoc.element.getElementsByTagName("a")[0];
+        var i = document.createElement("i");
+        i.setAttribute("class", "icon-chevron-right");
+        a.innerHTML = currentDoc.name;
+        a.appendChild(i);
         SaveDoc(currentDoc);        
     }
 }

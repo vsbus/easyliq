@@ -10,6 +10,7 @@
 <head>
 
 <link href="assets/css/bootstrap.css" type="text/css" rel="stylesheet" media="screen"/>
+<link href="assets/css/docs.css" type="text/css" rel="stylesheet" media="screen"/>
 <link href="assets/css/styles.css" type="text/css" rel="stylesheet"/>
 
 <script src="http://code.jquery.com/jquery-latest.js"></script>
@@ -33,7 +34,20 @@
 <body  style= "background:url('assets/images/bg.png') repeat scroll left top transparent">
  
     <form>
-    <div id = "overlay" > </div> 
+    <div id = "overlay" > 
+            
+    </div>
+    <div class="bs-docs-sidebar">
+        <ul id="documents_list" class="nav nav-list bs-docs-sidenav affix">
+          <li><a>Document:
+            <input type="button" onclick="javascript: addDefaultDocument();" value="Add"/>
+              <input type="button" onclick="javascript: removeDocumentClick();" value="Remove"/>
+              <input type="button" onclick="javascript: renameDocumentClick();" value="Rename"/>
+              </a>
+          </li>
+        </ul>
+      </div>
+     
     <div class = "container">
     <div class = "inputbar">
 <%
@@ -53,22 +67,15 @@ if (user != null) {
             </div>
             <div id = "main_menu">
             <div>
-              Document:
-              <input type="button" onclick="javascript: addDefaultDocument();" value="Add"/>
-              <input type="button" onclick="javascript: removeDocumentClick();" value="Remove"/>
-              <input type="button" onclick="javascript: renameDocumentClick();" value="Rename"/>
-              <div id="documents_list">
-              </div>
-            </div>
-            <div>
               Add Module: 
               <input type="button" onclick="javascript: addModuleButtonClick(new DensityConcentration());" value="DensityConcentration"/>
               <input type="button" onclick="javascript: addModuleButtonClick(new RfFromCakeSaturation());" value="RfFromCakeSaturation"/>        
             </div>
             </div>
         </div>
+  
         <div class="row"> 
-            
+
             </div>
     </div>
     

@@ -63,16 +63,21 @@ function addDocument(name, id, modules) {
         id : id,
         name : name,
         modules : modules,
-        element : document.createElement("input")
+        element : document.createElement("li")
     }
-    doc.element.style.background = "white";
-    doc.element.setAttribute("type", "button");
-    doc.element.value = name;
-    doc.element.onclick = function() {
+    var a = document.createElement("a");
+    var i = document.createElement("i");
+    i.setAttribute("class", "icon-chevron-right");
+    a.innerHTML = name;
+    a.appendChild(i);
+    a.onclick = function() {
         setCurrentDocument(doc);
     };
+    doc.element.appendChild(a);
     return doc;
 }
+//<li><a onclick = "javascript: addModule());"><i class="icon-chevron-right"></i> DensityConcentration</a></li>
+
 
 function ClearModulesSection() {
     if (!currentDoc) {
@@ -88,10 +93,10 @@ function ClearModulesSection() {
 function setCurrentDocument(doc) {
     ClearModulesSection();
     if (currentDoc != null) {
-        currentDoc.element.style.background = "white";
+        currentDoc.element.setAttribute("class", "");
     }
     currentDoc = doc;
-    currentDoc.element.style.background = "pink";
+    currentDoc.element.setAttribute("class", "active");
 
     for ( var i in doc.modules) {
         drawModule(doc.modules[i]);
