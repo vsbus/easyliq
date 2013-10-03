@@ -34,19 +34,23 @@ function removeDocumentClick() {
 
 function renameDocumentClick() {
     if (currentDoc != null) {
-        $("#overlay").show();
+        $("#shadow").show();
         var e = document.getElementById("doc_name");
         e.value = currentDoc.name;
         e.focus();
         document.getElementById("save_doc").onclick = function(){
-            currentDoc.name = e.value;
-            var a = currentDoc.element.getElementsByTagName("a")[0];
-            var i = document.createElement("i");
-            i.setAttribute("class", "icon-chevron-right");
-            a.innerHTML = currentDoc.name;
-            a.appendChild(i);
+            if(!isValid()) {
+                return;
+            }
+            currentDoc.name = e.value.trim();
+            DisplayDocumentName(currentDoc.name, currentDoc.element.getElementsByTagName("a")[0]);
             SaveDoc(currentDoc);
-            $("#overlay").hide();
+            $("#shadow").hide();
         }
     }
+}
+
+function cancelDocumentNameChange() {
+    document.getElementById('valid_message').innerHTML='';
+    $('#shadow').hide();
 }

@@ -34,14 +34,16 @@
 <body  style= "background:url('assets/images/bg.png') repeat scroll left top transparent">
  
     <form>
-    <div id = "overlay" > 
-        <div style="display: block; height: 100px; left: 35%;position: absolute; top: 45%; width: 30%; z-index: 100;" class="inputbar">
+    <div id="shadow">
+        <div id = "overlay" ></div>
+        <div id ="docname_popup" class="inputbar">
             document name:
-            <input type="text" id="doc_name"></input>
+            <div id="valid_message"></div>
+            <input type="text" id="doc_name"></input>            
             <input type = "button" id="save_doc" value="Save"></input>
-            <input type = "button" onclick="javascript:  $('#overlay').hide();" value="Cancel"></input>
-        </div>    
-    </div>
+            <input type = "button" onclick="javascript: cancelDocumentNameChange();" value="Cancel"/>
+        </div>
+     </div>
     <div class="bs-docs-sidebar">
         <ul id="documents_list" class="nav nav-list bs-docs-sidenav affix">
           <li><a><div>Document:</div>
@@ -87,7 +89,7 @@ if (user != null) {
 </form>
 <script  type="text/javascript">
 initWorkspace();
-$("#overlay").hide();
+$("#shadow").hide();
 </script>
 </body>
 </html>

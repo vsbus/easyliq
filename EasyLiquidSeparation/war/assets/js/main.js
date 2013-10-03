@@ -9,6 +9,10 @@ var digits_after_point = 3;
 var documents = [];
 var currentDoc = null;
 
+String.prototype.trim = function() {
+    return this.replace(/^\s+|\s+$/g, '');
+};
+
 function Process() {
     now = new Date();
     processing_time = now.getTime();
@@ -47,20 +51,37 @@ function addDefaultDocument() {
     var id = null;
     /*if (documents.length > 0) {
         name = documents[documents.length - 1].name + "0";
-    } */   
-    $("#overlay").show();
+    } */
+    $("#shadow").show();
     var e = document.getElementById("doc_name");
     e.value = name;
     e.focus();
-    document.getElementById("save_doc").onclick = function(){
-        name = e.value;
+    document.getElementById("save_doc").onclick = function() {
+        if (!isValid()) {
+            return;
+        }
+        name = e.value.trim();
         var ndoc = addDocument(name, id, []);
         SaveDoc(ndoc);
         DisplayDocument(ndoc);
         setCurrentDocument(ndoc);
-        $("#overlay").hide();
+
+        $("#shadow").hide();
     }
 }
+
+function isValid() {
+    var e = document.getElementById("doc_name").value;
+    var m = document.getElementById("valid_message");
+    if (e.trim()) {
+        m.innerHTML = "";
+        return true;
+    } else {
+        m.innerHTML = "please input nonempty name";
+        return false;
+    }
+}
+
 function DisplayDocument(doc) {
     document.getElementById("documents_list").appendChild(doc.element);
     documents[documents.length] = doc;
@@ -74,18 +95,20 @@ function addDocument(name, id, modules) {
         element : document.createElement("li")
     }
     var a = document.createElement("a");
-    var i = document.createElement("i");
-    i.setAttribute("class", "icon-chevron-right");
-    a.innerHTML = name;
-    a.appendChild(i);
+    DisplayDocumentName(name, a);
     a.onclick = function() {
         setCurrentDocument(doc);
     };
     doc.element.appendChild(a);
     return doc;
 }
-//<li><a onclick = "javascript: addModule());"><i class="icon-chevron-right"></i> DensityConcentration</a></li>
 
+function DisplayDocumentName(name, el) {    
+    var i = document.createElement("i");
+    i.setAttribute("class", "icon-chevron-right");
+    el.innerHTML = name;
+    el.appendChild(i);
+}
 
 function ClearModulesSection() {
     if (!currentDoc) {

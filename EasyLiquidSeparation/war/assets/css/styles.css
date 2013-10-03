@@ -9,6 +9,21 @@
     height: 100%;
 }
 
+#docname_popup {
+	display: block; 
+	height: 130px; 
+	left: 35%;position: 
+	absolute; top: 
+	45%; width: 30%; 
+	z-index: 100;
+}
+
+#valid_message {
+	color:red; 
+	font-size: 11px; 
+	height: 21px;
+}
+
 input {
 	-moz-box-sizing: border-box;
 	font-family: arial, verdana;
