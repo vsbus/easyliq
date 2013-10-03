@@ -57,6 +57,7 @@ function addDefaultDocument() {
         var ndoc = addDocument(name, id, []);
         SaveDoc(ndoc);
         DisplayDocument(ndoc);
+        setCurrentDocument(ndoc);
         $("#overlay").hide();
     }
 }

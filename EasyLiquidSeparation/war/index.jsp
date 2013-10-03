@@ -39,11 +39,12 @@
             document name:
             <input type="text" id="doc_name"></input>
             <input type = "button" id="save_doc" value="Save"></input>
+            <input type = "button" onclick="javascript:  $('#overlay').hide();" value="Cancel"></input>
         </div>    
     </div>
     <div class="bs-docs-sidebar">
         <ul id="documents_list" class="nav nav-list bs-docs-sidenav affix">
-          <li><a>Document:
+          <li><a><div>Document:</div>
             <input type="button" onclick="javascript: addDefaultDocument();" value="Add"/>
               <input type="button" onclick="javascript: removeDocumentClick();" value="Remove"/>
               <input type="button" onclick="javascript: renameDocumentClick();" value="Rename"/>
