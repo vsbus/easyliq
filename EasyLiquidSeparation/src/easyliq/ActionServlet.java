@@ -58,6 +58,31 @@ public class ActionServlet extends HttpServlet {
             e.printStackTrace();
         }
     }
+    
+    protected void doPost(HttpServletRequest request,
+            HttpServletResponse response) {
+        String action = request.getParameter("action");
+        if (action == null) {
+            return;
+        }
+        try {
+            if (action.equals("calculate")) {
+                Calculate(request, response);
+            }
+            if (action.equals("savedoc")) {
+                SaveDoc(request, response);
+            }
+            if (action.equals("removedoc")) {
+                RemoveDoc(request, response);
+            }
+            if (action.equals("loaddoc")) {
+                LoadDoc(request, response);
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
     private void Calculate(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
