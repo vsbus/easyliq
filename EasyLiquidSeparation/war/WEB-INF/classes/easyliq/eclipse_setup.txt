@@ -1,0 +1,6 @@
+1. kill java 7.
+2. kill java 6.
+3. install jdk 7 x64.
+4. install eclipse kepler x64.
+5. run eclipse and install java se 6 using OK button from eclipse.
+6. install app engine plug-in in eclipse (app engine sdk and plug-in).
