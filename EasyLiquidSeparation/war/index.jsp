@@ -35,7 +35,7 @@
  
 <form>
   <div class = "">
-    <div class = "row" style="white-space: nowrap">
+    <div class = "row">
       <div class = "span3"> 
         <div id="shadow">
           <div id = "overlay" ></div>
@@ -59,7 +59,7 @@
         </div>
       </div>
        
-      <div class = "span12" style="float:none; display: inline-block">
+      <div class = "span12">
         <div class = "inputbar">
   <%
   UserService userService = UserServiceFactory.getUserService();
