@@ -129,8 +129,8 @@ function setCurrentDocument(doc) {
     currentDoc = doc;
     currentDoc.element.setAttribute("class", "active");
 
-    for ( var i in doc.modules) {
-        drawModule(doc.modules[i]);
+    for (var i in doc.modules) {
+        addModuleDiv(doc.modules[i]);
     }
 }
 
@@ -145,5 +145,5 @@ function initWorkspace() {
 
 function addModule(m) {
     currentDoc.modules.push(m);
-    drawModule(m);
+    addModuleDiv(m);
 }

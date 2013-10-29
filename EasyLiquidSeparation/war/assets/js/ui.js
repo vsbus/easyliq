@@ -1,7 +1,27 @@
-function drawModule(m) {
-    var mainDiv = document.getElementsByClassName("row")[0];
-    mainDiv.appendChild(createModuleDiv(m));
+function resizeModulesDiv() {
+    // Resize modules container because I couldn't figure out how to get this
+    // automatically with CSS.
+    var modulesDiv = document.getElementById("modules_div");
+    var padding = 20;
+    var moduleDefaultWidth = padding + 300;
+	modulesDiv.style.width = moduleDefaultWidth * (modulesDiv.childNodes.length - 1) + padding;	
+}
+
+function addModuleDiv(m) {
+	var modulesDiv = document.getElementById("modules_div");
+    modulesDiv.appendChild(createModuleDiv(m));
+    resizeModulesDiv();
     m.combos[0].control.onchange();
+}
+
+function removeModuleDiv(moduleDiv) {
+    moduleDiv.parentNode.removeChild(moduleDiv);
+    resizeModulesDiv();
+}
+
+function insertModuleDivBefore(newModuleDiv, parentDiv, beforeModuleDiv) {
+    parentDiv.insertBefore(newModuleDiv, beforeModuleDiv);
+    resizeModulesDiv();
 }
 
 function createCopyButton(module, buttonsDiv) {
@@ -14,9 +34,9 @@ function createCopyButton(module, buttonsDiv) {
         newModule.id = null;
         currentDoc.modules.splice(idx + 1, 0, newModule);
         var newModuleBlock = createModuleDiv(newModule);
-        var moduleDiv = module.control;
-        moduleDiv.parentNode
-                .insertBefore(newModuleBlock, moduleDiv.nextSibling);
+        insertModuleDivBefore(newModuleBlock,
+        					  module.control.parentNode,
+        					  module.control.nextSibling);
         SaveDoc(currentDoc);
     }
     buttonsDiv.appendChild(btn);
@@ -30,7 +50,7 @@ function createRemoveButton(module, buttonsDiv) {
         var idx = currentDoc.modules.indexOf(module);
         currentDoc.modules.splice(idx, 1);
         var moduleDiv = module.control;
-        moduleDiv.parentNode.removeChild(moduleDiv);
+        removeModuleDiv(module.control);
         SaveDoc(currentDoc);
     }
     buttonsDiv.appendChild(btn);
@@ -144,7 +164,7 @@ function createModuleDiv(m) {
     drawCalculationOptions(moduleContainer, m);
     drawParametersTable(moduleContainer, m);
 
-    var moduleDiv = document.createElement("div");
+    var moduleDiv = document.createElement("span");
     moduleDiv.setAttribute("class", "span4");
     moduleDiv.appendChild(moduleContainer);
     m.control = moduleDiv;

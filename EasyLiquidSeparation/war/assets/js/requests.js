@@ -1,13 +1,11 @@
 function SaveDoc(doc) {
     var modules = []
-    for ( var i in doc.modules) {
+    for (var i in doc.modules) {
         modules[i] = Serialize(doc.modules[i])
     }
-
     $.ajax({
+    	type: "POST",
         url : "/ActionServlet",
-        // beforeSend: function(){$("#overlay").show(); console.log("show");},
-        // complete: function(){$("#overlay").hide(); console.log("hide");},
         data : {
             action : "savedoc",
             id : doc.id,
@@ -20,8 +18,8 @@ function SaveDoc(doc) {
         },
         async : false
     });
-    // $("#overlay").hide(); console.log("hide");
 }
+
 function LoadDocs() {
     $.ajax({
         url : "/ActionServlet",
