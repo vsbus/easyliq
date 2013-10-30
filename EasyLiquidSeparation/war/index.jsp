@@ -81,13 +81,13 @@
                 Add Module: 
                 <input type="button" onclick="javascript: addModuleButtonClick(new DensityConcentration());" value="DensityConcentration"/>
                 <input type="button" onclick="javascript: addModuleButtonClick(new RfFromCakeSaturation());" value="RfFromCakeSaturation"/>        
+                <input type="button" onclick="javascript: addModulesRowButtonClick();" value="New Line"/>
               </div>
               </div>
           </div>
     
-          <div id = "modules_div" class="row"> 
-
-          </div>
+        <div id = "modules_div">
+        </div>
       </div>
     </div>
   </div>    

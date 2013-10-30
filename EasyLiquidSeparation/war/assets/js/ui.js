@@ -1,27 +1,37 @@
-function resizeModulesDiv() {
+function renderModules() {
+	// Remove all rows.
+	document.getElementById("modules_div").innerHTML = "";
+	// Create new rows with modules.
+	for (var i in currentDoc.modules) {
+		var modulesRow = document.createElement("div");
+		modulesRow.setAttribute("name", "modules_row");
+		modulesRow.setAttribute("class", "row");
+		document.getElementById("modules_div").appendChild(modulesRow);
+		for (var j in currentDoc.modules[i]) {
+			var module = currentDoc.modules[i][j];
+			modulesRow.appendChild(createModuleDiv(module));
+			module.combos[0].control.onchange();
+		}
+	}
     // Resize modules container because I couldn't figure out how to get this
     // automatically with CSS.
-    var modulesDiv = document.getElementById("modules_div");
-    var padding = 20;
-    var moduleDefaultWidth = padding + 300;
-	modulesDiv.style.width = moduleDefaultWidth * (modulesDiv.childNodes.length - 1) + padding;	
-}
-
-function addModuleDiv(m) {
-	var modulesDiv = document.getElementById("modules_div");
-    modulesDiv.appendChild(createModuleDiv(m));
-    resizeModulesDiv();
-    m.combos[0].control.onchange();
-}
-
-function removeModuleDiv(moduleDiv) {
-    moduleDiv.parentNode.removeChild(moduleDiv);
-    resizeModulesDiv();
-}
-
-function insertModuleDivBefore(newModuleDiv, parentDiv, beforeModuleDiv) {
-    parentDiv.insertBefore(newModuleDiv, beforeModuleDiv);
-    resizeModulesDiv();
+	var rows = document.getElementsByName("modules_row");
+	for (var i = 0; i < rows.length; i++) {
+		var modulesRow = rows[i];
+		var PADDING = 20;
+		var MODULES_DEFAULT_WIDTH = PADDING + 300;
+		var CURSOR_WIDTH = 4;
+		modulesRow.style.width =
+			MODULES_DEFAULT_WIDTH * modulesRow.childNodes.length +
+			PADDING + CURSOR_WIDTH +
+			PADDING;
+	}
+	// Add cursor to the end of the last row.
+	var cursor = document.createElement("span");
+	cursor.setAttribute("class", "span1");
+	cursor.setAttribute("style", "height: 440px; background: grey;");
+	cursor.style.width = CURSOR_WIDTH;
+	rows[rows.length - 1].appendChild(cursor);
 }
 
 function createCopyButton(module, buttonsDiv) {
@@ -29,14 +39,13 @@ function createCopyButton(module, buttonsDiv) {
     btn.setAttribute("type", "button");
     btn.setAttribute("value", "C");
     btn.onclick = function() {
-        var idx = currentDoc.modules.indexOf(module);
+    	var pos = findModulePosition(module);
         var newModule = module.Copy();
         newModule.id = null;
-        currentDoc.modules.splice(idx + 1, 0, newModule);
-        var newModuleBlock = createModuleDiv(newModule);
-        insertModuleDivBefore(newModuleBlock,
-        					  module.control.parentNode,
-        					  module.control.nextSibling);
+        var row = currentDoc.modules[pos.row];
+        var idx = pos.col + 1;
+        row.splice(idx, 0, newModule);
+        renderModules();
         SaveDoc(currentDoc);
     }
     buttonsDiv.appendChild(btn);
@@ -47,10 +56,9 @@ function createRemoveButton(module, buttonsDiv) {
     btn.setAttribute("type", "button");
     btn.setAttribute("value", "X");
     btn.onclick = function() {
-        var idx = currentDoc.modules.indexOf(module);
-        currentDoc.modules.splice(idx, 1);
-        var moduleDiv = module.control;
-        removeModuleDiv(module.control);
+    	var pos = findModulePosition(module);
+        currentDoc.modules[pos.row].splice(pos.col, 1);
+        renderModules();
         SaveDoc(currentDoc);
     }
     buttonsDiv.appendChild(btn);
@@ -130,9 +138,9 @@ function setGroupRepresentator(module, parameter) {
 function drawParametersTable(div, m) {
     var tableDiv = document.createElement("div");
     tableDiv.appendChild(createHeaderRow());
-    for ( var key in m.groups_meta) {
+    for (var key in m.groups_meta) {
         var group_parameters = m.groups_meta[key].parameters;
-        for ( var i in group_parameters) {
+        for (var i in group_parameters) {
             addTableRow(m, group_parameters[i], tableDiv);
         }
         var separator = document.createElement("div");
@@ -199,13 +207,13 @@ function drawCalculationOptions(div, m) {
     m.combos[0].control = comboBox;
     comboDiv.appendChild(comboBox);
     var selected_index = null;
-    for ( var i in m.combos[0].options) {
+    for (var key in m.combos[0].options) {
         var e = document.createElement("option");
-        e.setAttribute("value", i);
+        e.setAttribute("value", key);
         e.setAttribute("role", "option");
-        e.text = m.combos[0].options[i].name;
+        e.text = m.combos[0].options[key].name;
         comboBox.appendChild(e);
-        if (i == m.combos[0].currentValue) {
+        if (key == m.combos[0].currentValue) {
             selected_index = comboBox.options.length - 1;
         }
     }

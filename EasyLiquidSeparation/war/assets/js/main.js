@@ -13,6 +13,20 @@ String.prototype.trim = function() {
     return this.replace(/^\s+|\s+$/g, '');
 };
 
+function findModulePosition(module) {
+	var row_idx;
+	var col_idx;
+	for (var i = 0; i < currentDoc.modules.length; i++) {
+		for (var j = 0; j < currentDoc.modules[i].length; j++) {
+			if (currentDoc.modules[i][j] == module) {
+				row_idx = i;
+				col_idx = j;
+			}
+		}
+	}
+	return {row: row_idx, col: col_idx};
+}
+
 function Process() {
     now = new Date();
     processing_time = now.getTime();
@@ -20,16 +34,19 @@ function Process() {
     if (!currentDoc) {
         return;
     }
-    for ( var i in currentDoc.modules) {
-        if (currentDoc.modules[i].changeByUserTime <= last_processing_time) {
-            continue;
-        }
-        if (processing_time - currentDoc.modules[i].changeByUserTime >= delay) {
-            currentDoc.modules[i].calculate();
-            // last processing time update MUST be only when something was
-            // recalculated.
-            last_processing_time = processing_time;
-        }
+    for (var i in currentDoc.modules) {
+    	for (var j in currentDoc.modules[i]) {
+    		var module = currentDoc.modules[i][j];
+    		if (module.changeByUserTime <= last_processing_time) {
+                continue;
+            }
+            if (processing_time - module.changeByUserTime >= delay) {
+            	module.calculate();
+                // last processing time update MUST be only when something was
+                // recalculated.
+                last_processing_time = processing_time;
+            }
+    	}
     }
 
     // Send save request when data was changed after the last saving
@@ -49,9 +66,6 @@ function UpdateChangeByUserTime(module, action_time) {
 function addDefaultDocument() {
     var name = "Untitled";
     var id = null;
-    /*if (documents.length > 0) {
-        name = documents[documents.length - 1].name + "0";
-    } */
     $("#shadow").show();
     var e = document.getElementById("doc_name");
     e.value = name;
@@ -64,9 +78,8 @@ function addDefaultDocument() {
         var ndoc = addDocument(name, id, []);
         SaveDoc(ndoc);
         DisplayDocument(ndoc);
-        setCurrentDocument(ndoc);
-
         $("#shadow").hide();
+        setCurrentDocument(ndoc);
     }
 }
 
@@ -110,28 +123,13 @@ function DisplayDocumentName(name, el) {
     el.appendChild(i);
 }
 
-function ClearModulesSection() {
-    if (!currentDoc) {
-        return;
-    }
-
-    for ( var i in currentDoc.modules) {
-        var c = currentDoc.modules[i].control;
-        c.parentNode.removeChild(c);
-    }
-}
-
 function setCurrentDocument(doc) {
-    ClearModulesSection();
     if (currentDoc != null) {
         currentDoc.element.setAttribute("class", "");
     }
     currentDoc = doc;
     currentDoc.element.setAttribute("class", "active");
-
-    for (var i in doc.modules) {
-        addModuleDiv(doc.modules[i]);
-    }
+    renderModules();
 }
 
 function initWorkspace() {
@@ -144,6 +142,10 @@ function initWorkspace() {
 }
 
 function addModule(m) {
-    currentDoc.modules.push(m);
-    addModuleDiv(m);
+	var modules = currentDoc.modules;
+	if (modules.length == 0) {
+		modules.push([]);
+	}
+    modules[modules.length - 1].push(m);
+    renderModules();
 }

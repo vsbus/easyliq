@@ -1,7 +1,17 @@
+var NEW_LINE = '{"newline":""}';
+
 function SaveDoc(doc) {
     var modules = []
-    for (var i in doc.modules) {
-        modules[i] = Serialize(doc.modules[i])
+    for (var i = 0; i < doc.modules.length; i++) {
+    	if (i != 0) {
+    		if (modules.length == 0 ||
+    				modules[modules.length - 1] != NEW_LINE) {
+    			modules.push(NEW_LINE);
+    		}
+    	}
+		for (var j in doc.modules[i]) {
+			modules.push(Serialize(doc.modules[i][j]));
+		}
     }
     $.ajax({
     	type: "POST",
@@ -27,17 +37,19 @@ function LoadDocs() {
             action : "loaddoc"
         },
         success : function(response) {
-            // Remove controls from UI.
-            ClearModulesSection();
             // Clear modules array.
             documents = []
             // Create new modules that download from DB.
-            for ( var i in response) {
+            for (var i in response) {
                 var doc = addDocument(response[i].docName, response[i].id, []);
-                for ( var j in response[i].modules) {
-                    var module = Deserialize(response[i].modules[j]);
-                    doc.modules.push(module);
-                    // addModule(module)
+                doc.modules.push([]);
+                for (var j in response[i].modules) {
+                	var module = response[i].modules[j];
+                	if (module.newline != undefined) {
+                		doc.modules.push([]);
+                	} else {
+                		doc.modules[doc.modules.length - 1].push(Deserialize(module));
+                	}
                 }
                 DisplayDocument(doc);
             }
@@ -57,16 +69,16 @@ function removeDoc() {
 }
 
 function Serialize(module) {
-    var values = {}
+	var values = {}
     for (p in module.parameters_meta) {
         values[p] = module.parameters_meta[p].value
     }
     var co = [];
-    for ( var i in module.combos) {
+    for (var i in module.combos) {
         co[i] = module.combos[i].currentValue;
     }
     var representators = {};
-    for ( var group in module.groups_meta) {
+    for (var group in module.groups_meta) {
         representators[group] = module.groups_meta[group].representator;// .push(module.groups_meta[group].representator);
     }
 
@@ -90,15 +102,16 @@ function Deserialize(response_map) {
         module = new DensityConcentration();
         break;
     }
+    
     module.updateParameters(response_map.parameters);
     module.id = response_map.id;
     module.position = response_map.position;
 
-    for ( var i in response_map.calc_options) {
+    for (var i in response_map.calc_options) {
         module.combos[i].currentValue = response_map.calc_options[i];
     }
 
-    for ( var i in response_map.inputs) {
+    for (var i in response_map.inputs) {
         module.groups_meta[i].representator = response_map.inputs[i];
     }
 

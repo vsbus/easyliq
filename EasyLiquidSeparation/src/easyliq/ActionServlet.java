@@ -130,9 +130,6 @@ public class ActionServlet extends HttpServlet {
 
     private void RemoveDoc(HttpServletRequest request,
             HttpServletResponse response) throws IOException {
-        UserService userService = UserServiceFactory.getUserService();
-        User user = userService.getCurrentUser();
-
         PersistenceManager pm = PMF.get().getPersistenceManager();
         String id = request.getParameter("id");
         try {

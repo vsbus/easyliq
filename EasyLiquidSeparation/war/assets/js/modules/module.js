@@ -69,7 +69,7 @@ function Module(name, combos, parameters, groups, parameters_meta, groups_meta,
     this.onComboChanged = onComboChanged;
     this.updateParameters = null;
     this.Render = function() {
-        for ( var parameter in this.parameters_meta) {
+        for (var parameter in this.parameters_meta) {
             var pmeta = this.parameters_meta[parameter];
             var gmeta = this.groups_meta[pmeta.group];
             if ((pmeta.group == this.calculatedGroup)
@@ -80,12 +80,12 @@ function Module(name, combos, parameters, groups, parameters_meta, groups_meta,
         }
     };
     this.Copy = function() {
-        var obj = new this.constructor();//new RfFromCakeSaturation();
+        var obj = new this.constructor();
         obj.id = null;
         obj.calculatedGroup = this.calculatedGroup;
         obj.control = null;
 
-        for ( var parameter in obj.parameters_meta) {
+        for (var parameter in obj.parameters_meta) {
             obj.parameters_meta[parameter].value = this.parameters_meta[parameter].value
         }
 

@@ -15,6 +15,12 @@ function addModuleButtonClick(module) {
 	SaveDoc(currentDoc);
 }
 
+function addModulesRowButtonClick() {
+	currentDoc.modules.push([]);
+	renderModules();
+	SaveDoc(currentDoc);
+}
+
 function removeDocumentClick() {
 	if (currentDoc != null) {
 	    removeDoc();
