@@ -86,6 +86,11 @@ function Module(name, combos, parameters, groups, parameters_meta, groups_meta,
         for (i = 0; i < this.combos.length; i++) {
             obj.combos[i].currentValue = this.combos[i].currentValue;
         }
+        
+        for (var gmeta in obj.groups_meta) {
+            obj.groups_meta[gmeta].representator = this.groups_meta[gmeta].representator;
+        }
+        
         obj.control = null;
 
         for (var parameter in obj.parameters_meta) {
