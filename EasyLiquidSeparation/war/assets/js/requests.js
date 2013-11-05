@@ -20,7 +20,8 @@ function SaveDoc(doc) {
             action : "savedoc",
             id : doc.id,
             docName : doc.name,
-            modules : modules
+            modules : modules,
+            isactive : doc == currentDoc
         },
         success : function(responseText) {
             userdocId = responseText;
@@ -52,6 +53,9 @@ function LoadDocs() {
                 	}
                 }
                 DisplayDocument(doc);
+                if (response[i].isactive == "true") {
+                	setCurrentDocument(doc);
+                }
             }
         },
         async : false

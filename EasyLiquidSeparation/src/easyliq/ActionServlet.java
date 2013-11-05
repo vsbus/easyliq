@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
+import javax.print.DocFlavor.STRING;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -150,6 +151,7 @@ public class ActionServlet extends HttpServlet {
         User user = userService.getCurrentUser();
 
         PersistenceManager pm = PMF.get().getPersistenceManager();
+        String activeDoc = GetActiveDocKey(pm, user.getEmail());
         String query = "select from " + UserDocument.class.getName()
                 + " where authorEmail=='" + user.getEmail() + "'";
         @SuppressWarnings("unchecked")
@@ -167,6 +169,7 @@ public class ActionServlet extends HttpServlet {
                 isFirst = false;
                 json = json + "{" + JsonPair("docName", doc.getName());
                 json = json + "," + JsonPair("id", doc.getKey());
+                json = json + "," + JsonPair("isactive", ((Boolean)(doc.getKey().equals(activeDoc))).toString());
                 json = json + ",\"modules\":[";
                 boolean isFirstModule = true;
                 for (String m : doc.getModules()) {
@@ -197,6 +200,7 @@ public class ActionServlet extends HttpServlet {
         pm.setIgnoreCache(true);
         String name = request.getParameter("docName");
         String id = request.getParameter("id");
+        Boolean isActiveDoc = Boolean.parseBoolean(request.getParameter("isactive"));
         String[] s = request.getParameterValues("modules[]");
         List<String> modules = new ArrayList<String>();
         if (s != null) {
@@ -207,14 +211,20 @@ public class ActionServlet extends HttpServlet {
                 UserDocument doc = new UserDocument(name, user.getEmail(),
                         modules);
                 pm.makePersistent(doc);
-                String key = doc.getKey();                
-                response.getWriter().write(key);
+                String key = doc.getKey();      
+                if (isActiveDoc) {
+                	UpdateActiveDocKey(pm, user.getEmail(), key);                	           
+                }                
+                response.getWriter().write(key);                
                 // Hack to force data store to apply changes: Query to the added element.
                 pm.getObjectById(UserDocument.class, key);
             } else {
                 UserDocument doc = pm.getObjectById(UserDocument.class, id);
                 doc.setName(name);
                 doc.setModules(modules);
+                if (isActiveDoc) {
+                	UpdateActiveDocKey(pm, user.getEmail(), id);                	
+                }  
                 response.getWriter().write(id);
                 // Hack to force data store to apply changes: Query to the added element.
                 pm.getObjectById(UserDocument.class, id);
@@ -223,4 +233,32 @@ public class ActionServlet extends HttpServlet {
             pm.close();
         }
     }
+
+	private void UpdateActiveDocKey(PersistenceManager pm, String email, String key) {
+		String query = "select from " + UserInfo.class.getName()
+                + " where email=='" + email + "'";
+    	List<UserInfo> ui = (List<UserInfo>) pm.newQuery(query).execute();
+        if (ui.isEmpty()) {
+        	UserInfo uInfo = new UserInfo(email, key);
+        	pm.makePersistent(uInfo);
+        }
+        else {
+        	UserInfo uInfo = ui.get(0);
+        	uInfo.setActiveDocKey(key);
+        	pm.makePersistent(uInfo);
+        }    		
+	}
+	
+	private String GetActiveDocKey(PersistenceManager pm, String email) {		
+		String query = "select from " + UserInfo.class.getName()
+                + " where email=='" + email + "'";
+    	List<UserInfo> ui = (List<UserInfo>) pm.newQuery(query).execute();
+        if (ui.isEmpty()) {
+        	return null;
+        }
+        else {
+        	UserInfo uInfo = ui.get(0);
+        	return uInfo.getActiveDocKey();
+        }    		
+	}
 }

@@ -137,7 +137,9 @@ function initWorkspace() {
     if (documents.length == 0) {
         addDefaultDocument();
     }
-    setCurrentDocument(documents[0]);
+    if (currentDoc == null) {
+    	setCurrentDocument(documents[0]);
+    }
     setInterval(Process, delay);
 }
 
