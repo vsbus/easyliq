@@ -20,7 +20,8 @@ function SaveDoc(doc) {
             action : "savedoc",
             id : doc.id,
             docName : doc.name,
-            modules : modules
+            modules : modules,
+            isactive : doc == currentDoc
         },
         success : function(responseText) {
             userdocId = responseText;
@@ -115,5 +116,37 @@ function Deserialize(response_map) {
         module.groups_meta[i].representator = response_map.inputs[i];
     }
 
-    return module
+    return module;
+}
+
+function SaveSettings() {   
+    $.ajax({
+        type: "POST",
+        url : "/ActionServlet",
+        data : {
+            action : "savesettings",
+            id : currentDoc.id
+        },        
+        async : false
+    });
+}
+
+function GetSettings() {   
+    $.ajax({
+        type: "POST",
+        url : "/ActionServlet",
+        data : {
+            action : "getsettings",            
+        },        
+        success : function(responseText) {
+            docId = responseText;
+            for (var i in documents) {
+                if(documents[i].id == docId) {
+                    setCurrentDocument(documents[i]);
+                    break;
+                }
+            }            
+        },
+        async : false
+    });
 }

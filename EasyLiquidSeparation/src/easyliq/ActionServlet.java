@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
+import javax.print.DocFlavor.STRING;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,14 +52,20 @@ public class ActionServlet extends HttpServlet {
                 RemoveDoc(request, response);
             }
             if (action.equals("loaddoc")) {
-                LoadDoc(request, response);
+                LoadAllDocs(request, response);
+            }
+            if (action.equals("savesettings")) {
+                saveSettings(request, response);
+            }
+            if (action.equals("getsettings")) {
+                getSettings(request, response);
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
-    
+
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response) {
         String action = request.getParameter("action");
@@ -76,7 +83,13 @@ public class ActionServlet extends HttpServlet {
                 RemoveDoc(request, response);
             }
             if (action.equals("loaddoc")) {
-                LoadDoc(request, response);
+                LoadAllDocs(request, response);
+            }
+            if (action.equals("savesettings")) {
+                saveSettings(request, response);
+            }
+            if (action.equals("getsettings")) {
+                getSettings(request, response);
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -134,22 +147,23 @@ public class ActionServlet extends HttpServlet {
         String id = request.getParameter("id");
         try {
             pm.deletePersistent(pm.getObjectById(UserDocument.class, id));
-			// Hack to force data store to apply deletion: As pm.getObjectById
-			// throws exceptions for not existing objects we are using
-			// pm.flush() here that works fine with deleting but not with
-			// changing elements.
+            // Hack to force data store to apply deletion: As pm.getObjectById
+            // throws exceptions for not existing objects we are using
+            // pm.flush() here that works fine with deleting but not with
+            // changing elements.
             pm.flush();
         } finally {
             pm.close();
         }
     }
 
-    private void LoadDoc(HttpServletRequest request,
+    private void LoadAllDocs(HttpServletRequest request,
             HttpServletResponse response) throws IOException {
         UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();
 
         PersistenceManager pm = PMF.get().getPersistenceManager();
+        //String activeDoc = GetActiveDocKey(pm, user.getEmail());
         String query = "select from " + UserDocument.class.getName()
                 + " where authorEmail=='" + user.getEmail() + "'";
         @SuppressWarnings("unchecked")
@@ -197,6 +211,8 @@ public class ActionServlet extends HttpServlet {
         pm.setIgnoreCache(true);
         String name = request.getParameter("docName");
         String id = request.getParameter("id");
+        Boolean isActiveDoc = Boolean.parseBoolean(request
+                .getParameter("isactive"));
         String[] s = request.getParameterValues("modules[]");
         List<String> modules = new ArrayList<String>();
         if (s != null) {
@@ -207,17 +223,62 @@ public class ActionServlet extends HttpServlet {
                 UserDocument doc = new UserDocument(name, user.getEmail(),
                         modules);
                 pm.makePersistent(doc);
-                String key = doc.getKey();                
+                String key = doc.getKey();
                 response.getWriter().write(key);
-                // Hack to force data store to apply changes: Query to the added element.
+                // Hack to force data store to apply changes: Query to the added
+                // element.
                 pm.getObjectById(UserDocument.class, key);
             } else {
                 UserDocument doc = pm.getObjectById(UserDocument.class, id);
                 doc.setName(name);
                 doc.setModules(modules);
                 response.getWriter().write(id);
-                // Hack to force data store to apply changes: Query to the added element.
+                // Hack to force data store to apply changes: Query to the added
+                // element.
                 pm.getObjectById(UserDocument.class, id);
+            }
+        } finally {
+            pm.close();
+        }
+    }
+
+    private void saveSettings(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        UserService userService = UserServiceFactory.getUserService();
+        String email = userService.getCurrentUser().getEmail();
+        String docId = request.getParameter("id");
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        try {
+            String query = "select from " + UserInfo.class.getName()
+                    + " where email=='" + email + "'";
+            List<UserInfo> ui = (List<UserInfo>) pm.newQuery(query).execute();
+            if (ui.isEmpty()) {
+                UserInfo uInfo = new UserInfo(email, docId);
+                pm.makePersistent(uInfo);
+            } else {
+                UserInfo uInfo = ui.get(0);
+                uInfo.setActiveDocKey(docId);
+                pm.makePersistent(uInfo);
+            }
+        } finally {
+            pm.close();
+        }
+    }
+    
+    private void getSettings(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        UserService userService = UserServiceFactory.getUserService();
+        String email = userService.getCurrentUser().getEmail();        
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        try {
+            String query = "select from " + UserInfo.class.getName()
+                    + " where email=='" + email + "'";
+            List<UserInfo> ui = (List<UserInfo>) pm.newQuery(query).execute();
+            if (ui.isEmpty()) {
+                response.getWriter().write("");
+            } else {
+                UserInfo uInfo = ui.get(0);
+                response.getWriter().write(uInfo.getActiveDocKey());
             }
         } finally {
             pm.close();

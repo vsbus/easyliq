@@ -31,7 +31,9 @@ function renderModules() {
 	cursor.setAttribute("class", "span1");
 	cursor.setAttribute("style", "height: 440px; background: grey;");
 	cursor.style.width = CURSOR_WIDTH;
-	rows[rows.length - 1].appendChild(cursor);
+	if (rows.length >= 1) {
+	    rows[rows.length - 1].appendChild(cursor);
+	}
 }
 
 function createCopyButton(module, buttonsDiv) {
