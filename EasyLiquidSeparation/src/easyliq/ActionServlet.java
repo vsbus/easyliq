@@ -57,8 +57,8 @@ public class ActionServlet extends HttpServlet {
             if (action.equals("savesettings")) {
                 saveSettings(request, response);
             }
-            if (action.equals("getsettings")) {
-                getSettings(request, response);
+            if (action.equals("loadsettings")) {
+                loadSettings(request, response);
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -88,8 +88,8 @@ public class ActionServlet extends HttpServlet {
             if (action.equals("savesettings")) {
                 saveSettings(request, response);
             }
-            if (action.equals("getsettings")) {
-                getSettings(request, response);
+            if (action.equals("loadsettings")) {
+                loadSettings(request, response);
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -163,7 +163,6 @@ public class ActionServlet extends HttpServlet {
         User user = userService.getCurrentUser();
 
         PersistenceManager pm = PMF.get().getPersistenceManager();
-        //String activeDoc = GetActiveDocKey(pm, user.getEmail());
         String query = "select from " + UserDocument.class.getName()
                 + " where authorEmail=='" + user.getEmail() + "'";
         @SuppressWarnings("unchecked")
@@ -265,7 +264,7 @@ public class ActionServlet extends HttpServlet {
         }
     }
     
-    private void getSettings(HttpServletRequest request,
+    private void loadSettings(HttpServletRequest request,
             HttpServletResponse response) throws IOException {
         UserService userService = UserServiceFactory.getUserService();
         String email = userService.getCurrentUser().getEmail();        

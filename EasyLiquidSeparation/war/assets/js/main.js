@@ -80,7 +80,7 @@ function addDefaultDocument() {
         DisplayDocument(ndoc);
         $("#shadow").hide();
         setCurrentDocument(ndoc);
-        SaveSettings();
+        saveSettings();
     }
 }
 
@@ -112,7 +112,7 @@ function addDocument(name, id, modules) {
     DisplayDocumentName(name, a);
     a.onclick = function() {
         setCurrentDocument(doc);
-        SaveSettings();
+        saveSettings();
     };
     doc.element.appendChild(a);
     return doc;
@@ -136,7 +136,7 @@ function setCurrentDocument(doc) {
 
 function initWorkspace() {
     LoadDocs();
-    GetSettings();
+    getSettings();
     if (documents.length == 0) {
         addDefaultDocument();
     }

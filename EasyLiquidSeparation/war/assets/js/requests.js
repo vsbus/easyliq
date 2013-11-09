@@ -119,7 +119,7 @@ function Deserialize(response_map) {
     return module;
 }
 
-function SaveSettings() {   
+function saveSettings() {   
     $.ajax({
         type: "POST",
         url : "/ActionServlet",
@@ -131,12 +131,12 @@ function SaveSettings() {
     });
 }
 
-function GetSettings() {   
+function getSettings() {   
     $.ajax({
         type: "POST",
         url : "/ActionServlet",
         data : {
-            action : "getsettings",            
+            action : "loadsettings",            
         },        
         success : function(responseText) {
             docId = responseText;

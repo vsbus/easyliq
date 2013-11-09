@@ -35,7 +35,7 @@ function removeDocumentClick() {
         	idx = 0;
         }
         setCurrentDocument(documents[idx]);
-        SaveSettings();
+        saveSettings();
 	}
 }
 

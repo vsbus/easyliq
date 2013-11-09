@@ -27,11 +27,11 @@ function renderModules() {
 			PADDING;
 	}
 	// Add cursor to the end of the last row.
-	var cursor = document.createElement("span");
-	cursor.setAttribute("class", "span1");
-	cursor.setAttribute("style", "height: 440px; background: grey;");
-	cursor.style.width = CURSOR_WIDTH;
 	if (rows.length >= 1) {
+    	var cursor = document.createElement("span");
+    	cursor.setAttribute("class", "span1");
+    	cursor.setAttribute("style", "height: 440px; background: grey;");
+    	cursor.style.width = CURSOR_WIDTH;	
 	    rows[rows.length - 1].appendChild(cursor);
 	}
 }
