@@ -164,7 +164,7 @@ public class ActionServlet extends HttpServlet {
 
         PersistenceManager pm = PMF.get().getPersistenceManager();
         String query = "select from " + UserDocument.class.getName()
-                + " where authorEmail=='" + user.getEmail() + "'";
+                + " where authorEmail=='" + user.getEmail() + "' order by creationDate";
         @SuppressWarnings("unchecked")
         List<UserDocument> r = (List<UserDocument>) pm.newQuery(query)
                 .execute();

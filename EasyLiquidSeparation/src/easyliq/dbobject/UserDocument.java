@@ -1,6 +1,7 @@
 package easyliq.dbobject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -25,6 +26,9 @@ public class UserDocument {
     private String authorEmail;
     
     @Persistent
+    private Date creationDate;
+    
+    @Persistent
     private List<String> modules;
     
     @Persistent
@@ -34,6 +38,7 @@ public class UserDocument {
         this.authorEmail = authorEmail;
         this.name = name;
         this.modules = modules;
+        this.creationDate = new Date();
     }
     
     public String getKey() {
@@ -63,5 +68,12 @@ public class UserDocument {
     public void setModules(List<String> modules) {
         this.modules = new ArrayList<String>(modules);
     }    
-
+    
+    public void setCreationDate(Date date) {
+        this.creationDate = date;
+    }
+    
+    public Date getCreationDate() {
+        return this.creationDate;
+    }
 }
