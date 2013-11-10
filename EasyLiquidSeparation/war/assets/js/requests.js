@@ -1,6 +1,6 @@
 var NEW_LINE = '{"newline":""}';
 
-function SaveDoc(doc) {
+function saveDoc(doc) {
     var modules = []
     for (var i = 0; i < doc.modules.length; i++) {
     	if (i != 0) {
@@ -31,7 +31,7 @@ function SaveDoc(doc) {
     });
 }
 
-function LoadDocs() {
+function loadDocs() {
     $.ajax({
         url : "/ActionServlet",
         data : {
@@ -131,7 +131,7 @@ function saveSettings() {
     });
 }
 
-function getSettings() {   
+function loadSettings() {   
     $.ajax({
         type: "POST",
         url : "/ActionServlet",

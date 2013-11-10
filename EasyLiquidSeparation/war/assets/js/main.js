@@ -54,7 +54,7 @@ function Process() {
     if (last_change_by_user_time > last_saving_time
             && processing_time - last_saving_time >= save_all_delay) {
         last_saving_time = processing_time;
-        SaveDoc(currentDoc);
+        saveDoc(currentDoc);
     }
 }
 
@@ -76,7 +76,7 @@ function addDefaultDocument() {
         }
         name = e.value.trim();
         var ndoc = addDocument(name, id, []);
-        SaveDoc(ndoc);
+        saveDoc(ndoc);
         DisplayDocument(ndoc);
         $("#shadow").hide();
         setCurrentDocument(ndoc);
@@ -135,8 +135,8 @@ function setCurrentDocument(doc) {
 }
 
 function initWorkspace() {
-    LoadDocs();
-    getSettings();
+    loadDocs();
+    loadSettings();
     if (documents.length == 0) {
         addDefaultDocument();
     }

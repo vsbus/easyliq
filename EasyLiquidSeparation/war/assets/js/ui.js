@@ -48,7 +48,7 @@ function createCopyButton(module, buttonsDiv) {
         var idx = pos.col + 1;
         row.splice(idx, 0, newModule);
         renderModules();
-        SaveDoc(currentDoc);
+        saveDoc(currentDoc);
     }
     buttonsDiv.appendChild(btn);
 }
@@ -61,7 +61,7 @@ function createRemoveButton(module, buttonsDiv) {
     	var pos = findModulePosition(module);
         currentDoc.modules[pos.row].splice(pos.col, 1);
         renderModules();
-        SaveDoc(currentDoc);
+        saveDoc(currentDoc);
     }
     buttonsDiv.appendChild(btn);
 }

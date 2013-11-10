@@ -12,13 +12,13 @@ function parameterValueChanged(m, parameter) {
 
 function addModuleButtonClick(module) {
 	addModule(module);
-	SaveDoc(currentDoc);
+	saveDoc(currentDoc);
 }
 
 function addModulesRowButtonClick() {
 	currentDoc.modules.push([]);
 	renderModules();
-	SaveDoc(currentDoc);
+	saveDoc(currentDoc);
 }
 
 function removeDocumentClick() {
@@ -51,7 +51,7 @@ function renameDocumentClick() {
             }
             currentDoc.name = e.value.trim();
             DisplayDocumentName(currentDoc.name, currentDoc.element.getElementsByTagName("a")[0]);
-            SaveDoc(currentDoc);
+            saveDoc(currentDoc);
             $("#shadow").hide();
         }
     }
