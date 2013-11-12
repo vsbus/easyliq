@@ -3,6 +3,9 @@ package easyliq;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Logger;
@@ -164,10 +167,26 @@ public class ActionServlet extends HttpServlet {
 
         PersistenceManager pm = PMF.get().getPersistenceManager();
         String query = "select from " + UserDocument.class.getName()
-                + " where authorEmail=='" + user.getEmail() + "' order by creationDate";
+                + " where authorEmail=='" + user.getEmail() + "'";
         @SuppressWarnings("unchecked")
         List<UserDocument> r = (List<UserDocument>) pm.newQuery(query)
                 .execute();
+        
+        Collections.sort(r, new Comparator<UserDocument>() {
+            public int compare(UserDocument userdoc1, UserDocument userdoc2) {
+            	Date date1 = userdoc1.getCreationDate();
+            	Date date2 = userdoc2.getCreationDate();
+            	if (date1 == null) {
+            		return date2 == null ? 0 : -1;
+            	}
+            	if (date2 == null) {
+            		return 1;
+            	}
+            	return date1.compareTo(date2);
+            }
+        });
+
+        
         if (!r.isEmpty()) {
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
