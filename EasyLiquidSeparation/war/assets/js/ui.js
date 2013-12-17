@@ -1,3 +1,7 @@
+var PADDING = 20;
+var MODULES_DEFAULT_WIDTH = PADDING + 300;
+var CURSOR_WIDTH = 4;
+        
 function renderModules() {
 	// Remove all rows.
 	document.getElementById("modules_div").innerHTML = "";
@@ -5,7 +9,7 @@ function renderModules() {
 	for (var i in currentDoc.modules) {
 		var modulesRow = document.createElement("div");
 		modulesRow.setAttribute("name", "modules_row");
-		modulesRow.setAttribute("class", "row");
+		modulesRow.setAttribute("class", "modules_row row");
 		document.getElementById("modules_div").appendChild(modulesRow);
 		for (var j in currentDoc.modules[i]) {
 			var module = currentDoc.modules[i][j];
@@ -14,18 +18,10 @@ function renderModules() {
 		}
 	}
     // Resize modules container because I couldn't figure out how to get this
-    // automatically with CSS.
+    // automatically with CSS.	
 	var rows = document.getElementsByName("modules_row");
-	for (var i = 0; i < rows.length; i++) {
-		var modulesRow = rows[i];
-		var PADDING = 20;
-		var MODULES_DEFAULT_WIDTH = PADDING + 300;
-		var CURSOR_WIDTH = 4;
-		modulesRow.style.width =
-			MODULES_DEFAULT_WIDTH * modulesRow.childNodes.length +
-			PADDING + CURSOR_WIDTH +
-			PADDING;
-	}
+	updateModulesRowWidth();
+	
 	// Add cursor to the end of the last row.
 	if (rows.length >= 1) {
     	var cursor = document.createElement("span");
@@ -34,6 +30,63 @@ function renderModules() {
     	cursor.style.width = CURSOR_WIDTH;	
 	    rows[rows.length - 1].appendChild(cursor);
 	}
+	   
+    $('.modules_row').sortable({
+        connectWith: '.modules_row ',
+        stop: function(event, ui) {updateModulesPosition();}
+    }); 
+}
+
+function updateModulesRowWidth() {
+    var rows = document.getElementsByName("modules_row");
+    for (var i = 0; i < rows.length; i++) {
+        var modulesRow = rows[i];       
+        modulesRow.style.width =
+            MODULES_DEFAULT_WIDTH * modulesRow.childNodes.length +
+            PADDING + CURSOR_WIDTH +
+            PADDING;
+    }    
+}
+
+function updateModulesPosition() {
+    var modules = currentDoc.modules; 
+    var newList = [];
+    
+    for (var i = 0; i < modules.length; i++) {
+        //this may not work in other browsers http://stackoverflow.com/questions/2430121/javascript-concatenate-multiple-nodelists-together
+        newList = newList.concat(Array.prototype.slice.call(modules[i]));
+    }
+    newList.sort(function(m1, m2) {return comparator(m1, m2);});
+    /*
+    var s = "";
+    for (var i = 0; i < newList.length; i++) {
+        s += newList[i].control.getBoundingClientRect().top;
+        s += ":"+newList[i].control.getBoundingClientRect().right;
+        s += ", ";        
+    }
+    alert(s);
+    */
+    currentDoc.modules=[[]];
+    var row = 0;    
+    for(var i = 0; i < newList.length; i++) {        
+        currentDoc.modules[row].push(newList[i]);
+        
+        if (i+1 != newList.length && newList[i].control.getBoundingClientRect().top != newList[i+1].control.getBoundingClientRect().top) {
+            currentDoc.modules.push([]);
+            row++;
+        }
+    }
+    saveDoc(currentDoc);
+}
+
+function comparator(m1, m2) {
+    var r1 = m1.control.getBoundingClientRect();
+    var r2 = m2.control.getBoundingClientRect();
+    
+    if(r1.top == r2.top) {
+        return r1.right - r2.right;
+    }
+    return r1.top - r2.top;
 }
 
 function createCopyButton(module, buttonsDiv) {
@@ -244,4 +297,20 @@ function createHeader(row, value) {
     th.setAttribute("class", "col-lg-4 info");
     th.innerHTML = value;
     row.appendChild(th);
+}
+calcMode = true;
+function CalcModeClick()
+{
+    calcMode = !calcMode;
+    var btn = document.getElementById("mode");
+    if (calcMode) {
+        btn.value = "Calc Mode ON";
+        btn.style.backgroundColor = "0000AA";
+        turnCalculationProcessOn();
+    }
+    if (!calcMode) {        
+        btn.value = "Calc Mode OFF";
+        btn.style.backgroundColor = "AA0000";
+        turnCalculationProcessOff();
+    }
 }

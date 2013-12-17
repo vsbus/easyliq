@@ -14,6 +14,9 @@
 <link href="assets/css/styles.css" type="text/css" rel="stylesheet"/>
 
 <script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+  
 
 <script src="assets/js/bootstrap.js"></script>
 <script src="assets/js/events.js"></script>
@@ -27,7 +30,14 @@
 <script src="assets/js/main.js"></script>
 
 <script  type="text/javascript">
-    userdocId = ""
+    userdocId = "";
+    
+   /* $(function() {
+    $( ".main_div.inputbar" ).draggable({
+    handle: ".module_title"});
+  });*/
+  
+  
 </script>
 </head>
 
@@ -82,6 +92,7 @@
                 <input type="button" onclick="javascript: addModuleButtonClick(new DensityConcentration());" value="DensityConcentration"/>
                 <input type="button" onclick="javascript: addModuleButtonClick(new RfFromCakeSaturation());" value="RfFromCakeSaturation"/>        
                 <input type="button" onclick="javascript: addModulesRowButtonClick();" value="New Line"/>
+                <input type="button" onclick="javascript: CalcModeClick();" id="mode" value="Calc Mode ON"/>
               </div>
               </div>
           </div>

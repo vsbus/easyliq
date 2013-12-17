@@ -5,7 +5,7 @@ var last_change_by_user_time = FAR_AGO;
 var last_saving_time = FAR_AGO;
 var last_processing_time = FAR_AGO;
 var digits_after_point = 3;
-
+var calculationProcess;
 var documents = [];
 var currentDoc = null;
 
@@ -143,7 +143,15 @@ function initWorkspace() {
     if (currentDoc == null) {
     	setCurrentDocument(documents[0]);
     }
-    setInterval(Process, delay);
+    turnCalculationProcessOn();
+}
+
+function turnCalculationProcessOn() {
+    calculationProcess = setInterval(Process, delay);
+}
+
+function turnCalculationProcessOff() {
+    clearInterval(calculationProcess);
 }
 
 function addModule(m) {
