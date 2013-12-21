@@ -31,13 +31,6 @@
 
 <script  type="text/javascript">
     userdocId = "";
-    
-   /* $(function() {
-    $( ".main_div.inputbar" ).draggable({
-    handle: ".module_title"});
-  });*/
-  
-  
 </script>
 </head>
 
@@ -92,7 +85,6 @@
                 <input type="button" onclick="javascript: addModuleButtonClick(new DensityConcentration());" value="DensityConcentration"/>
                 <input type="button" onclick="javascript: addModuleButtonClick(new RfFromCakeSaturation());" value="RfFromCakeSaturation"/>        
                 <input type="button" onclick="javascript: addModulesRowButtonClick();" value="New Line"/>
-                <input type="button" onclick="javascript: CalcModeClick();" id="mode" value="Calc Mode ON"/>
               </div>
               </div>
           </div>
