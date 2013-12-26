@@ -33,10 +33,13 @@ function renderModules() {
 	   
 	$('[name="modules_row"]').sortable({
         start:function (e, ui) {
-            ui.placeholder.css({width: CURSOR_WIDTH, height: ui.item.css("height")});
+            ui.placeholder.css({
+                width: CURSOR_WIDTH,
+                height: ui.item.css("height"),
+                background: "lightgray"});
         }, 
         connectWith: '[name="modules_row"]',
-        placeholder: "ui-sortable-placeholder span1" ,
+        placeholder: "span1",
         stop: function(event, ui) {updateModulesPosition();}
     }); 
 }
@@ -62,7 +65,7 @@ function findModulePositionByControl(moduleDiv) {
                 rowIdx = i;
                 colIdx = j;
             }
-        }`
+        }
     }
     return {row: rowIdx, col: colIdx};
 }
