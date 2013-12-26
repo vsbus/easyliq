@@ -53,26 +53,26 @@ function updateModulesRowWidth() {
     }    
 }
 
-function findModulePositionByControl(el) {
-    var row_idx;
-    var col_idx;
+function findModulePositionByControl(moduleDiv) {
+    var rowIdx;
+    var colIdx;
     for (var i = 0; i < currentDoc.modules.length; i++) {
         for (var j = 0; j < currentDoc.modules[i].length; j++) {
-            if (currentDoc.modules[i][j].control == el) {
-                row_idx = i;
-                col_idx = j;
+            if (currentDoc.modules[i][j].control == moduleDiv) {
+                rowIdx = i;
+                colIdx = j;
             }
-        }
+        }`
     }
-    return {row: row_idx, col: col_idx};
+    return {row: rowIdx, col: colIdx};
 }
 
 function updateModulesPosition() {
     var rows = document.getElementsByName("modules_row");
     for (var i = 0; i < rows.length; i++) {
-        var mm = rows[i].children;
-        for (var j = 0; j < mm.length; j++){
-            var pos = findModulePositionByControl(mm[j]);
+        var modulesDivInRow = rows[i].children;
+        for (var j = 0; j < modulesDivInRow.length; j++){
+            var pos = findModulePositionByControl(modulesDivInRow[j]);
             if (pos.row == null) continue;
             var element = currentDoc.modules[pos.row][pos.col];
             currentDoc.modules[pos.row].splice(pos.col, 1);
@@ -221,6 +221,7 @@ function createModuleDiv(m) {
     drawParametersTable(moduleContainer, m);
 
     var moduleDiv = document.createElement("span");
+    //return to span4
     moduleDiv.setAttribute("class", "span4");
     moduleDiv.appendChild(moduleContainer);
     m.control = moduleDiv;
