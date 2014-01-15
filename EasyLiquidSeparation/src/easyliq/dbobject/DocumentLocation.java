@@ -8,15 +8,15 @@ import javax.jdo.annotations.Persistent;
 import com.google.appengine.api.datastore.Key;
 
 @PersistenceCapable
-public class FolderDocument {
+public class DocumentLocation {
 
     @Persistent
-    private String folderKey ;
+    private String parentFolderKey ;
     @Persistent
     private String docKey;
     
-    public FolderDocument(String f, String d){
-        this.folderKey = f;
+    public DocumentLocation(String f, String d){
+        this.parentFolderKey = f;
         this.docKey = d;
     } 
     
@@ -24,10 +24,10 @@ public class FolderDocument {
         return this.docKey;
     }
     
-    public String getFolderKey(){
-        return this.folderKey;
+    public String getParentFolderKey(){
+        return this.parentFolderKey;
     }
-    public void setFolderKey (String f){
-        this.folderKey = f;
+    public void setParentFolderKey (String f){
+        this.parentFolderKey = f;
     }
 }

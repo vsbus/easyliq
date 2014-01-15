@@ -72,10 +72,12 @@ function addNewDocument() {
     var name = "Untitled";
     var id = null;
     $("#shadow").show();
-    var e = document.getElementById("doc_name");
+    $("#newname_popup").show();    
+    $("#folders_popup").hide();
+    var e = document.getElementById("new_name");
     e.value = name;
     e.focus();
-    document.getElementById("save_doc").onclick = function() {
+    document.getElementById("save_name").onclick = function() {
         if (!isValid()) {
             return;
         }
@@ -94,10 +96,12 @@ function addDefaultFolder() {
     var name = "Untitled Folder";
     var id = null;
     $("#shadow").show();
-    var e = document.getElementById("doc_name");
+    $("#newname_popup").show();    
+    $("#folders_popup").hide();
+    var e = document.getElementById("new_name");
     e.value = name;
     e.focus();
-    document.getElementById("save_doc").onclick = function() {
+    document.getElementById("save_name").onclick = function() {
         if (!isValid()) {
             return;
         }
@@ -112,7 +116,7 @@ function addDefaultFolder() {
 }
 
 function isValid() {
-    var e = document.getElementById("doc_name").value;
+    var e = document.getElementById("new_name").value;
     var m = document.getElementById("valid_message");
     if (e.trim()) {
         m.innerHTML = "";

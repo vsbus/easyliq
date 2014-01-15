@@ -15,7 +15,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 
 @PersistenceCapable
-public class Folder {
+public class UserFolder {
     
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -27,12 +27,13 @@ public class Folder {
     @Persistent    
     private String authorEmail ;
     
-   @Persistent
+    @Persistent    
+    private String comment ;
+    
+    @Persistent
     private Date creationDate;    
    
-    
-    private List<Folder> nestedFolders;
-    public Folder (String name, String email){
+    public UserFolder (String name, String email){
         this.name = name;        
         this.creationDate = new Date();
         this.authorEmail = email;
@@ -59,5 +60,11 @@ public class Folder {
     }
     public String getAuthorEmail() {
         return this.authorEmail;
+    }
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+    public String getComment() {
+        return this.comment;
     }
 }

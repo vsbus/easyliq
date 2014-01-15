@@ -43,11 +43,11 @@
         <div id="shadow">
           <div id = "overlay" ></div>
           <div class="popup">
-              <div id ="docname_popup" class="inputbar">
-                document name:
+              <div id ="newname_popup" class="inputbar">
+                new name:
                 <div id="valid_message"></div>
-                <input type="text" id="doc_name"></input>            
-                <input type = "button" id="save_doc" value="Save"></input>
+                <input type="text" id="new_name"></input>            
+                <input type = "button" id="save_name" value="Save"></input>
                 <input type = "button" onclick="javascript: cancelDocumentNameChange();" value="Cancel"/>
               </div>
               <div id ="folders_popup" class="inputbar">

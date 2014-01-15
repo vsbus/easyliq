@@ -47,12 +47,12 @@ function removeFolderClick() {
 function renameDocumentClick() {
     if (currentDoc != null) {
         $("#shadow").show();
-        $("#docname_popup").show();    
+        $("#newname_popup").show();    
         $("#folders_popup").hide();
-        var e = document.getElementById("doc_name");
+        var e = document.getElementById("new_name");
         e.value = currentDoc.name;
         e.focus();
-        document.getElementById("save_doc").onclick = function(){
+        document.getElementById("save_name").onclick = function(){
             if(!isValid()) {
                 return;
             }
@@ -75,7 +75,7 @@ function renameFolderClick() {
         var e = document.getElementById("doc_name");
         e.value = currentFolder.name;
         e.focus();
-        document.getElementById("save_doc").onclick = function(){
+        document.getElementById("save_name").onclick = function(){
             if(!isValid()) {
                 return;
             }
