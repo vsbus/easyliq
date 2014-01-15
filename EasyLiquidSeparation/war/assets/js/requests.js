@@ -31,6 +31,40 @@ function saveDoc(doc) {
     });
 }
 
+function saveFolder(fld) {
+    $.ajax({
+        type: "POST",
+        url : "/ActionServlet",
+        data : {
+            action : "savefolder",
+            id : fld.id,
+            folderName : fld.name,
+            isactive : fld == currentFolder
+        },
+        success : function(responseText) {
+            // userdocId = responseText;
+            fld.id = responseText;
+        },
+        async : false
+    });
+}
+function MoveDocToFolder(doc, fldId) {
+    $.ajax({
+        type: "POST",
+        url : "/ActionServlet",
+        data : {
+            action : "movedoctofolder",
+            doc : doc,
+            folder : fldId            
+        },
+        success : function(responseText) {
+            // userdocId = responseText;
+            // fld.id = responseText;
+        },
+        async : false
+    });
+}
+
 function loadDocs() {
     $.ajax({
         url : "/ActionServlet",
@@ -39,7 +73,7 @@ function loadDocs() {
         },
         success : function(response) {
             // Clear modules array.
-            documents = []
+            documents = [];
             // Create new modules that download from DB.
             for (var i in response) {
                 var doc = addDocument(response[i].docName, response[i].id, []);
@@ -57,7 +91,40 @@ function loadDocs() {
         },
         async : false
     });
+    
 }
+
+function loadFolders() {
+     $.ajax({
+        url : "/ActionServlet",
+        data : {
+            action : "loadfolders"
+        },
+        success : function(response) {
+            folders = []
+            for (var i in response) {
+                var f = addFolder(response[i].folderName, response[i].id, []);
+                f.documents = [];
+                for (var j in response[i].documents) {
+                    var doc = addDocument(response[i].documents[j].docName, response[i].documents[j].id, []); 
+                    doc.modules.push([]);
+                    for (var k in response[i].documents[j].modules) {
+                        var module = response[i].documents[j].modules[k];
+                        if (module.newline != undefined) {
+                            doc.modules.push([]);
+                        } else {
+                            doc.modules[doc.modules.length - 1].push(Deserialize(module));
+                        }
+                    }
+                    f.documents.push(doc);
+                }
+                DisplayFolder(f);
+            }
+        },
+        async : false 
+    });  
+}
+
 
 function removeDoc() {
     var request = {
@@ -67,6 +134,15 @@ function removeDoc() {
     }
     $.get('ActionServlet', request, function(response) {
     });
+}
+
+function removeFolder(id) {
+    var request = {
+            action : "removefolder",
+            id : id
+        }
+        $.get('ActionServlet', request, function(response) {
+        });
 }
 
 function Serialize(module) {

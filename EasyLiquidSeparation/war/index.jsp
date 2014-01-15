@@ -42,20 +42,40 @@
       <div class = "span3"> 
         <div id="shadow">
           <div id = "overlay" ></div>
-          <div id ="docname_popup" class="inputbar">
-            document name:
-            <div id="valid_message"></div>
-            <input type="text" id="doc_name"></input>            
-            <input type = "button" id="save_doc" value="Save"></input>
-            <input type = "button" onclick="javascript: cancelDocumentNameChange();" value="Cancel"/>
+          <div class="popup">
+              <div id ="docname_popup" class="inputbar">
+                document name:
+                <div id="valid_message"></div>
+                <input type="text" id="doc_name"></input>            
+                <input type = "button" id="save_doc" value="Save"></input>
+                <input type = "button" onclick="javascript: cancelDocumentNameChange();" value="Cancel"/>
+              </div>
+              <div id ="folders_popup" class="inputbar">
+                select new folder for your document:
+                <select id="foldernames_list">
+                </select>            
+                <input type = "button" id="save_changes" value="Save"></input>
+                <input type = "button" onclick="javascript: cancelDocumentNameChange();" value="Cancel"/>
+              </div>
           </div>
         </div>
         <div class="bs-docs-sidebar">
           <ul id="documents_list" class="nav nav-list bs-docs-sidenav">
             <li><a><div>Document:</div>
-              <input type="button" onclick="javascript: addDefaultDocument();" value="Add"/>
+              <input type="button" onclick="javascript: addNewDocument();" value="Add"/>
                 <input type="button" onclick="javascript: removeDocumentClick();" value="Remove"/>
+                <input type="button" onclick="javascript: moveDocumentToFolderClick();" value="Move"/>
                 <input type="button" onclick="javascript: renameDocumentClick();" value="Rename"/>
+                </a>
+            </li>
+          </ul>
+          
+          <ul id="folders_list" class="nav nav-list bs-docs-sidenav">
+            <li><a><div>Folder:</div>
+                <input type="button" onclick="javascript: addDefaultFolder();" value="Add"/>
+                <input type="button" onclick="javascript: removeFolderClick();" value="Remove"/>
+                <input type="button" onclick="javascript: renameFolderClick();" value="Rename"/>
+                <input type="button" onclick="javascript: addDocumentToCurrentFolderClick();" value="AddDoc"/>
                 </a>
             </li>
           </ul>

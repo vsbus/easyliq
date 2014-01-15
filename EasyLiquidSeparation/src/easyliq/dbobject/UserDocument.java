@@ -20,10 +20,10 @@ public class UserDocument {
      */
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-    private Key key;
+    private Key key; 
     
     @Persistent
-    private String authorEmail;
+    private String authorEmail ;
     
     @Persistent
     private Date creationDate;

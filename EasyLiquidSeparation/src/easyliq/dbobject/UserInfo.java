@@ -14,10 +14,10 @@ import com.google.appengine.api.datastore.KeyFactory;
 public class UserInfo {
 	 @PrimaryKey
 	 @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	 private Key key;
-	 
+	 private Key key ;
+	
 	 @Persistent
-	    private String email;
+     private String email;
 	 
 	 @Persistent
 	 private String activeDocKey;

@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 import javax.print.DocFlavor.STRING;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -45,11 +48,24 @@ public class ActionServlet extends HttpServlet {
             return;
         }
         try {
+            if (action.equals("folder")) {
+                FolderWork(request, response);
+            }
+            if (action.equals("loadfolders")) {
+                LoadFolders(request, response);
+            }
             if (action.equals("calculate")) {
                 Calculate(request, response);
             }
+            if (action.equals("removefolder")) {
+                RemoveFolder(request, response);
+            }
             if (action.equals("savedoc")) {
                 SaveDoc(request, response);
+                // FolderWork(request, response);
+            }
+            if (action.equals("savefolder")) {
+                SaveFolder(request, response);
             }
             if (action.equals("removedoc")) {
                 RemoveDoc(request, response);
@@ -69,6 +85,7 @@ public class ActionServlet extends HttpServlet {
         }
     }
 
+
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response) {
         String action = request.getParameter("action");
@@ -79,8 +96,20 @@ public class ActionServlet extends HttpServlet {
             if (action.equals("calculate")) {
                 Calculate(request, response);
             }
+            if (action.equals("loadfolders")) {
+                LoadFolders(request, response);
+            }
             if (action.equals("savedoc")) {
                 SaveDoc(request, response);
+                // FolderWork(request, response);
+            }
+            if (action.equals("movedoctofolder")) {
+                MoveDoc(request, response);
+                // FolderWork(request, response);
+            }
+
+            if (action.equals("savefolder")) {
+                SaveFolder(request, response);
             }
             if (action.equals("removedoc")) {
                 RemoveDoc(request, response);
@@ -98,6 +127,33 @@ public class ActionServlet extends HttpServlet {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+    private void MoveDoc(HttpServletRequest request,
+            HttpServletResponse response) {
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        String docId = request.getParameter("doc");
+        String fldId = request.getParameter("folder");
+        String query = "select from " + FolderDocument.class.getName()
+                + " where docKey == '" + docId + "'";
+        List<FolderDocument> fdList = (List<FolderDocument>) pm.newQuery(query)
+                .execute();
+        if (fdList.isEmpty()) {
+            FolderDocument fd = new FolderDocument(fldId, docId);
+            pm.makePersistent(fd);
+        } else {
+            fdList.get(0).setFolderKey(fldId);
+            pm.makePersistent(fdList.get(0));
+        }
+    }
+
+    private void FolderWork(HttpServletRequest request,
+            HttpServletResponse response) {
+        UserService userService = UserServiceFactory.getUserService();
+        User user = userService.getCurrentUser();
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        pm.makePersistent(new Folder("folder" + (new Date()).toString(), user
+                .getEmail()));
     }
 
     private void Calculate(HttpServletRequest request,
@@ -159,6 +215,32 @@ public class ActionServlet extends HttpServlet {
             pm.close();
         }
     }
+    
+    private void RemoveFolder(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        String id = request.getParameter("id");
+        try {
+            pm.deletePersistent(pm.getObjectById(Folder.class, id));
+            String query = "select from " + FolderDocument.class.getName()+ " where folderKey == '" + id + "'";
+            List<FolderDocument> fdList = (List<FolderDocument>)pm.newQuery(query).execute();
+            if(!fdList.isEmpty()) {
+                for(FolderDocument fd : fdList) {
+                    pm.deletePersistent(pm.getObjectById(UserDocument.class, fd.getDocKey()));
+                }
+                for(FolderDocument fd : fdList) {
+                    pm.deletePersistent(fd);
+                }
+            }         
+            // Hack to force data store to apply deletion: As pm.getObjectById
+            // throws exceptions for not existing objects we are using
+            // pm.flush() here that works fine with deleting but not with
+            // changing elements.
+            pm.flush();
+        } finally {
+            pm.close();
+        }
+    }
 
     private void LoadAllDocs(HttpServletRequest request,
             HttpServletResponse response) throws IOException {
@@ -171,22 +253,21 @@ public class ActionServlet extends HttpServlet {
         @SuppressWarnings("unchecked")
         List<UserDocument> r = (List<UserDocument>) pm.newQuery(query)
                 .execute();
-        
+
         Collections.sort(r, new Comparator<UserDocument>() {
             public int compare(UserDocument userdoc1, UserDocument userdoc2) {
-            	Date date1 = userdoc1.getCreationDate();
-            	Date date2 = userdoc2.getCreationDate();
-            	if (date1 == null) {
-            		return date2 == null ? 0 : -1;
-            	}
-            	if (date2 == null) {
-            		return 1;
-            	}
-            	return date1.compareTo(date2);
+                Date date1 = userdoc1.getCreationDate();
+                Date date2 = userdoc2.getCreationDate();
+                if (date1 == null) {
+                    return date2 == null ? 0 : -1;
+                }
+                if (date2 == null) {
+                    return 1;
+                }
+                return date1.compareTo(date2);
             }
         });
 
-        
         if (!r.isEmpty()) {
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
@@ -207,6 +288,81 @@ public class ActionServlet extends HttpServlet {
                     }
                     isFirstModule = false;
                     json = json + m;
+                }
+                json = json + "]}";
+            }
+            json = json + "]";
+            pm.close();
+            response.getWriter().write(json);
+        }
+    }
+
+    private String LoadDocByKey(String key) throws IOException {
+        String json = "";
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        UserDocument doc = pm.getObjectById(UserDocument.class, key);
+        /*String query = "select from " + UserDocument.class.getName()
+                + " where key =='" + key + "'";*/
+        //@SuppressWarnings("unchecked")
+        /*List<UserDocument> r = (List<UserDocument>) pm.newQuery(query)
+                .execute();*/
+
+        //if (!r.isEmpty()) {
+        if (doc != null) {
+            //UserDocument doc = r.get(0);
+            json = "{" + JsonPair("docName", doc.getName());
+            json = json + "," + JsonPair("id", doc.getKey());
+            json = json + ",\"modules\":[";
+            boolean isFirstModule = true;
+            for (String m : doc.getModules()) {
+                if (!isFirstModule) {
+                    json = json + ",";
+                }
+                isFirstModule = false;
+                json = json + m;
+            }
+            json = json + "]}";
+            pm.close();
+        }
+        return json;
+    }
+
+    private void LoadFolders(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        UserService userService = UserServiceFactory.getUserService();
+        User user = userService.getCurrentUser();
+
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        String query = "select from " + Folder.class.getName()
+                + " where authorEmail=='" + user.getEmail() + "'";
+        @SuppressWarnings("unchecked")
+        List<Folder> r = (List<Folder>) pm.newQuery(query).execute();
+        if (!r.isEmpty()) {
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            String json = "[";
+            boolean isFirst = true;
+            for (Folder f : r) {
+                if (!isFirst) {
+                    json = json + ",";
+                }
+                isFirst = false;
+                json = json + "{" + JsonPair("folderName", f.getName());
+                json = json + "," + JsonPair("id", f.getKey());
+                query = "select docKey from " + FolderDocument.class.getName()
+                        + " where folderKey == '" + f.getKey() + "'";
+                List<String> docsKeys = (List<String>) pm.newQuery(query)
+                        .execute();
+                json = json + "," + "\"documents\" : [";
+                if (!docsKeys.isEmpty()) {                    
+                    boolean isFirstDoc = true;
+                    for (String docKey : docsKeys) {
+                        if (!isFirstDoc) {
+                            json = json + ","; 
+                        }
+                        isFirstDoc = false;
+                        json = json + LoadDocByKey(docKey);
+                    }
                 }
                 json = json + "]}";
             }
@@ -260,6 +416,39 @@ public class ActionServlet extends HttpServlet {
         }
     }
 
+    private void SaveFolder(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        UserService userService = UserServiceFactory.getUserService();
+        User user = userService.getCurrentUser();
+
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        pm.setIgnoreCache(true);
+        String name = request.getParameter("folderName");
+        String id = request.getParameter("id");
+        Boolean isActiveDoc = Boolean.parseBoolean(request
+                .getParameter("isactive"));
+        try {
+            if (id.isEmpty()) {
+                Folder doc = new Folder(name, user.getEmail());
+                pm.makePersistent(doc);
+                String key = doc.getKey();
+                response.getWriter().write(key);
+                // Hack to force data store to apply changes: Query to the added
+                // element.
+                pm.getObjectById(Folder.class, key);
+            } else {
+                Folder f = pm.getObjectById(Folder.class, id);
+                f.setName(name);
+                response.getWriter().write(id);
+                // Hack to force data store to apply changes: Query to the added
+                // element.
+                pm.getObjectById(Folder.class, id);
+            }
+        } finally {
+            pm.close();
+        }
+    }
+
     private void saveSettings(HttpServletRequest request,
             HttpServletResponse response) throws IOException {
         UserService userService = UserServiceFactory.getUserService();
@@ -282,11 +471,11 @@ public class ActionServlet extends HttpServlet {
             pm.close();
         }
     }
-    
+
     private void loadSettings(HttpServletRequest request,
             HttpServletResponse response) throws IOException {
         UserService userService = UserServiceFactory.getUserService();
-        String email = userService.getCurrentUser().getEmail();        
+        String email = userService.getCurrentUser().getEmail();
         PersistenceManager pm = PMF.get().getPersistenceManager();
         try {
             String query = "select from " + UserInfo.class.getName()

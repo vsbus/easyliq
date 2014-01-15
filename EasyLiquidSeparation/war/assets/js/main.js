@@ -7,24 +7,29 @@ var last_processing_time = FAR_AGO;
 var digits_after_point = 3;
 var calculationProcess;
 var documents = [];
+var folders = [];
 var currentDoc = null;
+var currentFolder = null;
 
 String.prototype.trim = function() {
     return this.replace(/^\s+|\s+$/g, '');
 };
 
 function findModulePosition(module) {
-	var row_idx;
-	var col_idx;
-	for (var i = 0; i < currentDoc.modules.length; i++) {
-		for (var j = 0; j < currentDoc.modules[i].length; j++) {
-			if (currentDoc.modules[i][j] == module) {
-				row_idx = i;
-				col_idx = j;
-			}
-		}
-	}
-	return {row: row_idx, col: col_idx};
+    var row_idx;
+    var col_idx;
+    for ( var i = 0; i < currentDoc.modules.length; i++) {
+        for ( var j = 0; j < currentDoc.modules[i].length; j++) {
+            if (currentDoc.modules[i][j] == module) {
+                row_idx = i;
+                col_idx = j;
+            }
+        }
+    }
+    return {
+        row : row_idx,
+        col : col_idx
+    };
 }
 
 function Process() {
@@ -34,19 +39,19 @@ function Process() {
     if (!currentDoc) {
         return;
     }
-    for (var i in currentDoc.modules) {
-    	for (var j in currentDoc.modules[i]) {
-    		var module = currentDoc.modules[i][j];
-    		if (module.changeByUserTime <= last_processing_time) {
+    for ( var i in currentDoc.modules) {
+        for ( var j in currentDoc.modules[i]) {
+            var module = currentDoc.modules[i][j];
+            if (module.changeByUserTime <= last_processing_time) {
                 continue;
             }
             if (processing_time - module.changeByUserTime >= delay) {
-            	module.calculate();
+                module.calculate();
                 // last processing time update MUST be only when something was
                 // recalculated.
                 last_processing_time = processing_time;
             }
-    	}
+        }
     }
 
     // Send save request when data was changed after the last saving
@@ -63,7 +68,7 @@ function UpdateChangeByUserTime(module, action_time) {
     last_change_by_user_time = action_time;
 }
 
-function addDefaultDocument() {
+function addNewDocument() {
     var name = "Untitled";
     var id = null;
     $("#shadow").show();
@@ -80,7 +85,29 @@ function addDefaultDocument() {
         DisplayDocument(ndoc);
         $("#shadow").hide();
         setCurrentDocument(ndoc);
+        MoveDocToFolder(currentDoc.id, currentFolder.id);
         saveSettings();
+    }
+}
+
+function addDefaultFolder() {
+    var name = "Untitled Folder";
+    var id = null;
+    $("#shadow").show();
+    var e = document.getElementById("doc_name");
+    e.value = name;
+    e.focus();
+    document.getElementById("save_doc").onclick = function() {
+        if (!isValid()) {
+            return;
+        }
+        name = e.value.trim();
+        var nfld = addFolder(name, id, []);
+        saveFolder(nfld);
+        DisplayFolder(nfld);
+        $("#shadow").hide();
+        setCurrentFolder(nfld);
+        // saveSettings();
     }
 }
 
@@ -96,6 +123,23 @@ function isValid() {
     }
 }
 
+function DisplayFolder(f) {
+    document.getElementById("folders_list").appendChild(f.element);
+    folders[folders.length] = f
+    if (f.documents.length != 0) {
+        var ul = document.createElement("ul");
+        ul.setAttribute("class", "nav");
+        f.element.appendChild(ul);
+
+        for ( var i in f.documents) {
+            DisplayFolderDocument(ul, f.documents[i]);
+        }
+    }
+}
+
+function DisplayFolderDocument(parentsEl, doc) {
+    parentsEl.appendChild(doc.element);
+}
 function DisplayDocument(doc) {
     document.getElementById("documents_list").appendChild(doc.element);
     documents[documents.length] = doc;
@@ -118,7 +162,31 @@ function addDocument(name, id, modules) {
     return doc;
 }
 
-function DisplayDocumentName(name, el) {    
+function addFolder(name, id, docs) {
+    var fld = {
+        id : id,
+        name : name,
+        documents : docs,
+        element : document.createElement("li")
+    }
+    var a = document.createElement("a");
+    DisplayFolderName(name, a);
+    a.onclick = function() {
+        setCurrentFolder(fld);
+        // saveSettings();
+    };
+    fld.element.appendChild(a);
+    return fld;
+}
+
+function DisplayDocumentName(name, el) {
+    var i = document.createElement("i");
+    i.setAttribute("class", "icon-chevron-right");
+    el.innerHTML = name;
+    el.appendChild(i);
+}
+
+function DisplayFolderName(name, el) {
     var i = document.createElement("i");
     i.setAttribute("class", "icon-chevron-right");
     el.innerHTML = name;
@@ -134,14 +202,29 @@ function setCurrentDocument(doc) {
     renderModules();
 }
 
+function setCurrentFolder(doc) {
+    if (currentFolder != null) {
+        currentFolder.element.setAttribute("class", "");
+    }
+    currentFolder = doc;
+    currentFolder.element.setAttribute("class", "active");
+
+}
 function initWorkspace() {
     loadDocs();
+    loadFolders();
     loadSettings();
     if (documents.length == 0) {
-        addDefaultDocument();
+        addNewDocument();
+    }
+    if (folders.length == 0) {
+        addDefaultFolder();
     }
     if (currentDoc == null) {
-    	setCurrentDocument(documents[0]);
+        setCurrentDocument(documents[0]);
+    }
+    if (currentFolder == null) {
+        setCurrentFolder(folders[0]);
     }
     turnCalculationProcessOn();
 }
@@ -155,10 +238,10 @@ function turnCalculationProcessOff() {
 }
 
 function addModule(m) {
-	var modules = currentDoc.modules;
-	if (modules.length == 0) {
-		modules.push([]);
-	}
+    var modules = currentDoc.modules;
+    if (modules.length == 0) {
+        modules.push([]);
+    }
     modules[modules.length - 1].push(m);
     renderModules();
 }
