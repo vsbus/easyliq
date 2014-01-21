@@ -22,24 +22,24 @@ public class UserFolder {
     private Key key;
     
     @Persistent    
-    private String name ;
+    private String name;
     
     @Persistent    
-    private String authorEmail ;
+    private String authorEmail;
     
     @Persistent    
-    private String comment ;
+    private String comment;
     
     @Persistent
     private Date creationDate;    
    
-    public UserFolder (String name, String email){
+    public UserFolder (String name, String email) {
         this.name = name;        
         this.creationDate = new Date();
         this.authorEmail = email;
     }
     
-    public String getName(){
+    public String getName() {
         return this.name;
     }
     

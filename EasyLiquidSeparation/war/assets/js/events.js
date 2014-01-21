@@ -22,7 +22,9 @@ function addModulesRowButtonClick() {
 }
 
 function removeDocumentClick() {
-    removeCurrentDocument()
+    removeCurrentDocument();
+    // removeCurrentDocument doesn't use any pop-up windows so we can save
+    // settings after it's call.  
     saveSettings();
 }
 
@@ -50,7 +52,6 @@ function renameDocumentClick() {
 }
 function addDocumentToCurrentFolderClick() {
     addNewDocument();
-    saveSettings();
 }
 function renameFolderClick() {
     if (currentFolder != null) {

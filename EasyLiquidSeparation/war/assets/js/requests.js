@@ -163,16 +163,18 @@ function Deserialize(response_map) {
     return module;
 }
 
-function saveSettings() {   
-    $.ajax({
-        type: "POST",
-        url : "/ActionServlet",
-        data : {
-            action : "savesettings",
-            id : currentDoc.id
-        },        
-        async : false
-    });
+function saveSettings() {
+	if (currentDoc != null) {
+	    $.ajax({
+	        type: "POST",
+	        url:  "/ActionServlet",
+	        data: {
+	            action: "savesettings",
+	            id:     currentDoc.id
+	        },        
+	        async: false
+	    });
+	}
 }
 
 function loadSettings() {   
@@ -199,6 +201,18 @@ function loadSettings() {
                 }
             }            
         },
+        async : false
+    });
+}
+
+// TODO: Run this in deploy and then remove this code with corresponding server
+// side code. It moves all documents in DB without folder to a new created folder. 
+function db_fix_orphant_docs() {   
+    $.ajax({
+        url : "/ActionServlet",
+        data : {
+            action : "db_fix_orphant_docs",            
+        },        
         async : false
     });
 }

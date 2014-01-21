@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Logger;
@@ -19,11 +20,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.junit.experimental.theories.internal.Assignments;
+
 import easyliq.Calculators.Calculator;
 import easyliq.Calculators.Density;
 import easyliq.Calculators.RfFromCakeSaturation;
 import easyliq.dbobject.*;
 
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.files.FileServicePb.KeyValue;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -57,8 +63,10 @@ public class ActionServlet extends HttpServlet {
             if (action.equals("loadfolders")) {
                 LoadFolders(request, response);
             }
-            if (action.equals("loaddoc")) {
-                LoadAllDocs(request, response);
+        	// TODO: Run this in deploy and then remove this code with corresponding server
+        	// side code. It moves all documents in DB without folder to a new created folder. 
+            if (action.equals("db_fix_orphant_docs")) {
+            	db_fix_orphant_docs(request, response);
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -66,8 +74,52 @@ public class ActionServlet extends HttpServlet {
         }
     }
 
+	// TODO: Run this in deploy and then remove this code with corresponding server
+	// side code. It moves all documents in DB without folder to a new created folder. 
+    private void db_fix_orphant_docs(HttpServletRequest request,
+			HttpServletResponse response) {
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        String query = "select from " + UserFolder.class.getName();
+        @SuppressWarnings("unchecked")
+        List<UserFolder> r = (List<UserFolder>) pm.newQuery(query).execute();
+        List<String> assignedDocs = new ArrayList<String>();
+        for (UserFolder f : r) {
+            query = "select docKey from " + DocumentLocation.class.getName()
+                        + " where parentFolderKey == '" + f.getKey() + "'";
+            List<String> docsKeys = (List<String>) pm.newQuery(query).execute();
+            assignedDocs.addAll(docsKeys);
+        }
+        query = "select from " + UserDocument.class.getName();
+        List<UserDocument> allDocs = (List<UserDocument>)pm.newQuery(query).execute();
+        
+        HashMap<String, List<String>> orphant = new HashMap<String, List<String>>();
+        for (UserDocument userDoc : allDocs) {
+        	String s = userDoc.getKey();
+        	if (!assignedDocs.contains(s)) {
+        		String e = userDoc.getAuthorEmail();
+        		if (!orphant.containsKey(e)) {
+        			orphant.put(e, new ArrayList<String>());
+        		}
+            	orphant.get(e).add(s);
+        	}
+        }
+        
+        for (String userEmail : orphant.keySet()) {
+        	UserFolder fld = new UserFolder("Old Documents", userEmail);
+            pm.makePersistent(fld);
+            String key = fld.getKey();
+            // Hack to force data store to apply changes: Query to the added
+            // element.
+            pm.getObjectById(UserFolder.class, key);
+            for (String doc : orphant.get(userEmail)) {
+	            DocumentLocation fd = new DocumentLocation(fld.getKey(), doc);
+	            pm.makePersistent(fd);
+            }
+        }
+        pm.close();
+	}
 
-    protected void doPost(HttpServletRequest request,
+	protected void doPost(HttpServletRequest request,
             HttpServletResponse response) {
         String action = request.getParameter("action");
         if (action == null) {
@@ -77,14 +129,11 @@ public class ActionServlet extends HttpServlet {
             if (action.equals("calculate")) {
                 Calculate(request, response);
             }
-            if (action.equals("loadfolders")) {
-                LoadFolders(request, response);
-            }
             if (action.equals("savedoc")) {
                 SaveDoc(request, response);                
             }
             if (action.equals("movedoctofolder")) {
-                MoveDoc(request, response);
+                MoveDocToFolder(request, response);
             }
             if (action.equals("savefolder")) {
                 SaveFolder(request, response);
@@ -92,7 +141,6 @@ public class ActionServlet extends HttpServlet {
             if (action.equals("removedoc")) {
                 RemoveDoc(request, response);
             }
-          
             if (action.equals("savesettings")) {
                 saveSettings(request, response);
             }
@@ -105,21 +153,21 @@ public class ActionServlet extends HttpServlet {
         }
     }
 
-    private void MoveDoc(HttpServletRequest request,
+    private void MoveDocToFolder(HttpServletRequest request,
             HttpServletResponse response) {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         String docId = request.getParameter("doc");
-        String fldId = request.getParameter("folder");
         String query = "select from " + DocumentLocation.class.getName()
                 + " where docKey == '" + docId + "'";
-        List<DocumentLocation> fdList = (List<DocumentLocation>) pm.newQuery(query)
+        @SuppressWarnings("unchecked")
+		List<DocumentLocation> location = (List<DocumentLocation>) pm.newQuery(query)
                 .execute();
-        if (fdList.isEmpty()) {
-            DocumentLocation fd = new DocumentLocation(fldId, docId);
+        if (location.isEmpty()) {
+            DocumentLocation fd = new DocumentLocation(request.getParameter("folder"), docId);
             pm.makePersistent(fd);
         } else {
-            fdList.get(0).setParentFolderKey(fldId);
-            pm.makePersistent(fdList.get(0));
+            location.get(0).setParentFolderKey(request.getParameter("folder"));
+            pm.makePersistent(location.get(0));
         }
     }
     
@@ -215,89 +263,37 @@ public class ActionServlet extends HttpServlet {
         }
     }
 
-    private void LoadAllDocs(HttpServletRequest request,
+    private void SaveFolder(HttpServletRequest request,
             HttpServletResponse response) throws IOException {
         UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();
 
         PersistenceManager pm = PMF.get().getPersistenceManager();
-        String query = "select from " + UserDocument.class.getName()
-                + " where authorEmail=='" + user.getEmail() + "'";
-        @SuppressWarnings("unchecked")
-        List<UserDocument> r = (List<UserDocument>) pm.newQuery(query)
-                .execute();
-
-        Collections.sort(r, new Comparator<UserDocument>() {
-            public int compare(UserDocument userdoc1, UserDocument userdoc2) {
-                Date date1 = userdoc1.getCreationDate();
-                Date date2 = userdoc2.getCreationDate();
-                if (date1 == null) {
-                    return date2 == null ? 0 : -1;
-                }
-                if (date2 == null) {
-                    return 1;
-                }
-                return date1.compareTo(date2);
+        pm.setIgnoreCache(true);
+        String name = request.getParameter("folderName");
+        String id = request.getParameter("id");
+        Boolean isActiveDoc = Boolean.parseBoolean(request
+                .getParameter("isactive"));
+        try {
+            if (id.isEmpty()) {
+                UserFolder fld = new UserFolder(name, user.getEmail());
+                pm.makePersistent(fld);
+                String key = fld.getKey();
+                response.getWriter().write(key);
+                // Hack to force data store to apply changes: Query to the added
+                // element.
+                pm.getObjectById(UserFolder.class, key);
+            } else {
+                UserFolder f = pm.getObjectById(UserFolder.class, id);
+                f.setName(name);
+                response.getWriter().write(id);
+                // Hack to force data store to apply changes: Query to the added
+                // element.
+                pm.getObjectById(UserFolder.class, id);
             }
-        });
-
-        if (!r.isEmpty()) {
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            String json = "[";
-            boolean isFirst = true;
-            for (UserDocument doc : r) {
-                if (!isFirst) {
-                    json = json + ",";
-                }
-                isFirst = false;
-                json = json + "{" + JsonPair("docName", doc.getName());
-                json = json + "," + JsonPair("id", doc.getKey());
-                json = json + ",\"modules\":[";
-                boolean isFirstModule = true;
-                for (String m : doc.getModules()) {
-                    if (!isFirstModule) {
-                        json = json + ",";
-                    }
-                    isFirstModule = false;
-                    json = json + m;
-                }
-                json = json + "]}";
-            }
-            json = json + "]";
-            pm.close();
-            response.getWriter().write(json);
-        }
-    }
-
-    private String LoadDocByKey(String key) throws IOException {
-        String json = "";
-        PersistenceManager pm = PMF.get().getPersistenceManager();
-        UserDocument doc = pm.getObjectById(UserDocument.class, key);
-        /*String query = "select from " + UserDocument.class.getName()
-                + " where key =='" + key + "'";*/
-        //@SuppressWarnings("unchecked")
-        /*List<UserDocument> r = (List<UserDocument>) pm.newQuery(query)
-                .execute();*/
-
-        //if (!r.isEmpty()) {
-        if (doc != null) {
-            //UserDocument doc = r.get(0);
-            json = "{" + JsonPair("docName", doc.getName());
-            json = json + "," + JsonPair("id", doc.getKey());
-            json = json + ",\"modules\":[";
-            boolean isFirstModule = true;
-            for (String m : doc.getModules()) {
-                if (!isFirstModule) {
-                    json = json + ",";
-                }
-                isFirstModule = false;
-                json = json + m;
-            }
-            json = json + "]}";
+        } finally {
             pm.close();
         }
-        return json;
     }
 
     private void LoadFolders(HttpServletRequest request,
@@ -345,10 +341,6 @@ public class ActionServlet extends HttpServlet {
         }
     }
 
-    private String JsonPair(String name, String value) {
-        return "\"" + name + "\":\"" + value + "\"";
-    }
-
     private void SaveDoc(HttpServletRequest request,
             HttpServletResponse response) throws IOException {
         UserService userService = UserServiceFactory.getUserService();
@@ -383,39 +375,6 @@ public class ActionServlet extends HttpServlet {
                 // Hack to force data store to apply changes: Query to the added
                 // element.
                 pm.getObjectById(UserDocument.class, id);
-            }
-        } finally {
-            pm.close();
-        }
-    }
-
-    private void SaveFolder(HttpServletRequest request,
-            HttpServletResponse response) throws IOException {
-        UserService userService = UserServiceFactory.getUserService();
-        User user = userService.getCurrentUser();
-
-        PersistenceManager pm = PMF.get().getPersistenceManager();
-        pm.setIgnoreCache(true);
-        String name = request.getParameter("folderName");
-        String id = request.getParameter("id");
-        Boolean isActiveDoc = Boolean.parseBoolean(request
-                .getParameter("isactive"));
-        try {
-            if (id.isEmpty()) {
-                UserFolder fld = new UserFolder(name, user.getEmail());
-                pm.makePersistent(fld);
-                String key = fld.getKey();
-                response.getWriter().write(key);
-                // Hack to force data store to apply changes: Query to the added
-                // element.
-                pm.getObjectById(UserFolder.class, key);
-            } else {
-                UserFolder f = pm.getObjectById(UserFolder.class, id);
-                f.setName(name);
-                response.getWriter().write(id);
-                // Hack to force data store to apply changes: Query to the added
-                // element.
-                pm.getObjectById(UserFolder.class, id);
             }
         } finally {
             pm.close();
@@ -464,4 +423,31 @@ public class ActionServlet extends HttpServlet {
             pm.close();
         }
     }
+
+    private String LoadDocByKey(String key) throws IOException {
+	    String json = "";
+	    PersistenceManager pm = PMF.get().getPersistenceManager();
+	    UserDocument doc = pm.getObjectById(UserDocument.class, key);
+	    if (doc != null) {
+	        json = "{" + JsonPair("docName", doc.getName());
+	        json = json + "," + JsonPair("id", doc.getKey());
+	        json = json + ",\"modules\":[";
+	        boolean isFirstModule = true;
+	        for (String m : doc.getModules()) {
+	            if (!isFirstModule) {
+	                json = json + ",";
+	            }
+	            isFirstModule = false;
+	            json = json + m;
+	        }
+	        json = json + "]}";
+	        pm.close();
+	    }
+	    return json;
+	}
+	
+	private String JsonPair(String name, String value) {
+	    return "\"" + name + "\":\"" + value + "\"";
+	}
 }
+

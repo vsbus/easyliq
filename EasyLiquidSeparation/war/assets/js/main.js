@@ -17,8 +17,8 @@ String.prototype.trim = function() {
 function findModulePosition(module) {
     var row_idx;
     var col_idx;
-    for ( var i = 0; i < currentDoc.modules.length; i++) {
-        for ( var j = 0; j < currentDoc.modules[i].length; j++) {
+    for (var i = 0; i < currentDoc.modules.length; i++) {
+        for (var j = 0; j < currentDoc.modules[i].length; j++) {
             if (currentDoc.modules[i][j] == module) {
                 row_idx = i;
                 col_idx = j;
@@ -38,8 +38,8 @@ function Process() {
     if (!currentDoc) {
         return;
     }
-    for ( var i in currentDoc.modules) {
-        for ( var j in currentDoc.modules[i]) {
+    for (var i in currentDoc.modules) {
+        for (var j in currentDoc.modules[i]) {
             var module = currentDoc.modules[i][j];
             if (module.changeByUserTime <= last_processing_time) {
                 continue;
@@ -82,10 +82,11 @@ function addNewDocument() {
         name = e.value.trim();
         var ndoc = addDocument(name, id, []);
         saveDoc(ndoc);
-        moveDocToFolder(currentDoc.id, currentFolder.id);
+        moveDocToFolder(ndoc.id, currentFolder.id);
         DisplayDocument(ndoc);
         $("#shadow").hide();
         setCurrentDocument(ndoc);
+        saveSettings();
     }
 }
 
@@ -148,7 +149,7 @@ function DisplayFolder(f) {
         ul.setAttribute("class", "nav");
         f.element.appendChild(ul);
 
-        for ( var i in f.documents) {
+        for (var i in f.documents) {
             DisplayFolderDocument(ul, f.documents[i]);
         }
     }
@@ -232,15 +233,15 @@ function setCurrentDocument(doc) {
     if (currentDoc != null) {
         currentDoc.element.removeAttribute("class");
     }
+    
     currentDoc = doc;
-    currentDoc.element.setAttribute("class", "active");
-    
-    // After selecting the document current folder also changes.
+
     if (currentDoc != null) {
+    	currentDoc.element.setAttribute("class", "active");
+    	// After selecting the document current folder also changes.
         setCurrentFolder(getParentFolder(currentDoc));
+        renderModules();
     }
-    
-    renderModules();
 }
 
 function setCurrentFolder(fld) {
@@ -252,12 +253,8 @@ function setCurrentFolder(fld) {
 
 }
 function initWorkspace() {
-    //loadDocs();
     loadFolders();
     loadSettings();
-    /*if (documents.length == 0) {
-        addNewDocument();
-    }*/
     if (folders.length == 0) {
         addDefaultFolder();
     }

@@ -15,9 +15,9 @@ public class DocumentLocation {
     @Persistent
     private String docKey;
     
-    public DocumentLocation(String f, String d){
-        this.parentFolderKey = f;
-        this.docKey = d;
+    public DocumentLocation(String folderKey, String documentKey){
+        this.parentFolderKey = folderKey;
+        this.docKey = documentKey;
     } 
     
     public String getDocKey(){
@@ -27,7 +27,7 @@ public class DocumentLocation {
     public String getParentFolderKey(){
         return this.parentFolderKey;
     }
-    public void setParentFolderKey (String f){
-        this.parentFolderKey = f;
+    public void setParentFolderKey (String folderKey){
+        this.parentFolderKey = folderKey;
     }
 }
