@@ -48,59 +48,26 @@ function saveFolder(fld) {
         async : false
     });
 }
-function MoveDocToFolder(doc, fldId) {
+function moveDocToFolder(doc, folderId) {
     $.ajax({
         type: "POST",
-        url : "/ActionServlet",
-        data : {
-            action : "movedoctofolder",
-            doc : doc,
-            folder : fldId            
+        url:  "/ActionServlet",
+        data: {
+            action: "movedoctofolder",
+            doc:    doc,
+            folder: folderId
         },
-        success : function(responseText) {
-            // userdocId = responseText;
-            // fld.id = responseText;
-        },
-        async : false
+        async: false
     });
-}
-
-function loadDocs() {
-    $.ajax({
-        url : "/ActionServlet",
-        data : {
-            action : "loaddoc"
-        },
-        success : function(response) {
-            // Clear modules array.
-            documents = [];
-            // Create new modules that download from DB.
-            for (var i in response) {
-                var doc = addDocument(response[i].docName, response[i].id, []);
-                doc.modules.push([]);
-                for (var j in response[i].modules) {
-                	var module = response[i].modules[j];
-                	if (module.newline != undefined) {
-                		doc.modules.push([]);
-                	} else {
-                		doc.modules[doc.modules.length - 1].push(Deserialize(module));
-                	}
-                }
-                DisplayDocument(doc);
-            }
-        },
-        async : false
-    });
-    
 }
 
 function loadFolders() {
      $.ajax({
-        url : "/ActionServlet",
-        data : {
-            action : "loadfolders"
+        url:  "/ActionServlet",
+        data: {
+            action: "loadfolders"
         },
-        success : function(response) {
+        success: function(response) {
             folders = []
             for (var i in response) {
                 var f = addFolder(response[i].folderName, response[i].id, []);
@@ -117,6 +84,7 @@ function loadFolders() {
                         }
                     }
                     f.documents.push(doc);
+                    //DisplayDocument(f.element,doc)
                 }
                 DisplayFolder(f);
             }
@@ -216,10 +184,18 @@ function loadSettings() {
         },        
         success : function(responseText) {
             docId = responseText;
-            for (var i in documents) {
-                if(documents[i].id == docId) {
-                    setCurrentDocument(documents[i]);
-                    break;
+            var isFound = false;
+            for (var f in folders) {                
+                for (var i in folders[f].documents) {
+                    if(folders[f].documents[i].id == docId) {
+                        setCurrentFolder(folders[f]);
+                        setCurrentDocument(folders[f].documents[i]);
+                        isFound = true;
+                        break;
+                    }
+                    if (isFound) {
+                        break;
+                    }
                 }
             }            
         },

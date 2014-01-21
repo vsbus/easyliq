@@ -6,7 +6,6 @@ var last_saving_time = FAR_AGO;
 var last_processing_time = FAR_AGO;
 var digits_after_point = 3;
 var calculationProcess;
-var documents = [];
 var folders = [];
 var currentDoc = null;
 var currentFolder = null;
@@ -72,8 +71,7 @@ function addNewDocument() {
     var name = "Untitled";
     var id = null;
     $("#shadow").show();
-    $("#newname_popup").show();    
-    $("#folders_popup").hide();
+    $("#newname_popup").show();
     var e = document.getElementById("new_name");
     e.value = name;
     e.focus();
@@ -84,20 +82,36 @@ function addNewDocument() {
         name = e.value.trim();
         var ndoc = addDocument(name, id, []);
         saveDoc(ndoc);
+        moveDocToFolder(currentDoc.id, currentFolder.id);
         DisplayDocument(ndoc);
         $("#shadow").hide();
         setCurrentDocument(ndoc);
-        MoveDocToFolder(currentDoc.id, currentFolder.id);
-        saveSettings();
+    }
+}
+
+function removeCurrentDocument() {
+    if (currentDoc != null) {
+        removeDoc();
+        var docList = currentFolder.element.getElementsByTagName("ul")[0];
+        docList.removeChild(currentDoc.element);
+        var idx = currentFolder.documents.indexOf(currentDoc);
+        currentFolder.documents.splice(idx, 1);
+        if (idx == currentFolder.documents.length) {
+            idx = idx - 1;
+        }
+        if (idx < 0) {
+            addNewDocument();
+            idx = 0;
+        }
+        setCurrentDocument(currentFolder.documents[idx]);
     }
 }
 
 function addDefaultFolder() {
-    var name = "Untitled Folder";
+    var name = "Untitled Project";
     var id = null;
     $("#shadow").show();
-    $("#newname_popup").show();    
-    $("#folders_popup").hide();
+    $("#newname_popup").show();
     var e = document.getElementById("new_name");
     e.value = name;
     e.focus();
@@ -111,7 +125,6 @@ function addDefaultFolder() {
         DisplayFolder(nfld);
         $("#shadow").hide();
         setCurrentFolder(nfld);
-        // saveSettings();
     }
 }
 
@@ -144,9 +157,19 @@ function DisplayFolder(f) {
 function DisplayFolderDocument(parentsEl, doc) {
     parentsEl.appendChild(doc.element);
 }
+
 function DisplayDocument(doc) {
-    document.getElementById("documents_list").appendChild(doc.element);
+/*    document.getElementById("documents_list").appendChild(doc.element);
     documents[documents.length] = doc;
+    */
+    if (currentFolder.documents.length == 0) {
+        var ul = document.createElement("ul");
+        ul.setAttribute("class", "nav");
+        currentFolder.element.appendChild(ul);
+    }
+    var el = currentFolder.element.getElementsByTagName("ul")[0]; 
+    el.appendChild(doc.element);
+    currentFolder.documents[currentFolder.documents.length] = doc;
 }
 
 function addDocument(name, id, modules) {
@@ -177,7 +200,6 @@ function addFolder(name, id, docs) {
     DisplayFolderName(name, a);
     a.onclick = function() {
         setCurrentFolder(fld);
-        // saveSettings();
     };
     fld.element.appendChild(a);
     return fld;
@@ -197,38 +219,53 @@ function DisplayFolderName(name, el) {
     el.appendChild(i);
 }
 
+function getParentFolder(doc) {
+    for (var i in folders) {
+        if (folders[i].documents.indexOf(doc) != -1) {
+            return folders[i];
+        }
+    }
+    return null;
+}
+
 function setCurrentDocument(doc) {
     if (currentDoc != null) {
-        currentDoc.element.setAttribute("class", "");
+        currentDoc.element.removeAttribute("class");
     }
     currentDoc = doc;
     currentDoc.element.setAttribute("class", "active");
+    
+    // After selecting the document current folder also changes.
+    if (currentDoc != null) {
+        setCurrentFolder(getParentFolder(currentDoc));
+    }
+    
     renderModules();
 }
 
-function setCurrentFolder(doc) {
+function setCurrentFolder(fld) {
     if (currentFolder != null) {
-        currentFolder.element.setAttribute("class", "");
+        currentFolder.element.removeAttribute("class");
     }
-    currentFolder = doc;
+    currentFolder = fld;
     currentFolder.element.setAttribute("class", "active");
 
 }
 function initWorkspace() {
-    loadDocs();
+    //loadDocs();
     loadFolders();
     loadSettings();
-    if (documents.length == 0) {
+    /*if (documents.length == 0) {
         addNewDocument();
-    }
+    }*/
     if (folders.length == 0) {
         addDefaultFolder();
     }
-    if (currentDoc == null) {
-        setCurrentDocument(documents[0]);
-    }
     if (currentFolder == null) {
         setCurrentFolder(folders[0]);
+    }
+    if (currentDoc == null) {
+        setCurrentDocument(currentFolder.documents[0]);
     }
     turnCalculationProcessOn();
 }

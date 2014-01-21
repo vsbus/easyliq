@@ -11,44 +11,29 @@ function parameterValueChanged(m, parameter) {
 }
 
 function addModuleButtonClick(module) {
-	addModule(module);
-	saveDoc(currentDoc);
+    addModule(module);
+    saveDoc(currentDoc);
 }
 
 function addModulesRowButtonClick() {
-	currentDoc.modules.push([]);
-	renderModules();
-	saveDoc(currentDoc);
+    currentDoc.modules.push([]);
+    renderModules();
+    saveDoc(currentDoc);
 }
 
 function removeDocumentClick() {
-	if (currentDoc != null) {
-	    removeDoc();
-		document.getElementById("documents_list").removeChild(currentDoc.element);
-		var idx = documents.indexOf(currentDoc);
-        documents.splice(idx, 1);
-        if (idx == documents.length) {
-        	idx = idx - 1;
-        }
-        if (idx < 0) {
-        	addNewDocument();
-        	idx = 0;
-        }
-        setCurrentDocument(documents[idx]);
-        saveSettings();
-	}
+    removeCurrentDocument()
+    saveSettings();
 }
 
 function removeFolderClick() {
     removeFolder(currentFolder.id);
 }
 
-
 function renameDocumentClick() {
     if (currentDoc != null) {
         $("#shadow").show();
-        $("#newname_popup").show();    
-        $("#folders_popup").hide();
+        $("#newname_popup").show();
         var e = document.getElementById("new_name");
         e.value = currentDoc.name;
         e.focus();
@@ -65,14 +50,13 @@ function renameDocumentClick() {
 }
 function addDocumentToCurrentFolderClick() {
     addNewDocument();
-   // MoveDocToFolder(currentDoc.id, currentFolder.id);
+    saveSettings();
 }
 function renameFolderClick() {
     if (currentFolder != null) {
         $("#shadow").show();
-        $("#docname_popup").show();    
-        $("#folders_popup").hide();
-        var e = document.getElementById("doc_name");
+        $("#newname_popup").show();
+        var e = document.getElementById("new_name");
         e.value = currentFolder.name;
         e.focus();
         document.getElementById("save_name").onclick = function(){
@@ -87,28 +71,7 @@ function renameFolderClick() {
     }
 }
 
-function moveDocumentToFolderClick() {
-    $("#shadow").show();
-    $("#docname_popup").hide();    
-    $("#folders_popup").show();
-    
-    $("#foldernames_list").empty();
-    var select = document.getElementById("foldernames_list");    
-    
-    for(var i = 0; i < folders.length; i++) {
-            var el = document.createElement("option");
-            el.value = folders[i].id;
-            el.innerHTML = folders[i].name;
-            select.appendChild(el);
-        }
-    document.getElementById("save_changes").onclick = function(){        
-        MoveDocToFolder(currentDoc.id, select.selectedOptions[0].value);
-        $("#shadow").hide();
-    }
-}
-
-
-function cancelDocumentNameChange() {
+function cancelButtonClick() {
     document.getElementById('valid_message').innerHTML='';
     $('#shadow').hide();
 }

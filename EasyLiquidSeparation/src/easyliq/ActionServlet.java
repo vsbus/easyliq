@@ -194,16 +194,17 @@ public class ActionServlet extends HttpServlet {
         String id = request.getParameter("id");
         try {
             pm.deletePersistent(pm.getObjectById(UserFolder.class, id));
-            String query = "select from " + DocumentLocation.class.getName()+ " where parentFolderKey == '" + id + "'";
+            String query = "select from " + DocumentLocation.class.getName() + " where parentFolderKey == '" + id + "'";
             List<DocumentLocation> fdList = (List<DocumentLocation>)pm.newQuery(query).execute();
             if(!fdList.isEmpty()) {
                 for(DocumentLocation fd : fdList) {
                     pm.deletePersistent(pm.getObjectById(UserDocument.class, fd.getDocKey()));
                 }
+                
                 for(DocumentLocation fd : fdList) {
                     pm.deletePersistent(fd);
                 }
-            }         
+            }
             // Hack to force data store to apply deletion: As pm.getObjectById
             // throws exceptions for not existing objects we are using
             // pm.flush() here that works fine with deleting but not with
