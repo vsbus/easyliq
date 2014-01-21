@@ -42,7 +42,6 @@ function saveFolder(fld) {
             isactive : fld == currentFolder
         },
         success : function(responseText) {
-            // userdocId = responseText;
             fld.id = responseText;
         },
         async : false
@@ -83,8 +82,7 @@ function loadFolders() {
                             doc.modules[doc.modules.length - 1].push(Deserialize(module));
                         }
                     }
-                    f.documents.push(doc);
-                    //DisplayDocument(f.element,doc)
+                    f.documents.push(doc);                    
                 }
                 DisplayFolder(f);
             }
@@ -124,7 +122,7 @@ function Serialize(module) {
     }
     var representators = {};
     for (var group in module.groups_meta) {
-        representators[group] = module.groups_meta[group].representator;// .push(module.groups_meta[group].representator);
+        representators[group] = module.groups_meta[group].representator;
     }
 
     var map = {

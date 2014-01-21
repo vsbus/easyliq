@@ -253,7 +253,7 @@ public class ActionServlet extends HttpServlet {
 
         PersistenceManager pm = PMF.get().getPersistenceManager();
         String query = "select from " + UserFolder.class.getName()
-                + " where authorEmail=='" + user.getEmail() + "'";
+                + " where authorEmail=='" + user.getEmail() + "' order by creationDate";
         @SuppressWarnings("unchecked")
         List<UserFolder> r = (List<UserFolder>) pm.newQuery(query).execute();
         if (!r.isEmpty()) {
@@ -280,7 +280,7 @@ public class ActionServlet extends HttpServlet {
                             json = json + ","; 
                         }
                         isFirstDoc = false;
-                        json = json + LoadDocByKey(docKey);
+                        json = json + LoadDocByKeyJson(docKey);
                     }
                 }
                 json = json + "]}";
@@ -374,30 +374,37 @@ public class ActionServlet extends HttpServlet {
         }
     }
 
-    private String LoadDocByKey(String key) throws IOException {
+    private String LoadDocByKeyJson(String key) throws IOException {
 	    String json = "";
 	    PersistenceManager pm = PMF.get().getPersistenceManager();
 	    UserDocument doc = pm.getObjectById(UserDocument.class, key);
 	    if (doc != null) {
-	        json = "{" + JsonPair("docName", doc.getName());
-	        json = json + "," + JsonPair("id", doc.getKey());
-	        json = json + ",\"modules\":[";
-	        boolean isFirstModule = true;
-	        for (String m : doc.getModules()) {
-	            if (!isFirstModule) {
-	                json = json + ",";
-	            }
-	            isFirstModule = false;
-	            json = json + m;
-	        }
-	        json = json + "]}";
-	        pm.close();
-	    }
+	        json = GetDocumentJson(doc);
+        }
+        pm.close();
 	    return json;
 	}
 	
+    
+    private String GetDocumentJson(UserDocument doc) throws IOException {
+        String json = "";
+        if (doc != null) {
+            json = "{" + JsonPair("docName", doc.getName());
+            json = json + "," + JsonPair("id", doc.getKey());
+            json = json + ",\"modules\":[";
+            boolean isFirstModule = true;
+            for (String m : doc.getModules()) {
+                if (!isFirstModule) {
+                    json = json + ",";
+                }
+                isFirstModule = false;
+                json = json + m;
+            }
+            json = json + "]}";            
+        }
+        return json;
+    }
 	private String JsonPair(String name, String value) {
 	    return "\"" + name + "\":\"" + value + "\"";
 	}
 }
-
