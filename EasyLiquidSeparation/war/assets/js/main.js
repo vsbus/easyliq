@@ -141,16 +141,16 @@ function isValid() {
     }
 }
 
-function DisplayFolder(f) {
-    document.getElementById("folders_list").appendChild(f.element);
-    folders[folders.length] = f
-    if (f.documents.length != 0) {
+function DisplayFolder(folder) {
+    document.getElementById("folders_list").appendChild(folder.element);
+    folders[folders.length] = folder
+    if (folder.documents.length != 0) {
         var ul = document.createElement("ul");
         ul.setAttribute("class", "nav");
-        f.element.appendChild(ul);
+        folder.element.appendChild(ul);
 
-        for (var i in f.documents) {
-            DisplayFolderDocument(ul, f.documents[i]);
+        for (var i in folder.documents) {
+            DisplayFolderDocument(ul, folder.documents[i]);
         }
     }
 }
@@ -160,9 +160,6 @@ function DisplayFolderDocument(parentsEl, doc) {
 }
 
 function DisplayDocument(doc) {
-/*    document.getElementById("documents_list").appendChild(doc.element);
-    documents[documents.length] = doc;
-    */
     if (currentFolder.documents.length == 0) {
         var ul = document.createElement("ul");
         ul.setAttribute("class", "nav");
@@ -184,6 +181,8 @@ function addDocument(name, id, modules) {
     DisplayDocumentName(name, a);
     a.onclick = function() {
         setCurrentDocument(doc);
+    	// After selecting the document current folder also changes.
+        setCurrentFolder(getParentFolder(doc));
         saveSettings();
     };
     doc.element.appendChild(a);
@@ -201,6 +200,11 @@ function addFolder(name, id, docs) {
     DisplayFolderName(name, a);
     a.onclick = function() {
         setCurrentFolder(fld);
+    	// After selecting the folder current document is set to its first document.
+        if (fld.documents.length > 0 && fld.documents[0] != null) {
+        	setCurrentDocument(fld.documents[0]);
+        }
+        saveSettings();
     };
     fld.element.appendChild(a);
     return fld;
@@ -208,14 +212,12 @@ function addFolder(name, id, docs) {
 
 function DisplayDocumentName(name, el) {
     var i = document.createElement("i");
-    i.setAttribute("class", "icon-chevron-right");
     el.innerHTML = name;
     el.appendChild(i);
 }
 
 function DisplayFolderName(name, el) {
     var i = document.createElement("i");
-    i.setAttribute("class", "icon-chevron-right");
     el.innerHTML = name;
     el.appendChild(i);
 }
@@ -238,8 +240,6 @@ function setCurrentDocument(doc) {
 
     if (currentDoc != null) {
     	currentDoc.element.setAttribute("class", "active");
-    	// After selecting the document current folder also changes.
-        setCurrentFolder(getParentFolder(currentDoc));
         renderModules();
     }
 }

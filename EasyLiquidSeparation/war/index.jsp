@@ -8,66 +8,69 @@
 <html lang="ru" xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
+    <link href="assets/css/bootstrap.css" type="text/css" rel="stylesheet" media="screen" />
+    <link href="assets/css/docs.css" type="text/css" rel="stylesheet" media="screen" />
+    <link href="assets/css/styles.css" type="text/css" rel="stylesheet" />
 
-<link href="assets/css/bootstrap.css" type="text/css" rel="stylesheet" media="screen"/>
-<link href="assets/css/docs.css" type="text/css" rel="stylesheet" media="screen"/>
-<link href="assets/css/styles.css" type="text/css" rel="stylesheet"/>
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 
-<script src="http://code.jquery.com/jquery-latest.js"></script>
-<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-  
+    <script src="assets/js/bootstrap.js"></script>
+    <script src="assets/js/events.js"></script>
+    <script src="assets/js/requests.js"></script>
+    <script src="assets/js/ui.js"></script>
 
-<script src="assets/js/bootstrap.js"></script>
-<script src="assets/js/events.js"></script>
-<script src="assets/js/requests.js"></script>
-<script src="assets/js/ui.js"></script>
+    <script src="assets/js/modules/module.js"></script>
+    <script src="assets/js/modules/DensityConcentration.js"></script>
+    <script src="assets/js/modules/RfFromCakeSaturation.js"></script>
 
-<script src="assets/js/modules/module.js"></script>
-<script src="assets/js/modules/DensityConcentration.js"></script>
-<script src="assets/js/modules/RfFromCakeSaturation.js"></script>
+    <script src="assets/js/main.js"></script>
 
-<script src="assets/js/main.js"></script>
-
-<script  type="text/javascript">
-    userdocId = "";
-</script>
+    <script type="text/javascript">
+        userdocId = "";
+    </script>
 </head>
 
-<body  style= "background:url('assets/images/bg.png') repeat scroll left top transparent">
- 
-<form>
-  <div class = "">
-    <div class = "row">
-      <div class = "span3"> 
-        <div id="shadow">
-          <div id = "overlay" ></div>
-          <div class="popup">
-              <div id ="newname_popup" class="inputbar">
-                new name:
-                <div id="valid_message"></div>
-                <input type="text" id="new_name"></input>            
-                <input type = "button" id="save_name" value="Save"></input>
-                <input type = "button" onclick="javascript: cancelButtonClick();" value="Cancel"/>
-              </div>
-          </div>
-        </div>
-        <div>Projects:</div>
-        <input type="button" onclick="javascript: addDefaultFolder();" value="Add"/>
-        <input type="button" onclick="javascript: removeFolderClick();" value="Remove"/>
-        <input type="button" onclick="javascript: renameFolderClick();" value="Rename"/>
-        <div>Documents:</div>
-        <input type="button" onclick="javascript: addDocumentToCurrentFolderClick();" value="Add"/>
-        <input type="button" onclick="javascript: removeDocumentClick();" value="Remove"/>
-        <input type="button" onclick="javascript: renameDocumentClick();" value="Rename"/>
-        <div class="bs-docs-sidebar">
-          <ul id="folders_list" class="nav nav-list bs-docs-sidenav">
-          </ul>
-        </div>
-      </div>
-       
-      <div class = "span12">
-        <div class = "inputbar">
+<body style="background:url('assets/images/bg.png') repeat scroll left top transparent">
+    <form>
+        <div class="">
+            <div class="row">
+                <div class="span4">
+                    <div id="shadow">
+                        <div id="overlay"></div>
+                        <div class="popup">
+                            <div id="newname_popup" class="inputbar">
+                                new name:
+                                <div id="valid_message"></div>
+                                <input type="text" id="new_name"></input>
+                                <input type="button" id="save_name" value="Save"></input>
+                                <input type="button" onclick="javascript: cancelButtonClick();" value="Cancel" />
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div style="padding:10">
+	                    <div>Projects:</div>
+	                    <input type="button" onclick="javascript: addDefaultFolder();" value="Add" />
+	                    <input type="button" onclick="javascript: removeFolderClick();" value="Remove" />
+	                    <input type="button" onclick="javascript: renameFolderClick();" value="Rename" />
+                    </div>
+                    <div class="bs-sidebar hidden-print" role="complementary">
+                        <ul id="folders_list" class="nav bs-sidenav">
+                        </ul>
+                    </div>
+                    <div style="padding:10">	                    
+	                    <div>Documents:</div>
+	                    <input type="button" onclick="javascript: addDocumentToCurrentFolderClick();" value="Add" />
+	                    <input type="button" onclick="javascript: removeDocumentClick();" value="Remove" />
+	                    <input type="button" onclick="javascript: renameDocumentClick();" value="Rename" />
+                    </div>
+
+                </div>
+                <div class="span8">
+                    <div class="inputbar">
   <%
   UserService userService = UserServiceFactory.getUserService();
   User user = userService.getCurrentUser();
