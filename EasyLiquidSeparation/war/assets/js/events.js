@@ -30,6 +30,19 @@ function removeDocumentClick() {
 
 function removeFolderClick() {
     removeFolder(currentFolder.id);
+    currentFolder.element.parentElement.removeChild(currentFolder.element);
+    var idx = folders.indexOf(currentFolder);
+    folders.splice(idx, 1);
+    if (idx == folders.length) {
+        idx = idx - 1;
+    }
+    if (idx < folders.length) {
+	    fld = folders[idx];
+	    setCurrentFolder(fld);
+	    if (fld.documents.length > 0 && fld.documents[0] != null) {
+	    	setCurrentDocument(fld.documents[0]);
+	    }
+    }
 }
 
 function renameDocumentClick() {

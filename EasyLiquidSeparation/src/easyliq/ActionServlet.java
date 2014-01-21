@@ -54,6 +54,9 @@ public class ActionServlet extends HttpServlet {
             return;
         }
         try {
+            if (action.equals("calculate")) {
+                Calculate(request, response);
+            }
             if (action.equals("removefolder")) {
                 RemoveFolder(request, response);
             }
@@ -63,61 +66,11 @@ public class ActionServlet extends HttpServlet {
             if (action.equals("loadfolders")) {
                 LoadFolders(request, response);
             }
-        	// TODO: Run this in deploy and then remove this code with corresponding server
-        	// side code. It moves all documents in DB without folder to a new created folder. 
-            if (action.equals("db_fix_orphant_docs")) {
-            	db_fix_orphant_docs(request, response);
-            }
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
-
-	// TODO: Run this in deploy and then remove this code with corresponding server
-	// side code. It moves all documents in DB without folder to a new created folder. 
-    private void db_fix_orphant_docs(HttpServletRequest request,
-			HttpServletResponse response) {
-        PersistenceManager pm = PMF.get().getPersistenceManager();
-        String query = "select from " + UserFolder.class.getName();
-        @SuppressWarnings("unchecked")
-        List<UserFolder> r = (List<UserFolder>) pm.newQuery(query).execute();
-        List<String> assignedDocs = new ArrayList<String>();
-        for (UserFolder f : r) {
-            query = "select docKey from " + DocumentLocation.class.getName()
-                        + " where parentFolderKey == '" + f.getKey() + "'";
-            List<String> docsKeys = (List<String>) pm.newQuery(query).execute();
-            assignedDocs.addAll(docsKeys);
-        }
-        query = "select from " + UserDocument.class.getName();
-        List<UserDocument> allDocs = (List<UserDocument>)pm.newQuery(query).execute();
-        
-        HashMap<String, List<String>> orphant = new HashMap<String, List<String>>();
-        for (UserDocument userDoc : allDocs) {
-        	String s = userDoc.getKey();
-        	if (!assignedDocs.contains(s)) {
-        		String e = userDoc.getAuthorEmail();
-        		if (!orphant.containsKey(e)) {
-        			orphant.put(e, new ArrayList<String>());
-        		}
-            	orphant.get(e).add(s);
-        	}
-        }
-        
-        for (String userEmail : orphant.keySet()) {
-        	UserFolder fld = new UserFolder("Old Documents", userEmail);
-            pm.makePersistent(fld);
-            String key = fld.getKey();
-            // Hack to force data store to apply changes: Query to the added
-            // element.
-            pm.getObjectById(UserFolder.class, key);
-            for (String doc : orphant.get(userEmail)) {
-	            DocumentLocation fd = new DocumentLocation(fld.getKey(), doc);
-	            pm.makePersistent(fd);
-            }
-        }
-        pm.close();
-	}
 
 	protected void doPost(HttpServletRequest request,
             HttpServletResponse response) {
@@ -126,9 +79,6 @@ public class ActionServlet extends HttpServlet {
             return;
         }
         try {
-            if (action.equals("calculate")) {
-                Calculate(request, response);
-            }
             if (action.equals("savedoc")) {
                 SaveDoc(request, response);                
             }

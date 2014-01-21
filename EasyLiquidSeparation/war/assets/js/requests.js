@@ -204,15 +204,3 @@ function loadSettings() {
         async : false
     });
 }
-
-// TODO: Run this in deploy and then remove this code with corresponding server
-// side code. It moves all documents in DB without folder to a new created folder. 
-function db_fix_orphant_docs() {   
-    $.ajax({
-        url : "/ActionServlet",
-        data : {
-            action : "db_fix_orphant_docs",            
-        },        
-        async : false
-    });
-}
