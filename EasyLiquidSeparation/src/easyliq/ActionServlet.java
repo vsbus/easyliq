@@ -247,48 +247,78 @@ public class ActionServlet extends HttpServlet {
     }
 
     private void LoadFolders(HttpServletRequest request,
-            HttpServletResponse response) throws IOException {
+            HttpServletResponse response) throws Exception {
         UserService userService = UserServiceFactory.getUserService();
         User user = userService.getCurrentUser();
 
         PersistenceManager pm = PMF.get().getPersistenceManager();
         String query = "select from " + UserFolder.class.getName()
-                + " where authorEmail=='" + user.getEmail() + "' order by creationDate";
+                + " where authorEmail=='" + user.getEmail()
+                + "' order by creationDate";
         @SuppressWarnings("unchecked")
-        List<UserFolder> r = (List<UserFolder>) pm.newQuery(query).execute();
-        if (!r.isEmpty()) {
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            String json = "[";
-            boolean isFirst = true;
-            for (UserFolder f : r) {
-                if (!isFirst) {
-                    json = json + ",";
-                }
-                isFirst = false;
-                json = json + "{" + JsonPair("folderName", f.getName());
-                json = json + "," + JsonPair("id", f.getKey());
-                query = "select docKey from " + DocumentLocation.class.getName()
-                        + " where parentFolderKey == '" + f.getKey() + "'";
-                List<String> docsKeys = (List<String>) pm.newQuery(query)
-                        .execute();
-                json = json + "," + "\"documents\" : [";
-                if (!docsKeys.isEmpty()) {                    
-                    boolean isFirstDoc = true;
-                    for (String docKey : docsKeys) {
-                        if (!isFirstDoc) {
-                            json = json + ","; 
-                        }
-                        isFirstDoc = false;
-                        json = json + LoadDocByKeyJson(docKey);
-                    }
-                }
-                json = json + "]}";
-            }
-            json = json + "]";
-            pm.close();
-            response.getWriter().write(json);
+        List<UserFolder> folders = (List<UserFolder>) pm.newQuery(query)
+                .execute();
+        if (folders.isEmpty()) {
+            return;
         }
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        String json = "[";
+        boolean isFirst = true;
+        for (UserFolder f : folders) {
+            if (!isFirst) {
+                json = json + ",";
+            }
+            isFirst = false;
+            json = json + "{" + JsonPair("folderName", f.getName());
+            json = json + "," + JsonPair("id", f.getKey());
+            List<UserDocument> docs = GetDocumentsOfFolder(f);
+            json = json + "," + "\"documents\" : [";
+            if (!docs.isEmpty()) {
+                boolean isFirstDoc = true;
+                for (UserDocument doc : docs) {
+                    if (!isFirstDoc) {
+                        json = json + ",";
+                    }
+                    isFirstDoc = false;
+                    json = json + GetDocumentJson(doc);
+                }
+            }
+            json = json + "]}";
+        }
+        json = json + "]";
+        pm.close();
+        response.getWriter().write(json);
+    }
+
+    private List<UserDocument> GetDocumentsOfFolder(UserFolder f) throws Exception {
+        List<UserDocument> result = new ArrayList<UserDocument>();
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+        String query = "select docKey from " + DocumentLocation.class.getName()
+                + " where parentFolderKey == '" + f.getKey() + "'";
+        List<String> docsKeys = (List<String>) pm.newQuery(query).execute();
+        if (!docsKeys.isEmpty()) {
+            List<UserDocument> docs = new ArrayList<UserDocument>();
+            for (String docKey : docsKeys) {
+                UserDocument doc = pm.getObjectById(UserDocument.class, docKey);
+                docs.add(doc);
+            }
+            Collections.sort(docs, new Comparator<UserDocument>() {
+                public int compare(UserDocument userdoc1, UserDocument userdoc2) {
+                    Date date1 = userdoc1.getCreationDate();
+                    Date date2 = userdoc2.getCreationDate();
+                    if (date1 == null) {
+                        return date2 == null ? 0 : -1;
+                    }
+                    if (date2 == null) {
+                        return 1;
+                    }
+                    return date1.compareTo(date2);
+                }
+            });
+            result = docs;
+        }
+        return result;
     }
 
     private void SaveDoc(HttpServletRequest request,
