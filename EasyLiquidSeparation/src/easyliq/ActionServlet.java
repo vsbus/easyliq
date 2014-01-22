@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
@@ -107,11 +108,9 @@ public class ActionServlet extends HttpServlet {
             HttpServletResponse response) {
         PersistenceManager pm = PMF.get().getPersistenceManager();
         String docId = request.getParameter("doc");
-        String query = "select from " + DocumentLocation.class.getName()
-                + " where docKey == '" + docId + "'";
+        Query query = pm.newQuery(DocumentLocation.class, "docKey == '" + docId + "'" );
         @SuppressWarnings("unchecked")
-		List<DocumentLocation> location = (List<DocumentLocation>) pm.newQuery(query)
-                .execute();
+        List<DocumentLocation> location = (List<DocumentLocation>) query.execute();
         if (location.isEmpty()) {
             DocumentLocation fd = new DocumentLocation(request.getParameter("folder"), docId);
             pm.makePersistent(fd);
@@ -171,8 +170,8 @@ public class ActionServlet extends HttpServlet {
         String id = request.getParameter("id");
         try {
             pm.deletePersistent(pm.getObjectById(UserDocument.class, id));
-            String query = "select from " + DocumentLocation.class.getName() + " where docKey == '" + id +"'";
-            List<DocumentLocation> dl = (List<DocumentLocation>)pm.newQuery(query).execute();
+            Query query = pm.newQuery(DocumentLocation.class, "docKey == '" + id +"'");
+            List<DocumentLocation> dl = (List<DocumentLocation>)query.execute();
             for(DocumentLocation el : dl) {
                 pm.deletePersistent(el);
             }
@@ -192,8 +191,8 @@ public class ActionServlet extends HttpServlet {
         String id = request.getParameter("id");
         try {
             pm.deletePersistent(pm.getObjectById(UserFolder.class, id));
-            String query = "select from " + DocumentLocation.class.getName() + " where parentFolderKey == '" + id + "'";
-            List<DocumentLocation> fdList = (List<DocumentLocation>)pm.newQuery(query).execute();
+            Query query = pm.newQuery(DocumentLocation.class, "parentFolderKey == '" + id + "'");
+            List<DocumentLocation> fdList = (List<DocumentLocation>)query.execute();
             if(!fdList.isEmpty()) {
                 for(DocumentLocation fd : fdList) {
                     pm.deletePersistent(pm.getObjectById(UserDocument.class, fd.getDocKey()));
@@ -297,6 +296,7 @@ public class ActionServlet extends HttpServlet {
         String query = "select docKey from " + DocumentLocation.class.getName()
                 + " where parentFolderKey == '" + f.getKey() + "'";
         List<String> docsKeys = (List<String>) pm.newQuery(query).execute();
+        
         if (!docsKeys.isEmpty()) {
             List<UserDocument> docs = new ArrayList<UserDocument>();
             for (String docKey : docsKeys) {
@@ -368,9 +368,8 @@ public class ActionServlet extends HttpServlet {
         String docId = request.getParameter("id");
         PersistenceManager pm = PMF.get().getPersistenceManager();
         try {
-            String query = "select from " + UserInfo.class.getName()
-                    + " where email=='" + email + "'";
-            List<UserInfo> ui = (List<UserInfo>) pm.newQuery(query).execute();
+            Query query = pm.newQuery(UserInfo.class, "email=='" + email + "'");
+            List<UserInfo> ui = (List<UserInfo>) query.execute();
             if (ui.isEmpty()) {
                 UserInfo uInfo = new UserInfo(email, docId);
                 pm.makePersistent(uInfo);
@@ -390,9 +389,8 @@ public class ActionServlet extends HttpServlet {
         String email = userService.getCurrentUser().getEmail();
         PersistenceManager pm = PMF.get().getPersistenceManager();
         try {
-            String query = "select from " + UserInfo.class.getName()
-                    + " where email=='" + email + "'";
-            List<UserInfo> ui = (List<UserInfo>) pm.newQuery(query).execute();
+            Query query = pm.newQuery(UserInfo.class, "email=='" + email + "'");
+            List<UserInfo> ui = (List<UserInfo>) query.execute();
             if (ui.isEmpty()) {
                 response.getWriter().write("");
             } else {
