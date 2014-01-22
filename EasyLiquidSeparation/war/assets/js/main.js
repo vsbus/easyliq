@@ -100,10 +100,6 @@ function removeCurrentDocument() {
         if (idx == currentFolder.documents.length) {
             idx = idx - 1;
         }
-        if (idx < 0) {
-            addNewDocument();
-            idx = 0;
-        }
         setCurrentDocument(currentFolder.documents[idx]);
     }
 }
@@ -235,13 +231,11 @@ function setCurrentDocument(doc) {
     if (currentDoc != null) {
         currentDoc.element.removeAttribute("class");
     }
-    
     currentDoc = doc;
-
     if (currentDoc != null) {
     	currentDoc.element.setAttribute("class", "active");
-        renderModules();
     }
+    renderModules();
 }
 
 function setCurrentFolder(fld) {

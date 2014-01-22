@@ -2,46 +2,54 @@ var PADDING = 20;
 var MODULES_DEFAULT_WIDTH = PADDING + 300;
 var CURSOR_WIDTH = 4;
         
+
+
 function renderModules() {
-	// Remove all rows.
-	document.getElementById("modules_div").innerHTML = "";
-	// Create new rows with modules.
-	for (var i in currentDoc.modules) {
-		var modulesRow = document.createElement("div");
-		modulesRow.setAttribute("name", "modules_row");
-		modulesRow.setAttribute("class", "row");
-		document.getElementById("modules_div").appendChild(modulesRow);
-		for (var j in currentDoc.modules[i]) {
-			var module = currentDoc.modules[i][j];
-			modulesRow.appendChild(createModuleDiv(module));
-			module.combos[0].control.onchange();
-		}
-	}
-    // Resize modules container because I couldn't figure out how to get this
-    // automatically with CSS.	
-	var rows = document.getElementsByName("modules_row");
-	updateModulesRowWidth();
-	
-	// Add cursor to the end of the last row.
-	if (rows.length >= 1) {
-    	var cursor = document.createElement("span");
-    	cursor.setAttribute("class", "span1");
-    	cursor.setAttribute("style", "height: 440px; background: grey;");
-    	cursor.style.width = CURSOR_WIDTH;	
-	    rows[rows.length - 1].appendChild(cursor);
-	}
-	   
-	$('[name="modules_row"]').sortable({
-        start:function (e, ui) {
-            ui.placeholder.css({
-                width: CURSOR_WIDTH,
-                height: ui.item.css("height"),
-                background: "lightgray"});
-        }, 
-        connectWith: '[name="modules_row"]',
-        placeholder: "span1",
-        stop: function(event, ui) {updateModulesPosition();}
-    }); 
+    // Remove all rows.
+    document.getElementById("modules_div").innerHTML = "";
+    // Create new rows with modules.
+    if (currentDoc != null) {
+        for (var i in currentDoc.modules) {
+            var modulesRow = document.createElement("div");
+            modulesRow.setAttribute("name", "modules_row");
+            modulesRow.setAttribute("class", "row");
+            document.getElementById("modules_div").appendChild(modulesRow);
+            for ( var j in currentDoc.modules[i]) {
+                var module = currentDoc.modules[i][j];
+                modulesRow.appendChild(createModuleDiv(module));
+                module.combos[0].control.onchange();
+            }
+        }
+        // Resize modules container because I couldn't figure out how to get
+        // this
+        // automatically with CSS.
+        var rows = document.getElementsByName("modules_row");
+        updateModulesRowWidth();
+
+        // Add cursor to the end of the last row.
+        if (rows.length >= 1) {
+            var cursor = document.createElement("span");
+            cursor.setAttribute("class", "span1");
+            cursor.setAttribute("style", "height: 440px; background: grey;");
+            cursor.style.width = CURSOR_WIDTH;
+            rows[rows.length - 1].appendChild(cursor);
+        }
+
+        $('[name="modules_row"]').sortable({
+            start : function(e, ui) {
+                ui.placeholder.css({
+                    width : CURSOR_WIDTH,
+                    height : ui.item.css("height"),
+                    background : "lightgray"
+                });
+            },
+            connectWith : '[name="modules_row"]',
+            placeholder : "span1",
+            stop : function(event, ui) {
+                updateModulesPosition();
+            }
+        });
+    }
 }
 
 function updateModulesRowWidth() {
