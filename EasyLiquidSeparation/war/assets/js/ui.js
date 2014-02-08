@@ -1,8 +1,5 @@
 var PADDING = 20;
-var MODULES_DEFAULT_WIDTH = PADDING + 300;
 var CURSOR_WIDTH = 4;
-        
-
 
 function renderModules() {
     // Remove all rows.
@@ -14,15 +11,14 @@ function renderModules() {
             modulesRow.setAttribute("name", "modules_row");
             modulesRow.setAttribute("class", "row");
             document.getElementById("modules_div").appendChild(modulesRow);
-            for ( var j in currentDoc.modules[i]) {
+            for (var j in currentDoc.modules[i]) {
                 var module = currentDoc.modules[i][j];
                 modulesRow.appendChild(createModuleDiv(module));
                 module.combos[0].control.onchange();
             }
         }
         // Resize modules container because I couldn't figure out how to get
-        // this
-        // automatically with CSS.
+        // this automatically with CSS.
         var rows = document.getElementsByName("modules_row");
         updateModulesRowWidth();
 
@@ -55,12 +51,12 @@ function renderModules() {
 function updateModulesRowWidth() {
     var rows = document.getElementsByName("modules_row");
     for (var i = 0; i < rows.length; i++) {
-        var modulesRow = rows[i];       
-        modulesRow.style.width =
-            MODULES_DEFAULT_WIDTH * modulesRow.childNodes.length +
-            PADDING + CURSOR_WIDTH +
-            PADDING + CURSOR_WIDTH +
-            PADDING;
+        var modulesRow = rows[i];
+        var width = PADDING + CURSOR_WIDTH + PADDING + CURSOR_WIDTH + PADDING;
+        for (var j = 0; j < modulesRow.childNodes.length; j++) {
+            width += $(modulesRow.childNodes[j]).width() + PADDING;  
+        }
+        modulesRow.style.width = width;
     }    
 }
 
@@ -91,6 +87,17 @@ function updateModulesPosition() {
         }
     }
     renderModules();
+}
+
+function createCommentsButton(module, buttonsDiv) {
+    var btn = document.createElement("input");
+    btn.setAttribute("type", "button");
+    btn.setAttribute("value", "?");
+    btn.onclick = function() {
+    	module.showComments ^= true;
+    	renderModules();
+    }
+    buttonsDiv.appendChild(btn);
 }
 
 function createCopyButton(module, buttonsDiv) {
@@ -194,8 +201,9 @@ function setGroupRepresentator(module, parameter) {
     }
 }
 
-function drawParametersTable(div, m) {
+function createParametersTableDiv(m) {
     var tableDiv = document.createElement("div");
+    tableDiv.setAttribute("class", "parameters_table");
     tableDiv.appendChild(createHeaderRow());
     for (var key in m.groups_meta) {
         var group_parameters = m.groups_meta[key].parameters;
@@ -206,44 +214,75 @@ function drawParametersTable(div, m) {
         separator.setAttribute("style", "height: 12px;");
         tableDiv.appendChild(separator);
     }
-    div.appendChild(tableDiv);
+    return tableDiv;
 }
 
 function createModuleDiv(m) {
     var nameSpan = document.createElement("span");
     nameSpan.innerHTML = m.name;
-    nameSpan.setAttribute("class", "module_title span10");
+    nameSpan.setAttribute("class", "module_title span9");
 
-    var buttonsDiv = document.createElement("div");
-    buttonsDiv.setAttribute("style", "float: right;");
-    buttonsDiv.setAttribute("class", "module_title span2");
+    var buttonsDiv = document.createElement("span");
+    buttonsDiv.setAttribute("class", "module_title span3");
+    createCommentsButton(m, buttonsDiv);
     createCopyButton(m, buttonsDiv);
     createRemoveButton(m, buttonsDiv);
 
+    var nameAndButtons = document.createElement("span");
+    if (m.showComments) {
+        nameAndButtons.setAttribute("class", "row-fluid span6");
+    } else {
+        nameAndButtons.setAttribute("class", "row-fluid span12");
+    }
+    nameAndButtons.appendChild(nameSpan);
+    nameAndButtons.appendChild(buttonsDiv);
+
     var headerDiv = document.createElement("div");
     headerDiv.setAttribute("class", "row-fluid");
-    headerDiv.appendChild(nameSpan);
-    headerDiv.appendChild(buttonsDiv);
+    headerDiv.appendChild(nameAndButtons);
+
+    var calculationsDiv = document.createElement("span");
+    calculationsDiv.setAttribute("class", "span12");
+    calculationsDiv.appendChild(createCalculationOptionsDiv(m));
+    calculationsDiv.appendChild(createParametersTableDiv(m));
+
+	var contentDiv = document.createElement("div");
+	contentDiv.setAttribute("class", "row-fluid");
+	contentDiv.appendChild(calculationsDiv);
+	if (m.showComments) {
+        calculationsDiv.setAttribute("class", "span6");
+	    
+	    var textArea = document.createElement("textarea")
+	    textArea.setAttribute("style", "width: 100%; max-width: 100%; height: 220px");
+	    textArea.innerHTML = "Comments";
+	    
+	    var commentsDiv = document.createElement("span");
+	    commentsDiv.setAttribute("class", "span6");
+	    commentsDiv.appendChild(textArea);
+
+		contentDiv.appendChild(commentsDiv);
+	}
 
     var moduleContainer = document.createElement("div");
     moduleContainer.setAttribute("class", "main_div inputbar");
     moduleContainer.appendChild(headerDiv);
-    drawCalculationOptions(moduleContainer, m);
-    drawParametersTable(moduleContainer, m);
+    moduleContainer.appendChild(contentDiv);
 
     var moduleDiv = document.createElement("span");
-    //return to span4
-    moduleDiv.setAttribute("class", "span4");
+    if (m.showComments) {
+    	moduleDiv.setAttribute("class", "span8");
+    } else {
+    	moduleDiv.setAttribute("class", "span4");
+	}
     moduleDiv.appendChild(moduleContainer);
     m.control = moduleDiv;
     
     return moduleDiv;
 }
 
-function drawCalculationOptions(div, m) {
+function createCalculationOptionsDiv(m) {
     var comboDiv = document.createElement("div");
     comboDiv.setAttribute("class", "calc_option_div row-fluid");
-    div.appendChild(comboDiv);
 
     var s = document.createElement("span");
     s.setAttribute("class", "cbname span3");
@@ -257,11 +296,8 @@ function drawCalculationOptions(div, m) {
         var action_time = (new Date()).getTime();
         UpdateChangeByUserTime(m, action_time);
 
-        var moduleDiv = m.control;
-        var moduleContainer = moduleDiv.children[0];
-        var t = moduleContainer.children[moduleContainer.children.length - 1];
-        moduleContainer.removeChild(t);
-        drawParametersTable(moduleContainer, m);
+        var paramsTable = m.control.getElementsByClassName("parameters_table")[0]
+        paramsTable.parentElement.replaceChild(createParametersTableDiv(m), paramsTable);
     };
 
     m.combos[0].control = comboBox;
@@ -278,6 +314,8 @@ function drawCalculationOptions(div, m) {
         }
     }
     comboBox.selectedIndex = selected_index;
+    
+    return comboDiv;
 }
 
 function prepareTableForParameters(div) {

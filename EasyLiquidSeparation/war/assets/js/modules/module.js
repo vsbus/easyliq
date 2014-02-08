@@ -68,6 +68,7 @@ function Module(name, combos, parameters, groups, parameters_meta, groups_meta,
     this.calculate = calculate;
     this.onComboChanged = onComboChanged;
     this.updateParameters = null;
+    this.showComments = false;
     this.Render = function() {
         for (var parameter in this.parameters_meta) {
             var pmeta = this.parameters_meta[parameter];
