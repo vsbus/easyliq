@@ -6,8 +6,7 @@ function parameterValueChanged(m, parameter) {
     setGroupRepresentator(m, parameter);
     var meta = m.parameters_meta[parameter];
     meta.value = meta.element.value * map[meta.unit];
-    action_time = (new Date()).getTime();
-    UpdateChangeByUserTime(m, action_time);
+    UpdateChangeByUserTime(m);
 }
 
 function addModuleButtonClick(module) {

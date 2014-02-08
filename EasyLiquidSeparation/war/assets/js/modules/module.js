@@ -69,6 +69,7 @@ function Module(name, combos, parameters, groups, parameters_meta, groups_meta,
     this.onComboChanged = onComboChanged;
     this.updateParameters = null;
     this.showComments = false;
+    this.comments = "Put your comments here...";
     this.Render = function() {
         for (var parameter in this.parameters_meta) {
             var pmeta = this.parameters_meta[parameter];
@@ -82,7 +83,11 @@ function Module(name, combos, parameters, groups, parameters_meta, groups_meta,
     };
     this.Copy = function() {
         var obj = new this.constructor();
+
         obj.id = null;
+        obj.showComments = this.showComments;
+        obj.comments = this.comments;
+        
         obj.calculatedGroup = this.calculatedGroup;
         for (i = 0; i < this.combos.length; i++) {
             obj.combos[i].currentValue = this.combos[i].currentValue;

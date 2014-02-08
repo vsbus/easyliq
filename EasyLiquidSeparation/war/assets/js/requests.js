@@ -124,19 +124,21 @@ function Serialize(module) {
     for (var group in module.groups_meta) {
         representators[group] = module.groups_meta[group].representator;
     }
-
     var map = {
-        name : module.constructor.name,
-        position : module.position,
-        parameters : values,
-        calc_options : co,
-        inputs : representators
+        calc_options: co,
+        inputs:       representators,
+        name:         module.constructor.name,
+        position:     module.position,
+        parameters:   values,
+        showComments: module.showComments,
+        comments:     module.comments,
     }
     return JSON.stringify(map)
 }
 
 function Deserialize(response_map) {
     var module;
+    
     switch (response_map.name) {
     case "RfFromCakeSaturation":
         module = new RfFromCakeSaturation();
@@ -146,6 +148,8 @@ function Deserialize(response_map) {
         break;
     }
     
+    module.showComments = response_map.showComments == true;
+   	module.comments = response_map.comments
     module.updateParameters(response_map.parameters);
     module.id = response_map.id;
     module.position = response_map.position;

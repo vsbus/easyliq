@@ -62,7 +62,10 @@ function Process() {
     }
 }
 
-function UpdateChangeByUserTime(module, action_time) {
+// Updates time when the module was changed. This time is used to avoid sending
+// save requests many times in a row.
+function UpdateChangeByUserTime(module) {
+	var action_time = (new Date()).getTime();
     module.changeByUserTime = action_time;
     last_change_by_user_time = action_time;
 }

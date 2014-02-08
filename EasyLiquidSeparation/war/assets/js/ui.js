@@ -95,6 +95,7 @@ function createCommentsButton(module, buttonsDiv) {
     btn.setAttribute("value", "?");
     btn.onclick = function() {
     	module.showComments ^= true;
+    	saveDoc(currentDoc);
     	renderModules();
     }
     buttonsDiv.appendChild(btn);
@@ -263,7 +264,11 @@ function createModuleDiv(m) {
 	    
 	    var textArea = document.createElement("textarea")
 	    textArea.setAttribute("style", "width: 100%; max-width: 100%; height: 220px");
-	    textArea.innerHTML = "Comments";
+	    textArea.onkeyup = function() {
+	        m.comments = textArea.value;
+	    	UpdateChangeByUserTime(m);
+    	}
+	    textArea.innerHTML = m.comments;
 	    
 	    var commentsDiv = document.createElement("span");
 	    commentsDiv.setAttribute("class", "span6");
@@ -288,8 +293,7 @@ function createCalculationOptionsDiv(m) {
     comboBox.setAttribute("class", "span9");
     comboBox.onchange = function() {
         m.onComboChanged(m);
-        var action_time = (new Date()).getTime();
-        UpdateChangeByUserTime(m, action_time);
+        UpdateChangeByUserTime(m);
 
         var paramsTable = m.control.getElementsByClassName("parameters_table")[0]
         paramsTable.parentElement.replaceChild(createParametersTableDiv(m), paramsTable);
