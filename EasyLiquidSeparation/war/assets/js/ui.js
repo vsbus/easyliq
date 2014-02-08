@@ -229,11 +229,7 @@ function createModuleDiv(m) {
     createRemoveButton(m, buttonsDiv);
 
     var nameAndButtons = document.createElement("span");
-    if (m.showComments) {
-        nameAndButtons.setAttribute("class", "row-fluid span6");
-    } else {
-        nameAndButtons.setAttribute("class", "row-fluid span12");
-    }
+    nameAndButtons.setAttribute("class", "row-fluid span12");
     nameAndButtons.appendChild(nameSpan);
     nameAndButtons.appendChild(buttonsDiv);
 
@@ -249,7 +245,20 @@ function createModuleDiv(m) {
 	var contentDiv = document.createElement("div");
 	contentDiv.setAttribute("class", "row-fluid");
 	contentDiv.appendChild(calculationsDiv);
+
+    var moduleContainer = document.createElement("div");
+    moduleContainer.setAttribute("class", "main_div inputbar");
+    moduleContainer.appendChild(headerDiv);
+    moduleContainer.appendChild(contentDiv);
+
+    var moduleDiv = document.createElement("span");
+	moduleDiv.setAttribute("class", "span4");
+    moduleDiv.appendChild(moduleContainer);
+    m.control = moduleDiv;
+
 	if (m.showComments) {
+    	moduleDiv.setAttribute("class", "span8");
+        nameAndButtons.setAttribute("class", "row-fluid span6");
         calculationsDiv.setAttribute("class", "span6");
 	    
 	    var textArea = document.createElement("textarea")
@@ -262,20 +271,6 @@ function createModuleDiv(m) {
 
 		contentDiv.appendChild(commentsDiv);
 	}
-
-    var moduleContainer = document.createElement("div");
-    moduleContainer.setAttribute("class", "main_div inputbar");
-    moduleContainer.appendChild(headerDiv);
-    moduleContainer.appendChild(contentDiv);
-
-    var moduleDiv = document.createElement("span");
-    if (m.showComments) {
-    	moduleDiv.setAttribute("class", "span8");
-    } else {
-    	moduleDiv.setAttribute("class", "span4");
-	}
-    moduleDiv.appendChild(moduleContainer);
-    m.control = moduleDiv;
     
     return moduleDiv;
 }
