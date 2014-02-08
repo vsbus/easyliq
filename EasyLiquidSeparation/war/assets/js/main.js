@@ -246,8 +246,9 @@ function setCurrentFolder(fld) {
         currentFolder.element.removeAttribute("class");
     }
     currentFolder = fld;
-    currentFolder.element.setAttribute("class", "active");
-
+    if (currentFolder != null) {
+    	currentFolder.element.setAttribute("class", "active");
+    }
 }
 function initWorkspace() {
     loadFolders();
