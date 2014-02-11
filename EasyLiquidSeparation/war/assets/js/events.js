@@ -35,12 +35,15 @@ function removeFolderClick() {
     if (idx == folders.length) {
         idx = idx - 1;
     }
-    if (idx < folders.length) {
+    if (folders.length > 0) {
 	    fld = folders[idx];
 	    setCurrentFolder(fld);
 	    if (fld.documents.length > 0 && fld.documents[0] != null) {
 	    	setCurrentDocument(fld.documents[0]);
 	    }
+    }
+    else {
+        setCurrentDocument(null);
     }
 }
 
