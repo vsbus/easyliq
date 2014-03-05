@@ -20,6 +20,26 @@ function addModulesRowButtonClick() {
     saveDoc(currentDoc);
 }
 
+function triggerProjectComments() {
+	if (displayProjectComments) {
+		displayProjectComments = false;
+	} else {
+		displayProjectComments = true;
+	}
+	updateCommentsDisplay();
+	saveSettings();
+}
+
+function triggerDocumentComments() {
+	if (displayDocumentComments) {
+		displayDocumentComments = false;
+	} else {
+		displayDocumentComments = true;
+	}
+	updateCommentsDisplay();
+	saveSettings();
+}
+
 function removeDocumentClick() {
     removeCurrentDocument();
     // removeCurrentDocument doesn't use any pop-up windows so we can save

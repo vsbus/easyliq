@@ -9,6 +9,8 @@ var calculationProcess;
 var folders = [];
 var currentDoc = null;
 var currentFolder = null;
+var displayProjectComments = false;
+var displayDocumentComments = false;
 
 String.prototype.trim = function() {
     return this.replace(/^\s+|\s+$/g, '');
@@ -262,6 +264,7 @@ function initWorkspace() {
     if (currentDoc == null) {
         setCurrentDocument(currentFolder.documents[0]);
     }
+    updateCommentsDisplay();
     turnCalculationProcessOn();
 }
 

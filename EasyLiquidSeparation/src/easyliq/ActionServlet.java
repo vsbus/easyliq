@@ -67,6 +67,9 @@ public class ActionServlet extends HttpServlet {
             if (action.equals("loadfolders")) {
                 LoadFolders(request, response);
             }
+            if (action.equals("loadsettings")) {
+                loadSettings(request, response);
+            }
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -94,9 +97,6 @@ public class ActionServlet extends HttpServlet {
             }
             if (action.equals("savesettings")) {
                 saveSettings(request, response);
-            }
-            if (action.equals("loadsettings")) {
-                loadSettings(request, response);
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -260,8 +260,6 @@ public class ActionServlet extends HttpServlet {
         if (folders.isEmpty()) {
             return;
         }
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
         String json = "[";
         boolean isFirst = true;
         for (UserFolder f : folders) {
@@ -287,6 +285,8 @@ public class ActionServlet extends HttpServlet {
         }
         json = json + "]";
         pm.close();
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         response.getWriter().write(json);
     }
 
@@ -365,17 +365,17 @@ public class ActionServlet extends HttpServlet {
             HttpServletResponse response) throws IOException {
         UserService userService = UserServiceFactory.getUserService();
         String email = userService.getCurrentUser().getEmail();
-        String docId = request.getParameter("id");
+        String settings = request.getParameter("settings");
         PersistenceManager pm = PMF.get().getPersistenceManager();
         try {
             Query query = pm.newQuery(UserInfo.class, "email=='" + email + "'");
             List<UserInfo> ui = (List<UserInfo>) query.execute();
             if (ui.isEmpty()) {
-                UserInfo uInfo = new UserInfo(email, docId);
+                UserInfo uInfo = new UserInfo(email, settings);
                 pm.makePersistent(uInfo);
             } else {
                 UserInfo uInfo = ui.get(0);
-                uInfo.setActiveDocKey(docId);
+                uInfo.setSettingsJson(settings);
                 pm.makePersistent(uInfo);
             }
         } finally {
@@ -395,7 +395,9 @@ public class ActionServlet extends HttpServlet {
                 response.getWriter().write("");
             } else {
                 UserInfo uInfo = ui.get(0);
-                response.getWriter().write(uInfo.getActiveDocKey());
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write(uInfo.getSettingsJson());
             }
         } finally {
             pm.close();

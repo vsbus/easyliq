@@ -340,3 +340,19 @@ function createHeader(row, value) {
     th.innerHTML = value;
     row.appendChild(th);
 }
+
+function updateCommentsDisplay() {
+    var e = document.getElementById("project_comments");
+    if (displayProjectComments) {
+        e.style.display = "";
+    } else {
+    	e.style.display = "none";
+    }
+
+    e = document.getElementById("document_comments");
+    if (displayDocumentComments) {
+        e.style.display = "";
+    } else {
+    	e.style.display = "none";
+    }
+}

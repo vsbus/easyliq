@@ -47,6 +47,7 @@ function saveFolder(fld) {
         async : false
     });
 }
+
 function moveDocToFolder(doc, folderId) {
     $.ajax({
         type: "POST",
@@ -171,8 +172,12 @@ function saveSettings() {
 	        type: "POST",
 	        url:  "/ActionServlet",
 	        data: {
-	            action: "savesettings",
-	            id:     currentDoc.id
+	            action:   "savesettings",
+	            settings: JSON.stringify({
+	            	doc_id:                    currentDoc.id,
+	            	display_project_comments:  displayProjectComments,
+	            	display_document_comments: displayDocumentComments,
+	            })
 	        },        
 	        async: false
 	    });
@@ -181,13 +186,14 @@ function saveSettings() {
 
 function loadSettings() {   
     $.ajax({
-        type: "POST",
         url : "/ActionServlet",
         data : {
             action : "loadsettings",            
         },        
-        success : function(responseText) {
-            docId = responseText;
+        success : function(response) {
+            docId = response["doc_id"];
+            displayProjectComments = response["display_project_comments"] == true;
+            displayDocumentComments = response["display_document_comments"] == true;
             var isFound = false;
             for (var f in folders) {                
                 for (var i in folders[f].documents) {

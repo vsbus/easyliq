@@ -21,30 +21,26 @@ public class UserInfo {
 	private String email;
 
 	@Persistent
-	private String activeDocKey;
+	private String settingsJson;
 
-	public UserInfo(String email, String activeDocKey) {
+	public UserInfo(String email, String settingsJson) {
 		this.email = email;
-		this.activeDocKey = activeDocKey;
+		this.settingsJson = settingsJson;
 	}
 
 	public String getKey() {
 		return KeyFactory.keyToString(key);
 	}
 
-	public String getActiveDocKey() {
-		return activeDocKey;
+	public String getSettingsJson() {
+		return settingsJson;
 	}
 
-	public void setActiveDocKey(String key) {
-		activeDocKey = key;
+	public void setSettingsJson(String settingsJson) {
+		this.settingsJson = settingsJson;
 	}
 
 	public String getEmail() {
 		return email;
-	}
-
-	public void getActiveDocKey(Key key) {
-		activeDocKey = KeyFactory.keyToString(key);
 	}
 }
