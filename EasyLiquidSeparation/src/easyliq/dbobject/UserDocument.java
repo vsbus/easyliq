@@ -23,7 +23,7 @@ public class UserDocument {
     private Key key; 
     
     @Persistent
-    private String authorEmail ;
+    private String authorEmail;
     
     @Persistent
     private Date creationDate;
@@ -32,13 +32,17 @@ public class UserDocument {
     private List<String> modules;
     
     @Persistent
+    private String comments;
+    
+    @Persistent
     private String name;
         
-    public UserDocument(String name, String authorEmail, List<String> modules) {
+    public UserDocument(String name, String authorEmail, List<String> modules, String comments) {
         this.authorEmail = authorEmail;
         this.name = name;
         this.modules = modules;
         this.creationDate = new Date();
+        this.comments = comments;
     }
     
     public String getKey() {
@@ -75,5 +79,13 @@ public class UserDocument {
     
     public Date getCreationDate() {
         return this.creationDate;
+    }
+    
+    public String getComments() {
+    	return this.comments == null ? "" : this.comments;
+    }
+    
+    public void setComments(String comments) {
+    	this.comments = comments;
     }
 }

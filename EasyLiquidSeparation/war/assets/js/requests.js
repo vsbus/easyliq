@@ -17,11 +17,12 @@ function saveDoc(doc) {
     	type: "POST",
         url : "/ActionServlet",
         data : {
-            action : "savedoc",
-            id : doc.id,
-            docName : doc.name,
-            modules : modules,
-            isactive : doc == currentDoc
+            action:   "savedoc",
+            id:       doc.id,
+            docName:  doc.name,
+            modules:  modules,
+            isactive: doc == currentDoc,
+            comments: currentDoc.comments
         },
         success : function(responseText) {
             userdocId = responseText;
@@ -73,7 +74,10 @@ function loadFolders() {
                 var f = addFolder(response[i].folderName, response[i].id, []);
                 f.documents = [];
                 for (var j in response[i].documents) {
-                    var doc = addDocument(response[i].documents[j].docName, response[i].documents[j].id, []); 
+                    var doc = addDocument(response[i].documents[j].docName,
+                    		              response[i].documents[j].id,
+                    		              [],
+                    		              response[i].documents[j].comments); 
                     doc.modules.push([]);
                     for (var k in response[i].documents[j].modules) {
                         var module = response[i].documents[j].modules[k];

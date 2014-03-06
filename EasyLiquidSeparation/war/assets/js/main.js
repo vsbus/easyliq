@@ -68,7 +68,9 @@ function Process() {
 // save requests many times in a row.
 function UpdateChangeByUserTime(module) {
 	var action_time = (new Date()).getTime();
-    module.changeByUserTime = action_time;
+	if (module != null) {
+		module.changeByUserTime = action_time;
+	}
     last_change_by_user_time = action_time;
 }
 
@@ -85,7 +87,7 @@ function addNewDocument() {
             return;
         }
         name = e.value.trim();
-        var ndoc = addDocument(name, id, []);
+        var ndoc = addDocument(name, id, [], "Put your comments to document here.");
         saveDoc(ndoc);
         moveDocToFolder(ndoc.id, currentFolder.id);
         DisplayDocument(ndoc);
@@ -171,12 +173,13 @@ function DisplayDocument(doc) {
     currentFolder.documents[currentFolder.documents.length] = doc;
 }
 
-function addDocument(name, id, modules) {
+function addDocument(name, id, modules, comments) {
     var doc = {
-        id : id,
-        name : name,
-        modules : modules,
-        element : document.createElement("li")
+        id:       id,
+        name:     name,
+        modules:  modules,
+        element:  document.createElement("li"),
+        comments: comments
     }
     var a = document.createElement("a");
     DisplayDocumentName(name, a);
@@ -239,6 +242,8 @@ function setCurrentDocument(doc) {
     currentDoc = doc;
     if (currentDoc != null) {
     	currentDoc.element.setAttribute("class", "active");
+    	var e = document.getElementById("document_comments");
+    	e.value = currentDoc.comments;
     }
     renderModules();
 }

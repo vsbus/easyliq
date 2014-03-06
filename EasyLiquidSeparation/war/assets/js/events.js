@@ -40,6 +40,14 @@ function triggerDocumentComments() {
 	saveSettings();
 }
 
+function documentCommentsChanged() {
+	if (currentDoc != null) {
+	    var e = document.getElementById("document_comments");
+	    currentDoc.comments = e.value;
+	 	UpdateChangeByUserTime(null);
+	}
+}
+
 function removeDocumentClick() {
     removeCurrentDocument();
     // removeCurrentDocument doesn't use any pop-up windows so we can save

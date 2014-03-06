@@ -330,6 +330,7 @@ public class ActionServlet extends HttpServlet {
         pm.setIgnoreCache(true);
         String name = request.getParameter("docName");
         String id = request.getParameter("id");
+        String comments = request.getParameter("comments");
         Boolean isActiveDoc = Boolean.parseBoolean(request
                 .getParameter("isactive"));
         String[] s = request.getParameterValues("modules[]");
@@ -340,7 +341,7 @@ public class ActionServlet extends HttpServlet {
         try {
             if (id.isEmpty()) {
                 UserDocument doc = new UserDocument(name, user.getEmail(),
-                        modules);
+                        modules, comments);
                 pm.makePersistent(doc);
                 String key = doc.getKey();
                 response.getWriter().write(key);
@@ -351,6 +352,7 @@ public class ActionServlet extends HttpServlet {
                 UserDocument doc = pm.getObjectById(UserDocument.class, id);
                 doc.setName(name);
                 doc.setModules(modules);
+                doc.setComments(comments);
                 response.getWriter().write(id);
                 // Hack to force data store to apply changes: Query to the added
                 // element.
@@ -421,6 +423,7 @@ public class ActionServlet extends HttpServlet {
         if (doc != null) {
             json = "{" + JsonPair("docName", doc.getName());
             json = json + "," + JsonPair("id", doc.getKey());
+            json = json + "," + JsonPair("comments", doc.getComments());
             json = json + ",\"modules\":[";
             boolean isFirstModule = true;
             for (String m : doc.getModules()) {
