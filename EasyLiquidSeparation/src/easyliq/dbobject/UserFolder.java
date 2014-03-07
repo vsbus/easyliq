@@ -66,6 +66,6 @@ public class UserFolder {
         this.comments = comment;
     }
     public String getComments() {
-        return this.comments;
+        return this.comments == null ? "" : this.comments;
     }
 }
