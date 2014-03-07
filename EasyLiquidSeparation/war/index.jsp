@@ -97,7 +97,7 @@
           </div>
          <div style = "padding-top: 20">
              <input type="button" onclick="javascript: triggerProjectComments();" value="Project Comments"/>
-             <textarea id = "project_comments" style="display: none; margin-top: 5px; width: 100%; max-width: 100%; height: 120px">Write your project comments here.</textarea>
+             <textarea id = "project_comments" onkeyup="javascript: projectCommentsChanged();" style="display: none; margin-top: 5px; width: 100%; max-width: 100%; height: 120px">Write your project comments here.</textarea>
          </div>
          <div style = "padding-top: 20">
              <input type="button" onclick="javascript: triggerDocumentComments();" value="Document Comments"/>

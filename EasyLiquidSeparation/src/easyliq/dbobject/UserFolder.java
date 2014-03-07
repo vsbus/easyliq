@@ -28,15 +28,16 @@ public class UserFolder {
     private String authorEmail;
     
     @Persistent    
-    private String comment;
+    private String comments;
     
     @Persistent
     private Date creationDate;    
    
-    public UserFolder (String name, String email) {
+    public UserFolder (String name, String email, String comments) {
         this.name = name;        
         this.creationDate = new Date();
         this.authorEmail = email;
+        this.comments = comments;
     }
     
     public String getName() {
@@ -61,10 +62,10 @@ public class UserFolder {
     public String getAuthorEmail() {
         return this.authorEmail;
     }
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setComments(String comment) {
+        this.comments = comment;
     }
-    public String getComment() {
-        return this.comment;
+    public String getComments() {
+        return this.comments;
     }
 }

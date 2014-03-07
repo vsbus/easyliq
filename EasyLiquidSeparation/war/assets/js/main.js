@@ -60,6 +60,8 @@ function Process() {
     if (last_change_by_user_time > last_saving_time
             && processing_time - last_saving_time >= save_all_delay) {
         last_saving_time = processing_time;
+        
+        saveFolder(currentFolder);
         saveDoc(currentDoc);
     }
 }
@@ -124,7 +126,7 @@ function addDefaultFolder() {
             return;
         }
         name = e.value.trim();
-        var nfld = addFolder(name, id, []);
+        var nfld = addFolder(name, id, [], "Put your comments to project here.");
         saveFolder(nfld);
         DisplayFolder(nfld);
         $("#shadow").hide();
@@ -193,12 +195,13 @@ function addDocument(name, id, modules, comments) {
     return doc;
 }
 
-function addFolder(name, id, docs) {
+function addFolder(name, id, docs, comments) {
     var fld = {
-        id : id,
-        name : name,
-        documents : docs,
-        element : document.createElement("li")
+        id:        id,
+        name:      name,
+        documents: docs,
+        element:   document.createElement("li"),
+        comments:  comments
     }
     var a = document.createElement("a");
     DisplayFolderName(name, a);
@@ -255,6 +258,8 @@ function setCurrentFolder(fld) {
     currentFolder = fld;
     if (currentFolder != null) {
     	currentFolder.element.setAttribute("class", "active");
+    	var e = document.getElementById("project_comments");
+    	e.value = currentFolder.comments;
     }
 }
 function initWorkspace() {

@@ -221,11 +221,11 @@ public class ActionServlet extends HttpServlet {
         pm.setIgnoreCache(true);
         String name = request.getParameter("folderName");
         String id = request.getParameter("id");
-        Boolean isActiveDoc = Boolean.parseBoolean(request
-                .getParameter("isactive"));
+        String comments = request.getParameter("comments");
+        Boolean isActiveDoc = Boolean.parseBoolean(request.getParameter("isactive"));
         try {
             if (id.isEmpty()) {
-                UserFolder fld = new UserFolder(name, user.getEmail());
+                UserFolder fld = new UserFolder(name, user.getEmail(), comments);
                 pm.makePersistent(fld);
                 String key = fld.getKey();
                 response.getWriter().write(key);
@@ -235,6 +235,7 @@ public class ActionServlet extends HttpServlet {
             } else {
                 UserFolder f = pm.getObjectById(UserFolder.class, id);
                 f.setName(name);
+                f.setComments(comments);
                 response.getWriter().write(id);
                 // Hack to force data store to apply changes: Query to the added
                 // element.
@@ -269,6 +270,7 @@ public class ActionServlet extends HttpServlet {
             isFirst = false;
             json = json + "{" + JsonPair("folderName", f.getName());
             json = json + "," + JsonPair("id", f.getKey());
+            json = json + "," + JsonPair("comments", f.getComments());
             List<UserDocument> docs = GetDocumentsOfFolder(f);
             json = json + "," + "\"documents\" : [";
             if (!docs.isEmpty()) {

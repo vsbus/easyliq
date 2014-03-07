@@ -35,17 +35,18 @@ function saveDoc(doc) {
 function saveFolder(fld) {
     $.ajax({
         type: "POST",
-        url : "/ActionServlet",
-        data : {
-            action : "savefolder",
-            id : fld.id,
-            folderName : fld.name,
-            isactive : fld == currentFolder
+        url: "/ActionServlet",
+        data: {
+            action:     "savefolder",
+            id:         fld.id,
+            folderName: fld.name,
+            isactive:   fld == currentFolder,
+            comments:   fld.comments
         },
-        success : function(responseText) {
+        success: function(responseText) {
             fld.id = responseText;
         },
-        async : false
+        async: false
     });
 }
 
@@ -71,7 +72,10 @@ function loadFolders() {
         success: function(response) {
             folders = []
             for (var i in response) {
-                var f = addFolder(response[i].folderName, response[i].id, []);
+                var f = addFolder(response[i].folderName,
+                		          response[i].id,
+                		          [],
+                		          response[i].comments);
                 f.documents = [];
                 for (var j in response[i].documents) {
                     var doc = addDocument(response[i].documents[j].docName,

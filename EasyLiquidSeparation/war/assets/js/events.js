@@ -48,6 +48,14 @@ function documentCommentsChanged() {
 	}
 }
 
+function projectCommentsChanged() {
+	if (currentFolder != null) {
+	    var e = document.getElementById("project_comments");
+	    currentFolder.comments = e.value;
+	 	UpdateChangeByUserTime(null);
+	}
+}
+
 function removeDocumentClick() {
     removeCurrentDocument();
     // removeCurrentDocument doesn't use any pop-up windows so we can save
