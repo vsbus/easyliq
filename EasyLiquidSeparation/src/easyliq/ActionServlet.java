@@ -6,31 +6,21 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
-import javax.print.DocFlavor.STRING;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.junit.experimental.theories.internal.Assignments;
 
 import easyliq.Calculators.Calculator;
 import easyliq.Calculators.Density;
 import easyliq.Calculators.RfFromCakeSaturation;
 import easyliq.dbobject.*;
 
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
-import com.google.appengine.api.files.FileServicePb.KeyValue;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -440,6 +430,14 @@ public class ActionServlet extends HttpServlet {
         return json;
     }
 	private String JsonPair(String name, String value) {
-	    return "\"" + name + "\":\"" + value + "\"";
+		StringBuilder jsonValue = new StringBuilder();
+		for (char c : value.toCharArray()) {
+			if (c == '\n') {
+				jsonValue.append("\\n");
+			} else {
+				jsonValue.append(c);
+			}
+		}
+	    return "\"" + name + "\":\"" + jsonValue.toString() + "\"";
 	}
 }
