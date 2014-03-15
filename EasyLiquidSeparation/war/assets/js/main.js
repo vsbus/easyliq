@@ -55,10 +55,13 @@ function Process() {
         }
     }
 
-    // Send save request when data was changed after the last saving
-    // and last saving was done at least save_all_delay milliseconds ago.
+    // Send save request when:
+    //  - data was changed after the last saving;
+    //  - last saving was done at least save_all_delay milliseconds ago.
+    //  - last user change was done at least save_all delay msec ago. 
     if (last_change_by_user_time > last_saving_time
-            && processing_time - last_saving_time >= save_all_delay) {
+            && processing_time - last_saving_time >= save_all_delay
+            && processing_time - last_change_by_user_time >= save_all_delay) {
         last_saving_time = processing_time;
         
         saveFolder(currentFolder);
